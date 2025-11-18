@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { liff } from '@line/liff'
 import { supabase } from '@/lib/supabase'
+import { detectAuthMode, type LineProfile, type AuthMode } from '@/lib/auth'
 import WelcomeScreen from '@/components/WelcomeScreen'
 import RegistrationForm from '@/components/RegistrationForm'
 import EventList from '@/components/EventList'
@@ -15,37 +15,47 @@ export default function Home() {
   const [isRegistered, setIsRegistered] = useState(false)
   const [userProfile, setUserProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [authMode, setAuthMode] = useState<AuthMode>('unknown')
   const [currentView, setCurrentView] = useState<'events' | 'profile' | 'applications'>('events')
   const [navVisible, setNavVisible] = useState(true)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    const initializeLiff = async () => {
+    const initializeAuth = async () => {
       try {
-        await liff.init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID! })
+        const mode = detectAuthMode()
+        setAuthMode(mode)
+        
+        console.log('[Auth] Mode detected:', mode)
+        
+        // LIFF環境でもWeb環境でも、常にLINE Login（OAuth）を使用
+        // これにより、確実に同じユーザーIDが取得できます
         setIsLiffReady(true)
-
-        if (liff.isLoggedIn()) {
-          const profile = await liff.getProfile()
-          setUserProfile(profile)
-          
-          // 既存ユーザーかチェック
-          const { data: existingUser } = await supabase
-            .from('exhibitors')
-            .select('*')
-            .eq('line_user_id', profile.userId)
-            .single()
-
-          setIsRegistered(!!existingUser)
+        
+        // セッションストレージからプロフィール情報を取得（LINE Loginコールバック後）
+        const savedProfile = sessionStorage.getItem('line_profile')
+        const savedIsRegistered = sessionStorage.getItem('is_registered')
+        
+        if (savedProfile) {
+          const profile = JSON.parse(savedProfile) as LineProfile
+          console.log('[LINE Login] User ID from session:', profile.userId)
+          console.log('[LINE Login] Display Name:', profile.displayName)
+          setUserProfile({
+            userId: profile.userId,
+            displayName: profile.displayName,
+            pictureUrl: profile.pictureUrl,
+            statusMessage: profile.statusMessage
+          })
+          setIsRegistered(savedIsRegistered === 'true')
         }
       } catch (error) {
-        console.error('LIFF initialization failed:', error)
+        console.error('[Auth] Initialization error:', error)
       } finally {
         setLoading(false)
       }
     }
 
-    initializeLiff()
+    initializeAuth()
   }, [])
 
   useEffect(() => {
@@ -73,18 +83,9 @@ export default function Home() {
     return <LoadingSpinner />
   }
 
-  if (!isLiffReady) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-xl font-bold text-gray-800">LINEアプリで開いてください</h1>
-        </div>
-      </div>
-    )
-  }
-
-  if (!liff.isLoggedIn()) {
-    return <WelcomeScreen />
+  // ログイン状態のチェック（常にLINE Loginを使用）
+  if (!userProfile) {
+    return <WelcomeScreen authMode={authMode} />
   }
 
   if (!isRegistered) {

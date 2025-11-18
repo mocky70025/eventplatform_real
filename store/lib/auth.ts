@@ -1,0 +1,115 @@
+export interface LineProfile {
+  userId: string
+  displayName: string
+  pictureUrl?: string
+  statusMessage?: string
+}
+
+export type AuthMode = 'line_login' | 'unknown'
+
+/**
+ * 認証モードを判定
+ * 注意: LIFF環境でもWeb環境でも、常にLINE Login（OAuth）を使用することで、確実に同じユーザーIDを取得できます
+ */
+export const detectAuthMode = (): AuthMode => {
+  if (typeof window === 'undefined') return 'unknown'
+  
+  // LIFF環境でもWeb環境でも、常にLINE Login（OAuth）を使用
+  // これにより、確実に同じユーザーIDが取得できます
+  return 'line_login'
+}
+
+/**
+ * LINE Login（OAuth）の認証URLを生成
+ */
+export const getLineLoginUrl = (appType: 'store' | 'organizer' = 'store'): string => {
+  const channelId = process.env.NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID
+  if (!channelId) {
+    console.error('[LINE Login] NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID is not set')
+    throw new Error('NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID is not set')
+  }
+  
+  // 1つのコールバックURLを使用（store側のURL）
+  // organizer側からも同じコールバックURLを使用する
+  const redirectUri = process.env.NEXT_PUBLIC_LINE_LOGIN_REDIRECT_URI || 
+    (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '')
+  
+  // stateパラメータにアプリタイプを含める
+  const randomState = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  const state = `${appType}_${randomState}`
+  
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('line_login_state', state)
+    sessionStorage.setItem('line_login_app_type', appType)
+  }
+  
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id: channelId,
+    redirect_uri: redirectUri,
+    state: state,
+    scope: 'profile openid email',
+    bot_prompt: 'normal'
+  })
+  
+  const loginUrl = `https://access.line.me/oauth2/v2.1/authorize?${params.toString()}`
+  console.log('[LINE Login] Generated login URL:', loginUrl.replace(/state=[^&]+/, 'state=***'))
+  
+  return loginUrl
+}
+
+/**
+ * LINE Loginのコールバックから認証コードを取得
+ */
+export const getLineLoginCode = (): { code: string; state: string } | null => {
+  if (typeof window === 'undefined') return null
+  
+  const urlParams = new URLSearchParams(window.location.search)
+  const code = urlParams.get('code')
+  const state = urlParams.get('state')
+  
+  if (!code || !state) {
+    return null
+  }
+  
+  // stateの検証
+  const savedState = sessionStorage.getItem('line_login_state')
+  if (savedState !== state) {
+    console.error('State mismatch in LINE Login callback')
+    return null
+  }
+  
+  sessionStorage.removeItem('line_login_state')
+  
+  return { code, state }
+}
+
+/**
+ * LINE Loginの認証コードからユーザー情報を取得
+ * 注意: この実装はサーバーサイドで行うべきですが、動作確認用にクライアントサイドでも実装可能です
+ * 本番環境では、API Routeを使用してサーバーサイドで処理してください
+ */
+export const exchangeLineLoginCode = async (code: string): Promise<LineProfile | null> => {
+  try {
+    // サーバーサイドのAPI Routeを使用することを推奨
+    // ここでは動作確認用の実装例を示します
+    const response = await fetch('/api/auth/line-login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ code }),
+    })
+    
+    if (!response.ok) {
+      throw new Error('Failed to exchange code')
+    }
+    
+    const data = await response.json()
+    return data.profile
+  } catch (error) {
+    console.error('Failed to exchange LINE Login code:', error)
+    return null
+  }
+}
+
