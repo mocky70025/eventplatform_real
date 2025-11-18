@@ -125,7 +125,7 @@ const hasEventDraftContent = (payload: EventFormDraftPayload): boolean => {
 
 export default function EventForm({ organizer, onEventCreated, onCancel, initialEvent }: EventFormProps) {
   const isDraftEnabled = !initialEvent
-  const draftUserKey = organizer?.line_user_id || organizer.id
+  const draftUserKey = organizer?.user_id || organizer.id
 
   const initialFormState = useMemo<EventFormState>(() => ({
     ...EVENT_FORM_EMPTY_STATE,

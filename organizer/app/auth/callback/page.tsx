@@ -15,9 +15,8 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // URLパラメータから認証コードまたはプロフィール情報を取得
+        // URLパラメータから認証コードを取得
         const code = searchParams.get('code')
-        const profileParam = searchParams.get('profile')
         const state = searchParams.get('state')
         const error = searchParams.get('error')
         
@@ -27,21 +26,12 @@ export default function AuthCallback() {
           return
         }
         
-        let profile: any = null
-        
-        // store側からリダイレクトされた場合（プロフィール情報がURLパラメータで渡される）
-        if (profileParam) {
-          try {
-            profile = JSON.parse(decodeURIComponent(profileParam))
-            console.log('[LINE Login] Profile received from store:', profile)
-          } catch (e) {
-            setErrorMessage('プロフィール情報の取得に失敗しました')
+        if (!code || !state) {
+          setErrorMessage('認証コードが取得できませんでした')
           setStatus('error')
           return
         }
-        } 
-        // 直接organizer側にコールバックされた場合（認証コードを使用）
-        else if (code && state) {
+        
         // stateの検証
         const savedState = sessionStorage.getItem('line_login_state')
         if (savedState !== state) {
@@ -53,15 +43,10 @@ export default function AuthCallback() {
         sessionStorage.removeItem('line_login_state')
         
         // 認証コードをユーザー情報に交換
-          profile = await exchangeLineLoginCode(code)
+        const profile = await exchangeLineLoginCode(code)
         
         if (!profile) {
           setErrorMessage('ユーザー情報の取得に失敗しました')
-            setStatus('error')
-            return
-          }
-        } else {
-          setErrorMessage('認証情報が取得できませんでした')
           setStatus('error')
           return
         }

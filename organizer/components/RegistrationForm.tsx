@@ -3,8 +3,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { supabase, type Organizer } from '@/lib/supabase'
 
+import { type LineProfile } from '@/lib/auth'
+
 interface RegistrationFormProps {
-  userProfile: any
+  userProfile: LineProfile
   onRegistrationComplete: () => void
 }
 
@@ -66,6 +68,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const upsertDraft = useCallback(
     async (payload: OrganizerDraftPayload) => {
       if (!userProfile?.userId) return
+      // line_user_idをuser_idとして使用（form_draftsテーブルはuser_idを使用）
       const { error } = await supabase
         .from('form_drafts')
         .upsert(
@@ -81,11 +84,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       if (error) throw error
       draftExistsRef.current = true
     },
-    [userProfile?.userId]
+    [userProfile]
   )
 
   const removeDraft = useCallback(async () => {
     if (!userProfile?.userId || !draftExistsRef.current) return
+    // line_user_idをuser_idとして使用
     const { error } = await supabase
       .from('form_drafts')
       .delete()
@@ -94,7 +98,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
     if (error) throw error
     draftExistsRef.current = false
-  }, [userProfile?.userId])
+  }, [userProfile])
 
   const scheduleDraftUpsert = useCallback(
     (payload: OrganizerDraftPayload) => {
@@ -149,6 +153,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       }
 
       try {
+        // line_user_idをuser_idとして使用
         const { data, error } = await supabase
           .from('form_drafts')
           .select('payload')
@@ -192,7 +197,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     return () => {
       isCancelled = true
     }
-  }, [userProfile?.userId])
+  }, [userProfile])
 
   useEffect(() => {
     if (!draftLoaded) return
@@ -337,7 +342,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     setLoading(true)
 
     try {
-      // 重複登録チェック
+      if (!userProfile?.userId) {
+        alert('ログインが必要です。')
+        return
+      }
+
+      // 重複登録チェック（line_user_idを使用）
       const { data: existingUser } = await supabase
         .from('organizers')
         .select('id')

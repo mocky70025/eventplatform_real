@@ -13,6 +13,7 @@ export type Organizer = {
   age: number
   phone_number: string
   email: string
+  user_id?: string // 後方互換性のため残す
   line_user_id: string
   is_approved: boolean
   created_at: string

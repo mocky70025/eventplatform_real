@@ -5,7 +5,6 @@ import { supabase } from '@/lib/supabase'
 import OrganizerEditForm from './OrganizerEditForm'
 
 interface OrganizerProfileProps {
-  userProfile: any
 }
 
 interface OrganizerData {
@@ -16,13 +15,13 @@ interface OrganizerData {
   age: number
   phone_number: string
   email: string
-  line_user_id: string
+  user_id: string
   is_approved: boolean
   created_at: string
   updated_at: string
 }
 
-export default function OrganizerProfile({ userProfile }: OrganizerProfileProps) {
+export default function OrganizerProfile() {
   const [organizerData, setOrganizerData] = useState<OrganizerData | null>(null)
   const [loading, setLoading] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
@@ -33,10 +32,13 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
   const fetchOrganizerData = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user?.id) return
+
       const { data, error } = await supabase
         .from('organizers')
         .select('*')
-        .eq('line_user_id', userProfile.userId)
+        .eq('user_id', user.id)
         .single()
 
       if (error) throw error
@@ -83,7 +85,6 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
     return (
       <OrganizerEditForm
         organizerData={organizerData}
-        userProfile={userProfile}
         onUpdateComplete={handleUpdateComplete}
         onCancel={() => setIsEditing(false)}
       />

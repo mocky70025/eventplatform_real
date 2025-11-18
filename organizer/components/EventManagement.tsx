@@ -7,8 +7,10 @@ import EventList from './EventList'
 import EventApplications from './EventApplications'
 import OrganizerProfile from './OrganizerProfile'
 
+import { type LineProfile } from '@/lib/auth'
+
 interface EventManagementProps {
-  userProfile: any
+  userProfile: LineProfile
 }
 
 export default function EventManagement({ userProfile }: EventManagementProps) {
@@ -49,7 +51,9 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   const fetchOrganizerData = async () => {
     try {
-      // 主催者情報を取得
+      if (!userProfile?.userId) return
+
+      // 主催者情報を取得（line_user_idを使用）
       const { data: organizerData } = await supabase
         .from('organizers')
         .select('*')
@@ -251,7 +255,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
       case 'profile':
         return (
           <div style={{ paddingBottom: '24px' }}>
-            <OrganizerProfile userProfile={userProfile} />
+            <OrganizerProfile />
           </div>
         )
       default:

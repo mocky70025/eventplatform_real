@@ -32,16 +32,14 @@ export default function AuthCallback() {
           return
         }
         
-        // stateの検証とアプリタイプの取得
+        // stateの検証
         const savedState = sessionStorage.getItem('line_login_state')
-        if (!savedState || !savedState.startsWith(state.split('_')[0] + '_')) {
+        if (savedState !== state) {
           setErrorMessage('セキュリティ検証に失敗しました')
           setStatus('error')
           return
         }
         
-        // stateからアプリタイプを取得
-        const appType = state.startsWith('organizer_') ? 'organizer' : 'store'
         sessionStorage.removeItem('line_login_state')
         
         // 認証コードをユーザー情報に交換
@@ -56,17 +54,7 @@ export default function AuthCallback() {
         // デバッグログ
         console.log('[LINE Login] User ID:', profile.userId)
         console.log('[LINE Login] Display Name:', profile.displayName)
-        console.log('[LINE Login] App Type:', appType)
-        
-        // organizer側からのリクエストの場合、organizer側にリダイレクト
-        if (appType === 'organizer') {
-          const organizerUrl = process.env.NEXT_PUBLIC_ORGANIZER_URL || 'https://tomorrow-event-platform-organizer.vercel.app'
-          // 認証コードは1回しか使用できないため、プロフィール情報を取得してからorganizer側にリダイレクト
-          // プロフィール情報をURLパラメータで渡す（簡易的な実装、本番環境では別の方法を推奨）
-          const profileParam = encodeURIComponent(JSON.stringify(profile))
-          window.location.href = `${organizerUrl}/auth/callback?profile=${profileParam}&state=${state}`
-          return
-        }
+        console.log('[LINE Login] App Type: store')
         
         // store側の処理
         // 既存ユーザーかチェック

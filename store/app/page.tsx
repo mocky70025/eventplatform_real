@@ -35,16 +35,16 @@ export default function Home() {
         
         if (savedProfile) {
           try {
-            const profile = JSON.parse(savedProfile) as LineProfile
-            console.log('[LINE Login] User ID from session:', profile.userId)
-            console.log('[LINE Login] Display Name:', profile.displayName)
-            setUserProfile({
-              userId: profile.userId,
-              displayName: profile.displayName,
-              pictureUrl: profile.pictureUrl,
-              statusMessage: profile.statusMessage
-            })
-            setIsRegistered(savedIsRegistered === 'true')
+          const profile = JSON.parse(savedProfile) as LineProfile
+          console.log('[LINE Login] User ID from session:', profile.userId)
+          console.log('[LINE Login] Display Name:', profile.displayName)
+          setUserProfile({
+            userId: profile.userId,
+            displayName: profile.displayName,
+            pictureUrl: profile.pictureUrl,
+            statusMessage: profile.statusMessage
+          })
+          setIsRegistered(savedIsRegistered === 'true')
             console.log('[Home] User profile set:', { userId: profile.userId, isRegistered: savedIsRegistered === 'true' })
           } catch (error) {
             console.error('[Home] Failed to parse profile from sessionStorage:', error)

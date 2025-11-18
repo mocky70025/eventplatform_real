@@ -5,14 +5,12 @@ import { supabase } from '@/lib/supabase'
 
 interface OrganizerEditFormProps {
   organizerData: any
-  userProfile: any
   onUpdateComplete: (updatedData: any) => void
   onCancel: () => void
 }
 
 export default function OrganizerEditForm({
   organizerData,
-  userProfile,
   onUpdateComplete,
   onCancel
 }: OrganizerEditFormProps) {
@@ -145,10 +143,16 @@ export default function OrganizerEditForm({
       }
 
       // Supabaseで更新
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user?.id) {
+        alert('ログインが必要です。')
+        return
+      }
+
       const { data, error } = await supabase
         .from('organizers')
         .update(updateData)
-        .eq('line_user_id', userProfile.userId)
+        .eq('user_id', user.id)
         .select()
         .single()
 

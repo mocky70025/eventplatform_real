@@ -65,13 +65,13 @@ export async function POST(request: NextRequest) {
       // IDトークンからユーザー情報を取得（JWTをデコード）
       // 注意: 本番環境では、IDトークンの署名検証を行う必要があります
       try {
-        const payload = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
+      const payload = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
         console.log('[API] ID token payload:', { sub: payload.sub, name: payload.name })
-        profile = {
-          userId: payload.sub,
-          displayName: payload.name || '',
-          pictureUrl: payload.picture,
-          statusMessage: payload.email
+      profile = {
+        userId: payload.sub,
+        displayName: payload.name || '',
+        pictureUrl: payload.picture,
+        statusMessage: payload.email
         }
       } catch (error) {
         console.error('[API] Failed to decode ID token:', error)

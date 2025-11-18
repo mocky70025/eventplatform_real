@@ -16,7 +16,6 @@ export const isLiffEnvironment = (): boolean => {
 
 /**
  * LINE Login（OAuth）の認証URLを生成
- * 注意: organizer側からもstore側のコールバックURLを使用します
  */
 export const getLineLoginUrl = (): string => {
   const channelId = process.env.NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID
@@ -25,18 +24,16 @@ export const getLineLoginUrl = (): string => {
     throw new Error('NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID is not set')
   }
   
-  // store側のコールバックURLを使用（1つのコールバックURLのみ設定可能なため）
-  // 環境変数でstore側のURLを設定する必要があります
+  // organizer側のコールバックURLを使用
   const redirectUri = process.env.NEXT_PUBLIC_LINE_LOGIN_REDIRECT_URI || 
     (typeof window !== 'undefined' ? `${window.location.origin}/auth/callback` : '')
   
-  // stateパラメータにアプリタイプを含める
+  // stateパラメータ（セキュリティ用）
   const randomState = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-  const state = `organizer_${randomState}`
+  const state = randomState
   
   if (typeof window !== 'undefined') {
     sessionStorage.setItem('line_login_state', state)
-    sessionStorage.setItem('line_login_app_type', 'organizer')
   }
   
   const params = new URLSearchParams({
