@@ -6,15 +6,6 @@ export interface LineProfile {
 }
 
 /**
- * 現在の環境がLIFF環境かどうかを判定（情報表示用）
- */
-export const isLiffEnvironment = (): boolean => {
-  if (typeof window === 'undefined') return false
-  // User-Agentで判定（簡易的な方法）
-  return /Line/i.test(navigator.userAgent)
-}
-
-/**
  * LINE Login（OAuth）の認証URLを生成
  */
 export const getLineLoginUrl = (): string => {

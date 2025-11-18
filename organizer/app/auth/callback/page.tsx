@@ -69,15 +69,6 @@ export default function AuthCallback() {
         
         console.log('[Callback] Existing organizer found:', existingUser ? 'yes' : 'no')
         
-        // 念のため、exhibitorsテーブルにも登録されていないか確認（デバッグ用）
-        const { data: existingExhibitor } = await supabase
-          .from('exhibitors')
-          .select('*')
-          .eq('line_user_id', profile.userId)
-          .single()
-        
-        console.log('[Callback] Existing exhibitor found:', existingExhibitor ? 'yes' : 'no')
-        
         // セッションストレージにプロフィール情報を保存
         sessionStorage.setItem('line_profile', JSON.stringify(profile))
         sessionStorage.setItem('is_registered', existingUser ? 'true' : 'false')
