@@ -91,6 +91,7 @@ export const getLineLoginCode = (): { code: string; state: string } | null => {
  */
 export const exchangeLineLoginCode = async (code: string): Promise<LineProfile | null> => {
   try {
+    console.log('[Auth] Exchanging code for profile, code:', code ? 'present' : 'missing')
     // サーバーサイドのAPI Routeを使用することを推奨
     // ここでは動作確認用の実装例を示します
     const response = await fetch('/api/auth/line-login', {
@@ -101,14 +102,25 @@ export const exchangeLineLoginCode = async (code: string): Promise<LineProfile |
       body: JSON.stringify({ code }),
     })
     
+    console.log('[Auth] API response status:', response.status)
+    
     if (!response.ok) {
-      throw new Error('Failed to exchange code')
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+      console.error('[Auth] API response error:', errorData)
+      throw new Error(`Failed to exchange code: ${errorData.error || response.statusText}`)
     }
     
     const data = await response.json()
+    console.log('[Auth] API response data:', data)
+    
+    if (!data.profile) {
+      console.error('[Auth] No profile in response:', data)
+      return null
+    }
+    
     return data.profile
   } catch (error) {
-    console.error('Failed to exchange LINE Login code:', error)
+    console.error('[Auth] Failed to exchange LINE Login code:', error)
     return null
   }
 }
