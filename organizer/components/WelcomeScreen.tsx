@@ -1,10 +1,19 @@
 'use client'
 
-import { liff } from '@line/liff'
+import { getLineLoginUrl } from '@/lib/auth'
 
 export default function WelcomeScreen() {
   const handleLogin = () => {
-    liff.login()
+    try {
+      console.log('[WelcomeScreen] Login button clicked')
+      // LIFF環境でもWeb環境でも、常にLINE Login（OAuth）を使用
+      const loginUrl = getLineLoginUrl()
+      console.log('[WelcomeScreen] Login URL generated, redirecting...')
+      window.location.href = loginUrl
+    } catch (error) {
+      console.error('[WelcomeScreen] Error in handleLogin:', error)
+      alert('ログインエラーが発生しました。コンソールを確認してください。')
+    }
   }
 
   return (
@@ -31,6 +40,31 @@ export default function WelcomeScreen() {
             イベント主催者向けプラットフォーム
           </p>
         </div>
+
+        <button
+          onClick={handleLogin}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: '16px 24px',
+            gap: '10px',
+            width: '100%',
+            height: '48px',
+            background: '#06C755',
+            borderRadius: '8px',
+            border: 'none',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '16px',
+            fontWeight: 700,
+            lineHeight: '19px',
+            color: '#FFFFFF',
+            cursor: 'pointer'
+          }}
+        >
+          LINEでログイン
+        </button>
 
         <div style={{
           background: '#FFFFFF',
@@ -124,31 +158,6 @@ export default function WelcomeScreen() {
             </div>
           </div>
         </div>
-
-        <button
-          onClick={handleLogin}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '16px 24px',
-            gap: '10px',
-            width: '100%',
-            height: '48px',
-            background: '#06C755',
-            borderRadius: '8px',
-            border: 'none',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '16px',
-            fontWeight: 700,
-            lineHeight: '19px',
-            color: '#FFFFFF',
-            cursor: 'pointer'
-          }}
-        >
-          LINEでログイン
-        </button>
       </div>
     </div>
   )
