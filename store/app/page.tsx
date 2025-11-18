@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import { detectAuthMode, type LineProfile, type AuthMode } from '@/lib/auth'
+import { type LineProfile } from '@/lib/auth'
 import WelcomeScreen from '@/components/WelcomeScreen'
 import RegistrationForm from '@/components/RegistrationForm'
 import EventList from '@/components/EventList'
@@ -15,7 +15,6 @@ export default function Home() {
   const [isRegistered, setIsRegistered] = useState(false)
   const [userProfile, setUserProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [authMode, setAuthMode] = useState<AuthMode>('unknown')
   const [currentView, setCurrentView] = useState<'events' | 'profile' | 'applications'>('events')
   const [navVisible, setNavVisible] = useState(true)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -23,11 +22,6 @@ export default function Home() {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        const mode = detectAuthMode()
-        setAuthMode(mode)
-        
-        console.log('[Auth] Mode detected:', mode)
-        
         // LIFF環境でもWeb環境でも、常にLINE Login（OAuth）を使用
         // これにより、確実に同じユーザーIDが取得できます
         setIsLiffReady(true)
@@ -85,7 +79,7 @@ export default function Home() {
 
   // ログイン状態のチェック（常にLINE Loginを使用）
   if (!userProfile) {
-    return <WelcomeScreen authMode={authMode} />
+    return <WelcomeScreen />
   }
 
   if (!isRegistered) {

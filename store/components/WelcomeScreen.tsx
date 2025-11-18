@@ -1,10 +1,13 @@
 'use client'
 
-import { liff } from '@line/liff'
+import { getLineLoginUrl } from '@/lib/auth'
 
 export default function WelcomeScreen() {
   const handleLogin = () => {
-    liff.login()
+    // LIFF環境でもWeb環境でも、常にLINE Login（OAuth）を使用
+    // これにより、確実に同じユーザーIDが取得できます
+    const loginUrl = getLineLoginUrl()
+    window.location.href = loginUrl
   }
 
   return (
