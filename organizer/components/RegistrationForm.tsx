@@ -392,12 +392,38 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       console.log('[RegistrationForm] Insert data:', insertData)
 
       console.log('[RegistrationForm] Inserting into organizers table...')
-      const { data: insertData_result, error } = await supabase
-        .from('organizers')
-        .insert(insertData)
-        .select()
+      console.log('[RegistrationForm] Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+      console.log('[RegistrationForm] Supabase Key present:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+      
+      try {
+        const { data: insertData_result, error } = await supabase
+          .from('organizers')
+          .insert(insertData)
+          .select()
 
-      console.log('[RegistrationForm] Insert result:', { data: insertData_result, error })
+        console.log('[RegistrationForm] Insert result:', { data: insertData_result, error })
+
+        if (error) {
+          console.error('[RegistrationForm] Supabase error:', error)
+          console.error('[RegistrationForm] Error code:', error.code)
+          console.error('[RegistrationForm] Error message:', error.message)
+          console.error('[RegistrationForm] Error details:', error.details)
+          console.error('[RegistrationForm] Error hint:', error.hint)
+          throw error
+        }
+
+        console.log('[RegistrationForm] Insert successful:', insertData_result)
+      } catch (fetchError) {
+        console.error('[RegistrationForm] Fetch error:', fetchError)
+        console.error('[RegistrationForm] Fetch error type:', typeof fetchError)
+        console.error('[RegistrationForm] Fetch error details:', JSON.stringify(fetchError, null, 2))
+        
+        // ネットワークエラーの場合、より詳細な情報を提供
+        if (fetchError instanceof TypeError && fetchError.message.includes('fetch')) {
+          throw new Error(`ネットワークエラー: Supabaseへの接続に失敗しました。環境変数が正しく設定されているか確認してください。URL: ${process.env.NEXT_PUBLIC_SUPABASE_URL || '未設定'}`)
+        }
+        throw fetchError
+      }
 
       if (error) {
         console.error('[RegistrationForm] Supabase error:', error)
