@@ -43,6 +43,7 @@ DROP POLICY IF EXISTS "Organizers can manage their own events" ON events;
 DROP POLICY IF EXISTS "Allow public select on events" ON events;
 DROP POLICY IF EXISTS "Allow public insert on events" ON events;
 DROP POLICY IF EXISTS "Allow public update on events" ON events;
+DROP POLICY IF EXISTS "Allow public delete on events" ON events;
 
 CREATE POLICY "Allow public select on events" ON events
     FOR SELECT USING (true);
