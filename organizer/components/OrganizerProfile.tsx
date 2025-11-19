@@ -44,11 +44,26 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
       console.log('[OrganizerProfile] Fetching organizer data for userId:', userProfile.userId)
 
-      const { data, error } = await supabase
-        .from('organizers')
-        .select('*')
-        .eq('line_user_id', userProfile.userId)
-        .single()
+      const authType = (userProfile as any).authType || 'line'
+      let data, error
+
+      if (authType === 'email') {
+        const result = await supabase
+          .from('organizers')
+          .select('*')
+          .eq('user_id', userProfile.userId)
+          .single()
+        data = result.data
+        error = result.error
+      } else {
+        const result = await supabase
+          .from('organizers')
+          .select('*')
+          .eq('line_user_id', userProfile.userId)
+          .single()
+        data = result.data
+        error = result.error
+      }
 
       console.log('[OrganizerProfile] Fetch result:', { data, error })
 

@@ -404,12 +404,27 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     setLoading(true)
 
     try {
-      // 重複登録チェック
-      const { data: existingUser } = await supabase
-        .from('exhibitors')
-        .select('id')
-        .eq('line_user_id', userProfile.userId)
-        .single()
+      // 認証タイプに応じて重複登録チェック
+      const authType = userProfile.authType || 'line'
+      let existingUser = null
+
+      if (authType === 'email') {
+        // メールアドレス・パスワード認証の場合
+        const { data } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('user_id', userProfile.userId)
+          .single()
+        existingUser = data
+      } else {
+        // LINE Loginの場合
+        const { data } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('line_user_id', userProfile.userId)
+          .single()
+        existingUser = data
+      }
 
       if (existingUser) {
         alert('既に登録済みです。')
@@ -439,14 +454,23 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         documentImageUrls.fire_equipment_layout_image_url = documentUrls.fire_equipment_layout
       }
 
+      // 挿入データの準備
+      const insertData: any = {
+        ...formData,
+        phone_number: normalizedPhone,
+        ...documentImageUrls,
+      }
+
+      // 認証タイプに応じてuser_idまたはline_user_idを設定
+      if (authType === 'email') {
+        insertData.user_id = userProfile.userId
+      } else {
+        insertData.line_user_id = userProfile.userId
+      }
+
       const { error } = await supabase
         .from('exhibitors')
-        .insert({
-          ...formData,
-          phone_number: normalizedPhone,
-          ...documentImageUrls,
-          line_user_id: userProfile.userId,
-        })
+        .insert(insertData)
 
       if (error) {
         console.error('Supabase error:', error)

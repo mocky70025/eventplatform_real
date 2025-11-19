@@ -16,28 +16,53 @@ export default function Home() {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // セッションストレージからプロフィール情報を取得（LINE Loginコールバック後）
-        const savedProfile = sessionStorage.getItem('line_profile')
-        const savedIsRegistered = sessionStorage.getItem('is_registered')
+        // Supabase Authのセッションを確認
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
-        console.log('[Home] Saved profile from sessionStorage:', savedProfile)
-        console.log('[Home] Is registered from sessionStorage:', savedIsRegistered)
-        
-        if (savedProfile) {
-          try {
-            const profile = JSON.parse(savedProfile) as LineProfile
-            console.log('[Home] User ID from session:', profile.userId)
-            console.log('[Home] Display Name:', profile.displayName)
-            console.log('[Home] Is registered from sessionStorage:', savedIsRegistered)
-            setUserProfile(profile)
-            setIsRegistered(savedIsRegistered === 'true')
-            console.log('[Home] User profile set:', { userId: profile.userId, isRegistered: savedIsRegistered === 'true' })
-            console.log('[Home] App type: organizer - will show organizer RegistrationForm')
-          } catch (error) {
-            console.error('[Home] Failed to parse profile from sessionStorage:', error)
+        if (session && session.user) {
+          // メールアドレス・パスワード認証の場合
+          console.log('[Home] Email auth session found:', session.user.id)
+          const authType = sessionStorage.getItem('auth_type')
+          
+          if (authType === 'email') {
+            setUserProfile({
+              userId: session.user.id,
+              email: session.user.email,
+              authType: 'email'
+            } as any)
+            
+            // 登録済みかチェック
+            const { data: organizer } = await supabase
+              .from('organizers')
+              .select('id')
+              .eq('user_id', session.user.id)
+              .single()
+            
+            setIsRegistered(!!organizer)
+            console.log('[Home] Email auth user profile set:', { userId: session.user.id, isRegistered: !!organizer })
           }
         } else {
-          console.log('[Home] No profile found in sessionStorage')
+          // LINE Loginの場合
+          const savedProfile = sessionStorage.getItem('line_profile')
+          const savedIsRegistered = sessionStorage.getItem('is_registered')
+          
+          console.log('[Home] Saved profile from sessionStorage:', savedProfile)
+          console.log('[Home] Is registered from sessionStorage:', savedIsRegistered)
+          
+          if (savedProfile) {
+            try {
+              const profile = JSON.parse(savedProfile) as LineProfile
+              console.log('[Home] User ID from session:', profile.userId)
+              console.log('[Home] Display Name:', profile.displayName)
+              setUserProfile(profile)
+              setIsRegistered(savedIsRegistered === 'true')
+              console.log('[Home] LINE Login user profile set:', { userId: profile.userId, isRegistered: savedIsRegistered === 'true' })
+            } catch (error) {
+              console.error('[Home] Failed to parse profile from sessionStorage:', error)
+            }
+          } else {
+            console.log('[Home] No profile found in sessionStorage')
+          }
         }
       } catch (error) {
         console.error('[Auth] Initialization error:', error)

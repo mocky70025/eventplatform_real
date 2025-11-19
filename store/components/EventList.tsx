@@ -267,12 +267,25 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   const handleApply = async (eventId: string) => {
     try {
-      // 出店者情報を取得
-      const { data: exhibitor } = await supabase
-        .from('exhibitors')
-        .select('id')
-        .eq('line_user_id', userProfile.userId)
-        .single()
+      // 出店者情報を取得（認証タイプに応じて）
+      const authType = userProfile.authType || 'line'
+      let exhibitor
+
+      if (authType === 'email') {
+        const { data } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('user_id', userProfile.userId)
+          .single()
+        exhibitor = data
+      } else {
+        const { data } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('line_user_id', userProfile.userId)
+          .single()
+        exhibitor = data
+      }
 
       if (!exhibitor) {
         alert('出店者登録が完了していません。まず登録を行ってください。')

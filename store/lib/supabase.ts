@@ -3,7 +3,13 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+})
 
 export type Exhibitor = {
   id: string
@@ -19,7 +25,8 @@ export type Exhibitor = {
   automobile_inspection_image_url?: string
   pl_insurance_image_url?: string
   fire_equipment_layout_image_url?: string
-  line_user_id: string
+  user_id?: string // Supabase AuthのユーザーID
+  line_user_id?: string // LINE LoginのユーザーID
   created_at: string
   updated_at: string
 }

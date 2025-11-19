@@ -16,12 +16,25 @@ export default function EventCard({ event, userProfile }: EventCardProps) {
   const handleApply = async () => {
     setApplying(true)
     try {
-      // 出店者情報を取得
-      const { data: exhibitor } = await supabase
-        .from('exhibitors')
-        .select('id')
-        .eq('line_user_id', userProfile.userId)
-        .single()
+      // 出店者情報を取得（認証タイプに応じて）
+      const authType = userProfile.authType || 'line'
+      let exhibitor
+
+      if (authType === 'email') {
+        const { data } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('user_id', userProfile.userId)
+          .single()
+        exhibitor = data
+      } else {
+        const { data } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('line_user_id', userProfile.userId)
+          .single()
+        exhibitor = data
+      }
 
       if (!exhibitor) {
         throw new Error('出店者情報が見つかりません')

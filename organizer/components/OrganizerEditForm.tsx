@@ -151,14 +151,30 @@ export default function OrganizerEditForm({
         return
       }
 
-      console.log('[OrganizerEditForm] Updating organizer with line_user_id:', userProfile.userId)
+      const authType = (userProfile as any).authType || 'line'
+      console.log('[OrganizerEditForm] Updating organizer with auth type:', authType, 'userId:', userProfile.userId)
 
-      const { data, error } = await supabase
-        .from('organizers')
-        .update(updateData)
-        .eq('line_user_id', userProfile.userId)
-        .select()
-        .single()
+      let data, error
+
+      if (authType === 'email') {
+        const result = await supabase
+          .from('organizers')
+          .update(updateData)
+          .eq('user_id', userProfile.userId)
+          .select()
+          .single()
+        data = result.data
+        error = result.error
+      } else {
+        const result = await supabase
+          .from('organizers')
+          .update(updateData)
+          .eq('line_user_id', userProfile.userId)
+          .select()
+          .single()
+        data = result.data
+        error = result.error
+      }
 
       if (error) {
         console.error('Update failed:', error)

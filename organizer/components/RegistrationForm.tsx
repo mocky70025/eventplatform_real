@@ -361,13 +361,29 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
       console.log('[RegistrationForm] User ID:', userProfile.userId)
 
-      // 重複登録チェック（line_user_idを使用）
+      // 重複登録チェック（認証タイプに応じて）
+      const authType = (userProfile as any).authType || 'line'
       console.log('[RegistrationForm] Checking for existing organizer...')
-      const { data: existingUser, error: checkError } = await supabase
-        .from('organizers')
-        .select('id')
-        .eq('line_user_id', userProfile.userId)
-        .single()
+      let existingUser = null
+      let checkError = null
+
+      if (authType === 'email') {
+        const result = await supabase
+          .from('organizers')
+          .select('id')
+          .eq('user_id', userProfile.userId)
+          .single()
+        existingUser = result.data
+        checkError = result.error
+      } else {
+        const result = await supabase
+          .from('organizers')
+          .select('id')
+          .eq('line_user_id', userProfile.userId)
+          .single()
+        existingUser = result.data
+        checkError = result.error
+      }
 
       if (checkError && checkError.code !== 'PGRST116') {
         console.error('[RegistrationForm] Error checking existing user:', checkError)
@@ -383,11 +399,17 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       const normalizedPhone = convertToHalfWidth(formData.phone_number.replace(/-/g, ''))
       console.log('[RegistrationForm] Normalized phone:', normalizedPhone)
 
-      const insertData = {
+      const insertData: any = {
         ...formData,
         phone_number: normalizedPhone,
-        line_user_id: userProfile.userId,
         is_approved: false,
+      }
+
+      // 認証タイプに応じてuser_idまたはline_user_idを設定
+      if (authType === 'email') {
+        insertData.user_id = userProfile.userId
+      } else {
+        insertData.line_user_id = userProfile.userId
       }
       console.log('[RegistrationForm] Insert data:', insertData)
 

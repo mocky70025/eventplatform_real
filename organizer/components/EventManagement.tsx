@@ -53,12 +53,25 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     try {
       if (!userProfile?.userId) return
 
-      // 主催者情報を取得（line_user_idを使用）
-      const { data: organizerData } = await supabase
-        .from('organizers')
-        .select('*')
-        .eq('line_user_id', userProfile.userId)
-        .single()
+      // 主催者情報を取得（認証タイプに応じて）
+      const authType = (userProfile as any).authType || 'line'
+      let organizerData
+
+      if (authType === 'email') {
+        const { data } = await supabase
+          .from('organizers')
+          .select('*')
+          .eq('user_id', userProfile.userId)
+          .single()
+        organizerData = data
+      } else {
+        const { data } = await supabase
+          .from('organizers')
+          .select('*')
+          .eq('line_user_id', userProfile.userId)
+          .single()
+        organizerData = data
+      }
 
       if (organizerData) {
         setOrganizer(organizerData)
