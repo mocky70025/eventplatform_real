@@ -4,10 +4,14 @@ import { useState } from 'react'
 import { getLineLoginUrl } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
 
-type AuthMode = 'select' | 'line' | 'email' | 'register'
+type AuthMode = 'initial' | 'login' | 'register'
+type LoginMethod = 'line' | 'email'
+type RegisterMethod = 'line' | 'email'
 
 export default function WelcomeScreen() {
-  const [authMode, setAuthMode] = useState<AuthMode>('select')
+  const [authMode, setAuthMode] = useState<AuthMode>('initial')
+  const [loginMethod, setLoginMethod] = useState<LoginMethod | null>(null)
+  const [registerMethod, setRegisterMethod] = useState<RegisterMethod | null>(null)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [registerEmail, setRegisterEmail] = useState('')
@@ -26,6 +30,11 @@ export default function WelcomeScreen() {
       console.error('[WelcomeScreen] Error in handleLogin:', error)
       alert('ログインエラーが発生しました。コンソールを確認してください。')
     }
+  }
+
+  const handleLineRegister = () => {
+    // LINE Loginは新規登録とログインが同じフロー
+    handleLineLogin()
   }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -94,6 +103,18 @@ export default function WelcomeScreen() {
     }
   }
 
+  const resetForm = () => {
+    setAuthMode('initial')
+    setLoginMethod(null)
+    setRegisterMethod(null)
+    setEmail('')
+    setPassword('')
+    setRegisterEmail('')
+    setRegisterPassword('')
+    setRegisterPasswordConfirm('')
+    setError('')
+  }
+
   return (
     <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
       <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
@@ -119,8 +140,187 @@ export default function WelcomeScreen() {
           </p>
         </div>
 
-        {authMode === 'select' && (
+        {/* 初期画面：ログイン or 新規登録を選択 */}
+        {authMode === 'initial' && (
           <>
+            <button
+              onClick={() => setAuthMode('login')}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '16px 24px',
+                gap: '10px',
+                width: '100%',
+                height: '48px',
+                background: '#06C755',
+                borderRadius: '8px',
+                border: 'none',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                fontWeight: 700,
+                lineHeight: '19px',
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                marginBottom: '12px'
+              }}
+            >
+              ログイン
+            </button>
+            <button
+              onClick={() => setAuthMode('register')}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '16px 24px',
+                gap: '10px',
+                width: '100%',
+                height: '48px',
+                background: '#FFFFFF',
+                borderRadius: '8px',
+                border: '1px solid #E5E5E5',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                fontWeight: 700,
+                lineHeight: '19px',
+                color: '#000000',
+                cursor: 'pointer'
+              }}
+            >
+              新規登録
+            </button>
+
+            <div style={{
+              background: '#FFFFFF',
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+              borderRadius: '12px',
+              padding: '24px',
+              marginTop: '24px'
+            }}>
+              <h2 style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                lineHeight: '120%',
+                color: '#000000',
+                marginBottom: '24px'
+              }}>
+                ご利用の流れ
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{
+                    background: '#06C755',
+                    color: '#FFFFFF',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    flexShrink: 0
+                  }}>
+                    1
+                  </div>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>アカウントでログイン</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{
+                    background: '#06C755',
+                    color: '#FFFFFF',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    flexShrink: 0
+                  }}>
+                    2
+                  </div>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>基本情報を登録</p>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <div style={{
+                    background: '#06C755',
+                    color: '#FFFFFF',
+                    borderRadius: '50%',
+                    width: '24px',
+                    height: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    flexShrink: 0
+                  }}>
+                    3
+                  </div>
+                  <p style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    lineHeight: '150%',
+                    color: '#000000'
+                  }}>イベントを掲載・管理</p>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* ログイン方法選択 */}
+        {authMode === 'login' && !loginMethod && (
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h2 style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                lineHeight: '120%',
+                color: '#000000'
+              }}>
+                ログイン方法を選択
+              </h2>
+              <button
+                onClick={resetForm}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  color: '#06C755',
+                  cursor: 'pointer'
+                }}
+              >
+                ×
+              </button>
+            </div>
             <button
               onClick={handleLineLogin}
               style={{
@@ -147,7 +347,7 @@ export default function WelcomeScreen() {
               LINEでログイン
             </button>
             <button
-              onClick={() => setAuthMode('email')}
+              onClick={() => setLoginMethod('email')}
               style={{
                 display: 'flex',
                 flexDirection: 'row',
@@ -165,33 +365,16 @@ export default function WelcomeScreen() {
                 fontWeight: 700,
                 lineHeight: '19px',
                 color: '#000000',
-                cursor: 'pointer',
-                marginBottom: '12px'
+                cursor: 'pointer'
               }}
             >
               メールアドレスでログイン
             </button>
-            <div style={{ textAlign: 'center', marginTop: '16px' }}>
-              <button
-                onClick={() => setAuthMode('register')}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  lineHeight: '150%',
-                  color: '#06C755',
-                  cursor: 'pointer',
-                  textDecoration: 'underline'
-                }}
-              >
-                新規登録はこちら
-              </button>
-            </div>
-          </>
+          </div>
         )}
 
-        {authMode === 'email' && (
+        {/* メールアドレスでログイン */}
+        {authMode === 'login' && loginMethod === 'email' && (
           <div style={{
             background: '#FFFFFF',
             boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
@@ -211,7 +394,7 @@ export default function WelcomeScreen() {
               </h2>
               <button
                 onClick={() => {
-                  setAuthMode('select')
+                  setLoginMethod(null)
                   setError('')
                   setEmail('')
                   setPassword('')
@@ -325,7 +508,93 @@ export default function WelcomeScreen() {
           </div>
         )}
 
-        {authMode === 'register' && (
+        {/* 新規登録方法選択 */}
+        {authMode === 'register' && !registerMethod && (
+          <div style={{
+            background: '#FFFFFF',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '12px',
+            padding: '24px',
+            marginBottom: '24px'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h2 style={{
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                lineHeight: '120%',
+                color: '#000000'
+              }}>
+                新規登録方法を選択
+              </h2>
+              <button
+                onClick={resetForm}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  color: '#06C755',
+                  cursor: 'pointer'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <button
+              onClick={handleLineRegister}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '16px 24px',
+                gap: '10px',
+                width: '100%',
+                height: '48px',
+                background: '#06C755',
+                borderRadius: '8px',
+                border: 'none',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                fontWeight: 700,
+                lineHeight: '19px',
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                marginBottom: '12px'
+              }}
+            >
+              LINEで新規登録
+            </button>
+            <button
+              onClick={() => setRegisterMethod('email')}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '16px 24px',
+                gap: '10px',
+                width: '100%',
+                height: '48px',
+                background: '#FFFFFF',
+                borderRadius: '8px',
+                border: '1px solid #E5E5E5',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                fontWeight: 700,
+                lineHeight: '19px',
+                color: '#000000',
+                cursor: 'pointer'
+              }}
+            >
+              メールアドレスで新規登録
+            </button>
+          </div>
+        )}
+
+        {/* メールアドレスで新規登録 */}
+        {authMode === 'register' && registerMethod === 'email' && (
           <div style={{
             background: '#FFFFFF',
             boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
@@ -345,7 +614,7 @@ export default function WelcomeScreen() {
               </h2>
               <button
                 onClick={() => {
-                  setAuthMode('select')
+                  setRegisterMethod(null)
                   setError('')
                   setRegisterEmail('')
                   setRegisterPassword('')
@@ -490,99 +759,6 @@ export default function WelcomeScreen() {
             </form>
           </div>
         )}
-
-        <div style={{
-          background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px',
-          padding: '24px',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '20px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#000000',
-            marginBottom: '24px'
-          }}>
-            ご利用の流れ
-          </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <div style={{
-                background: '#06C755',
-                color: '#FFFFFF',
-                borderRadius: '50%',
-                width: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '14px',
-                fontWeight: 700,
-                flexShrink: 0
-              }}>
-                1
-              </div>
-              <p style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                lineHeight: '150%',
-                color: '#000000'
-              }}>LINEアカウントでログイン</p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <div style={{
-                background: '#06C755',
-                color: '#FFFFFF',
-                borderRadius: '50%',
-                width: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '14px',
-                fontWeight: 700,
-                flexShrink: 0
-              }}>
-                2
-              </div>
-              <p style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                lineHeight: '150%',
-                color: '#000000'
-              }}>基本情報を登録</p>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
-              <div style={{
-                background: '#06C755',
-                color: '#FFFFFF',
-                borderRadius: '50%',
-                width: '24px',
-                height: '24px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '14px',
-                fontWeight: 700,
-                flexShrink: 0
-              }}>
-                3
-              </div>
-              <p style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                lineHeight: '150%',
-                color: '#000000'
-              }}>イベントを掲載・管理</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   )
