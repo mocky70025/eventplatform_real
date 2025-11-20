@@ -9,6 +9,7 @@ import EventList from '@/components/EventList'
 import ExhibitorProfile from '@/components/ExhibitorProfile'
 import ApplicationManagement from '@/components/ApplicationManagement'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 
 export default function Home() {
   const [isLiffReady, setIsLiffReady] = useState(false)
@@ -33,11 +34,20 @@ export default function Home() {
           const authType = sessionStorage.getItem('auth_type')
           
           if (authType === 'email') {
+            // メール確認済みかチェック
+            const isEmailConfirmed = !!session.user.email_confirmed_at
+            
             setUserProfile({
               userId: session.user.id, // Supabase AuthのUUID
               email: session.user.email,
-              authType: 'email'
+              authType: 'email',
+              emailConfirmed: isEmailConfirmed
             })
+            
+            // メール未確認の場合は警告を表示
+            if (!isEmailConfirmed) {
+              console.warn('[Home] Email not confirmed yet')
+            }
             
             // 登録済みかチェック
             const { data: exhibitor } = await supabase
@@ -47,7 +57,11 @@ export default function Home() {
               .single()
             
             setIsRegistered(!!exhibitor)
-            console.log('[Home] Email auth user profile set:', { userId: session.user.id, isRegistered: !!exhibitor })
+            console.log('[Home] Email auth user profile set:', { 
+              userId: session.user.id, 
+              isRegistered: !!exhibitor,
+              emailConfirmed: isEmailConfirmed
+            })
           }
         } else {
           // LINE Loginの場合
@@ -173,8 +187,16 @@ export default function Home() {
     { key: 'applications', label: '申し込み', icon: <ChecklistIcon /> }
   ]
 
+  // メール未確認の場合はバナーを表示
+  const showEmailConfirmationBanner = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && userProfile?.email
+
   return (
     <div style={{ background: '#F7F7F7', minHeight: '100vh', paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)' }}>
+      {showEmailConfirmationBanner && (
+        <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
+          <EmailConfirmationBanner email={userProfile.email} />
+        </div>
+      )}
       {renderCurrentView()}
 
       <nav

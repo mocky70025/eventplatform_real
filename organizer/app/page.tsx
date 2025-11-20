@@ -25,11 +25,20 @@ export default function Home() {
           const authType = sessionStorage.getItem('auth_type')
           
           if (authType === 'email') {
+            // メール確認済みかチェック
+            const isEmailConfirmed = !!session.user.email_confirmed_at
+            
             setUserProfile({
               userId: session.user.id,
               email: session.user.email,
-              authType: 'email'
+              authType: 'email',
+              emailConfirmed: isEmailConfirmed
             } as any)
+            
+            // メール未確認の場合は警告を表示
+            if (!isEmailConfirmed) {
+              console.warn('[Home] Email not confirmed yet')
+            }
             
             // 登録済みかチェック
             const { data: organizer } = await supabase
@@ -39,7 +48,11 @@ export default function Home() {
               .single()
             
             setIsRegistered(!!organizer)
-            console.log('[Home] Email auth user profile set:', { userId: session.user.id, isRegistered: !!organizer })
+            console.log('[Home] Email auth user profile set:', { 
+              userId: session.user.id, 
+              isRegistered: !!organizer,
+              emailConfirmed: isEmailConfirmed
+            })
           }
         } else {
           // LINE Loginの場合
@@ -86,5 +99,17 @@ export default function Home() {
     return <RegistrationForm userProfile={userProfile} onRegistrationComplete={() => setIsRegistered(true)} />
   }
 
-  return <EventManagement userProfile={userProfile} />
+  // メール未確認の場合はバナーを表示
+  const showEmailConfirmationBanner = userProfile?.authType === 'email' && !(userProfile as any)?.emailConfirmed && (userProfile as any)?.email
+
+  return (
+    <>
+      {showEmailConfirmationBanner && (
+        <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
+          <EmailConfirmationBanner email={(userProfile as any).email} />
+        </div>
+      )}
+      <EventManagement userProfile={userProfile} />
+    </>
+  )
 }

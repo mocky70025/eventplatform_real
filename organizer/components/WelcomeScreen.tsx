@@ -77,14 +77,34 @@ export default function WelcomeScreen() {
     }
 
     try {
+      // メール確認用のリダイレクトURLを設定
+      const redirectUrl = `${window.location.origin}/auth/verify-email`
+      
       const { data, error } = await supabase.auth.signUp({
         email: registerEmail,
         password: registerPassword,
+        options: {
+          emailRedirectTo: redirectUrl
+        }
       })
 
       if (error) throw error
 
       if (data.user) {
+        // メール確認が必要な場合
+        if (!data.session) {
+          // メール確認待ちの状態を表示
+          setError('')
+          alert('確認メールを送信しました。メール内のリンクをクリックしてメールアドレスを確認してください。')
+          setAuthMode('initial')
+          setRegisterMethod(null)
+          setRegisterEmail('')
+          setRegisterPassword('')
+          setRegisterPasswordConfirm('')
+          return
+        }
+
+        // メール確認が不要な場合（開発環境など）
         sessionStorage.setItem('auth_type', 'email')
         sessionStorage.setItem('user_id', data.user.id)
         sessionStorage.setItem('user_email', data.user.email || '')
