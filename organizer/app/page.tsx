@@ -34,10 +34,11 @@ export default function Home() {
             
             setUserProfile({
               userId: session.user.id,
+              displayName: session.user.email || '',
               email: session.user.email,
-              authType: 'email',
+              authType: 'email' as const,
               emailConfirmed: isEmailConfirmed
-            } as any)
+            })
             
             // メール未確認の場合は警告を表示
             if (!isEmailConfirmed) {
@@ -67,10 +68,11 @@ export default function Home() {
           
           setUserProfile({
             userId: storedUserId,
+            displayName: storedEmail || '',
             email: storedEmail || '',
-            authType: 'email',
+            authType: 'email' as const,
             emailConfirmed: emailConfirmed
-          } as any)
+          })
           
           // 登録済みかチェック
           const { data: organizer } = await supabase
@@ -131,13 +133,13 @@ export default function Home() {
   }
 
   // メール未確認の場合はバナーを表示
-  const showEmailConfirmationBanner = userProfile?.authType === 'email' && !(userProfile as any)?.emailConfirmed && (userProfile as any)?.email
+  const showEmailConfirmationBanner = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && userProfile?.email
 
   return (
     <>
       {showEmailConfirmationBanner && (
         <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
-          <EmailConfirmationBanner email={(userProfile as any).email} />
+          <EmailConfirmationBanner email={userProfile.email || ''} />
         </div>
       )}
       <EventManagement userProfile={userProfile} />
