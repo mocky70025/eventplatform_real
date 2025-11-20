@@ -12,34 +12,29 @@ export default function VerifyEmailPage() {
 
   useEffect(() => {
     const verifyEmail = async () => {
-      const token = searchParams.get('token')
-      const type = searchParams.get('type')
-
-      if (!token || type !== 'signup') {
-        setStatus('error')
-        setErrorMessage('無効な確認リンクです')
-        return
-      }
-
       try {
-        // メール確認を実行
-        // Supabaseのメール確認リンクは、URLパラメータからtokenとtypeを取得
-        const { data, error } = await supabase.auth.verifyOtp({
-          token: token,
-          type: 'signup'
-        })
-
-        if (error) {
-          console.error('Email verification error:', error)
+        // Supabaseのメール確認リンクをクリックすると、自動的にセッションが作成される
+        // セッションを確認
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+        
+        if (sessionError) {
+          console.error('Session error:', sessionError)
           setStatus('error')
-          setErrorMessage(error.message || 'メールアドレスの確認に失敗しました')
+          setErrorMessage(sessionError.message || 'セッションの取得に失敗しました')
           return
         }
 
-        // セッションを取得
-        const { data: { session } } = await supabase.auth.getSession()
-        
         if (session && session.user) {
+          // メール確認済みかチェック
+          const isEmailConfirmed = !!session.user.email_confirmed_at
+          
+          if (!isEmailConfirmed) {
+            // メール確認がまだ完了していない場合
+            setStatus('error')
+            setErrorMessage('メールアドレスの確認が完了していません。確認メールを再送信してください。')
+            return
+          }
+
           // セッションストレージに保存
           sessionStorage.setItem('auth_type', 'email')
           sessionStorage.setItem('user_id', session.user.id)
@@ -52,8 +47,45 @@ export default function VerifyEmailPage() {
             router.push('/')
           }, 3000)
         } else {
-          setStatus('error')
-          setErrorMessage('セッションの取得に失敗しました')
+          // セッションが存在しない場合、URLパラメータから確認を試みる
+          const token = searchParams.get('token')
+          const tokenHash = searchParams.get('token_hash')
+          const type = searchParams.get('type')
+
+          if (tokenHash && type === 'signup') {
+            // token_hashを使用して確認を試みる
+            const { data, error } = await supabase.auth.verifyOtp({
+              token_hash: tokenHash,
+              type: 'signup'
+            })
+
+            if (error) {
+              console.error('Email verification error:', error)
+              setStatus('error')
+              setErrorMessage(error.message || 'メールアドレスの確認に失敗しました')
+              return
+            }
+
+            // 再度セッションを取得
+            const { data: { session: newSession } } = await supabase.auth.getSession()
+            
+            if (newSession && newSession.user) {
+              sessionStorage.setItem('auth_type', 'email')
+              sessionStorage.setItem('user_id', newSession.user.id)
+              sessionStorage.setItem('user_email', newSession.user.email || '')
+              
+              setStatus('success')
+              setTimeout(() => {
+                router.push('/')
+              }, 3000)
+            } else {
+              setStatus('error')
+              setErrorMessage('セッションの取得に失敗しました')
+            }
+          } else {
+            setStatus('error')
+            setErrorMessage('無効な確認リンクです。確認メールを再送信してください。')
+          }
         }
       } catch (err: any) {
         console.error('Verification error:', err)
