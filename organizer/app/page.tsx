@@ -7,6 +7,7 @@ import WelcomeScreen from '@/components/WelcomeScreen'
 import RegistrationForm from '@/components/RegistrationForm'
 import EventManagement from '@/components/EventManagement'
 import LoadingSpinner from '@/components/LoadingSpinner'
+import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 
 export default function Home() {
   const [userProfile, setUserProfile] = useState<LineProfile | null>(null)
