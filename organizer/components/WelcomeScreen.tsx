@@ -79,6 +79,8 @@ export default function WelcomeScreen() {
     try {
       // メール確認用のリダイレクトURLを設定
       const redirectUrl = `${window.location.origin}/auth/verify-email`
+      console.log('[WelcomeScreen] Email registration - redirectUrl:', redirectUrl)
+      console.log('[WelcomeScreen] Email registration - email:', registerEmail)
       
       const { data, error } = await supabase.auth.signUp({
         email: registerEmail,
@@ -88,9 +90,36 @@ export default function WelcomeScreen() {
         }
       })
 
-      if (error) throw error
+      console.log('[WelcomeScreen] SignUp response:', {
+        hasUser: !!data.user,
+        userId: data.user?.id,
+        email: data.user?.email,
+        hasSession: !!data.session,
+        error: error ? {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        } : null
+      })
+
+      if (error) {
+        console.error('[WelcomeScreen] SignUp error details:', {
+          message: error.message,
+          status: error.status,
+          name: error.name,
+          stack: error.stack
+        })
+        throw error
+      }
 
       if (data.user) {
+        console.log('[WelcomeScreen] User created successfully:', {
+          id: data.user.id,
+          email: data.user.email,
+          emailConfirmed: !!data.user.email_confirmed_at,
+          createdAt: data.user.created_at
+        })
+        
         // メール確認が必要な場合でも、user_idを保存して登録フォームに進める
         sessionStorage.setItem('auth_type', 'email')
         sessionStorage.setItem('user_id', data.user.id)
@@ -99,6 +128,7 @@ export default function WelcomeScreen() {
         
         // メール確認が必要な場合
         if (!data.session) {
+          console.log('[WelcomeScreen] Email confirmation required - no session')
           // メール確認待ちの状態を表示
           setError('')
           // ページをリロードして、メール確認待ち画面を表示
@@ -106,11 +136,20 @@ export default function WelcomeScreen() {
           return
         }
         
+        console.log('[WelcomeScreen] Email confirmation not required - session exists')
         // メール確認が不要な場合（開発環境など）は、ページをリロード
         window.location.reload()
+      } else {
+        console.error('[WelcomeScreen] SignUp succeeded but no user data returned')
+        setError('ユーザー登録に失敗しました。もう一度お試しください。')
       }
     } catch (err: any) {
-      console.error('Email register error:', err)
+      console.error('[WelcomeScreen] Email register error:', {
+        message: err.message,
+        status: err.status,
+        name: err.name,
+        stack: err.stack
+      })
       setError(err.message || '登録に失敗しました')
     } finally {
       setLoading(false)
