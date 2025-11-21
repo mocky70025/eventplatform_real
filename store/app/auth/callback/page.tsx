@@ -32,23 +32,15 @@ export default function AuthCallback() {
           return
         }
         
-        // stateの検証（モード情報を含む）
+        // stateの検証
         const savedState = sessionStorage.getItem('line_login_state')
-        const savedMode = sessionStorage.getItem('line_login_mode') || 'login'
-        
-        // stateからモードを抽出（format: "mode_randomstring"）
-        const stateMode = state.startsWith('login_') ? 'login' : state.startsWith('register_') ? 'register' : 'login'
-        const stateRandom = state.replace(/^(login|register)_/, '')
-        const savedStateRandom = savedState ? savedState.replace(/^(login|register)_/, '') : ''
-        
-        if (savedStateRandom !== stateRandom) {
+        if (savedState !== state) {
           setErrorMessage('セキュリティ検証に失敗しました')
           setStatus('error')
           return
         }
         
         sessionStorage.removeItem('line_login_state')
-        sessionStorage.removeItem('line_login_mode')
         
         // 認証コードをユーザー情報に交換
         const profile = await exchangeLineLoginCode(code)
@@ -63,37 +55,31 @@ export default function AuthCallback() {
         console.log('[LINE Login] User ID:', profile.userId)
         console.log('[LINE Login] Display Name:', profile.displayName)
         console.log('[LINE Login] App Type: store')
-        console.log('[LINE Login] Mode:', savedMode)
         
         // store側の処理
         // 既存ユーザーかチェック
-        const { data: existingUser } = await supabase
+        console.log('[Callback] Checking for existing exhibitor with userId:', profile.userId)
+        const { data: existingUser, error: exhibitorError } = await supabase
           .from('exhibitors')
           .select('*')
           .eq('line_user_id', profile.userId)
           .single()
         
-        // セッションストレージにプロフィール情報を保存
-        sessionStorage.setItem('line_profile', JSON.stringify(profile))
-        
-        // 新規登録モードの場合、既存ユーザーでも登録フォームを表示する
-        // ただし、既に登録済みの場合は、登録フォームではなくホーム画面を表示
-        if (savedMode === 'register' && !existingUser) {
-          // 新規登録モードで、まだ登録していない場合
-          sessionStorage.setItem('is_registered', 'false')
-          console.log('[Callback] Register mode - new user, show registration form')
-        } else if (savedMode === 'register' && existingUser) {
-          // 新規登録モードだが、既に登録済みの場合
-          sessionStorage.setItem('is_registered', 'true')
-          console.log('[Callback] Register mode - existing user, show home')
-        } else {
-          // ログインモードの場合
-          sessionStorage.setItem('is_registered', existingUser ? 'true' : 'false')
-          console.log('[Callback] Login mode - is registered:', existingUser ? 'true' : 'false')
+        if (exhibitorError && exhibitorError.code !== 'PGRST116') {
+          console.error('[Callback] Error checking exhibitor:', exhibitorError)
         }
         
+        const isRegistered = !!existingUser
+        console.log('[Callback] Existing exhibitor found:', isRegistered ? 'yes' : 'no')
+        
+        // セッションストレージにプロフィール情報を保存
+        sessionStorage.setItem('line_profile', JSON.stringify(profile))
+        sessionStorage.setItem('is_registered', isRegistered ? 'true' : 'false')
+        sessionStorage.setItem('auth_type', 'line')
+        
         console.log('[Callback] Profile saved to sessionStorage:', profile)
-        console.log('[Callback] Is registered:', sessionStorage.getItem('is_registered'))
+        console.log('[Callback] Is registered:', isRegistered)
+        console.log('[Callback] Auth type set to: line')
         
         setStatus('success')
         

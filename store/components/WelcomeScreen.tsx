@@ -24,12 +24,7 @@ export default function WelcomeScreen() {
   const isLiff = isLiffEnvironment()
 
   const handleLineLogin = () => {
-    const loginUrl = getLineLoginUrl('login')
-    window.location.href = loginUrl
-  }
-
-  const handleLineRegister = () => {
-    const loginUrl = getLineLoginUrl('register')
+    const loginUrl = getLineLoginUrl()
     window.location.href = loginUrl
   }
 
@@ -610,7 +605,7 @@ export default function WelcomeScreen() {
               </button>
             </div>
             <button
-              onClick={handleLineRegister}
+              onClick={handleLineLogin}
               style={{
                 display: 'flex',
                 flexDirection: 'row',

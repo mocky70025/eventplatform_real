@@ -99,15 +99,20 @@ export default function Home() {
           // LINE Loginの場合
           const savedProfile = sessionStorage.getItem('line_profile')
           const savedIsRegistered = sessionStorage.getItem('is_registered')
+          const savedAuthType = sessionStorage.getItem('auth_type')
           
           console.log('[Home] Saved profile from sessionStorage:', savedProfile)
           console.log('[Home] Is registered from sessionStorage:', savedIsRegistered)
+          console.log('[Home] Auth type from sessionStorage:', savedAuthType)
           
           if (savedProfile) {
             try {
               const profile = JSON.parse(savedProfile) as LineProfile
-              console.log('[LINE Login] User ID from session:', profile.userId)
-              console.log('[LINE Login] Display Name:', profile.displayName)
+              console.log('[Home] User ID from session:', profile.userId)
+              console.log('[Home] Display Name:', profile.displayName)
+              
+              const isRegistered = savedIsRegistered === 'true'
+              
               setUserProfile({
                 userId: profile.userId,
                 displayName: profile.displayName,
@@ -115,13 +120,19 @@ export default function Home() {
                 statusMessage: profile.statusMessage,
                 authType: 'line'
               })
-              setIsRegistered(savedIsRegistered === 'true')
-              console.log('[Home] LINE Login user profile set:', { userId: profile.userId, isRegistered: savedIsRegistered === 'true' })
+              setIsRegistered(isRegistered)
+              
+              console.log('[Home] LINE Login user profile set:', { 
+                userId: profile.userId, 
+                isRegistered: isRegistered,
+                authType: 'line'
+              })
             } catch (error) {
               console.error('[Home] Failed to parse profile from sessionStorage:', error)
             }
           } else {
             console.log('[Home] No profile found in sessionStorage')
+            console.log('[Home] This might be a fresh page load - user needs to login')
           }
         }
       } catch (error) {
