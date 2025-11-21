@@ -17,21 +17,48 @@ export default function EmailConfirmationPending({ email, onEmailConfirmed }: Em
     setResendSuccess(false)
     
     try {
-      const { error } = await supabase.auth.resend({
+      // リダイレクトURLを設定（メール確認用）
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '')
+      const redirectUrl = `${appUrl}/auth/verify-email`
+      
+      console.log('[EmailConfirmationPending] Resending confirmation email:', {
+        email: email,
+        redirectUrl: redirectUrl,
+        appUrl: appUrl
+      })
+      
+      const { data, error } = await supabase.auth.resend({
         type: 'signup',
-        email: email
+        email: email,
+        options: {
+          emailRedirectTo: redirectUrl
+        }
+      })
+
+      console.log('[EmailConfirmationPending] Resend response:', {
+        hasData: !!data,
+        error: error ? {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        } : null
       })
 
       if (error) {
-        console.error('Failed to resend confirmation email:', error)
-        alert('確認メールの再送信に失敗しました。もう一度お試しください。')
+        console.error('[EmailConfirmationPending] Failed to resend confirmation email:', {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        })
+        alert(`確認メールの再送信に失敗しました。\nエラー: ${error.message}\n\nSupabase Dashboardで設定を確認してください。`)
       } else {
+        console.log('[EmailConfirmationPending] Confirmation email resent successfully')
         setResendSuccess(true)
         setTimeout(() => setResendSuccess(false), 3000)
       }
-    } catch (err) {
-      console.error('Resend error:', err)
-      alert('確認メールの再送信に失敗しました。もう一度お試しください。')
+    } catch (err: any) {
+      console.error('[EmailConfirmationPending] Resend error:', err)
+      alert(`確認メールの再送信に失敗しました。\nエラー: ${err.message || '不明なエラー'}`)
     } finally {
       setResending(false)
     }
