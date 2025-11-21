@@ -9,6 +9,15 @@ export interface LineProfile {
 }
 
 /**
+ * LIFF環境かどうかを検出
+ */
+export const isLiffEnvironment = (): boolean => {
+  if (typeof window === 'undefined') return false
+  // LIFF環境では、window.liff が存在するか、URLにliff.line.meが含まれる
+  return !!(window as any).liff || window.location.href.includes('liff.line.me')
+}
+
+/**
  * LINE Login（OAuth）の認証URLを生成
  */
 export const getLineLoginUrl = (): string => {

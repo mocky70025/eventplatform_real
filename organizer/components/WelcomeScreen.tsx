@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { getLineLoginUrl } from '@/lib/auth'
+import { getLineLoginUrl, isLiffEnvironment } from '@/lib/auth'
 import { supabase } from '@/lib/supabase'
 
 type AuthMode = 'initial' | 'login' | 'register'
