@@ -24,8 +24,29 @@ export default function WelcomeScreen() {
   const isLiff = isLiffEnvironment()
 
   const handleLineLogin = () => {
-    const loginUrl = getLineLoginUrl()
-    window.location.href = loginUrl
+    try {
+      console.log('[WelcomeScreen] LINE Login button clicked, authMode:', authMode)
+      const loginUrl = getLineLoginUrl()
+      console.log('[WelcomeScreen] LINE Login URL generated, redirecting...')
+      window.location.href = loginUrl
+    } catch (error) {
+      console.error('[WelcomeScreen] Error in handleLineLogin:', error)
+      alert('ログインエラーが発生しました。コンソールを確認してください。')
+    }
+  }
+
+  const handleLineRegister = () => {
+    try {
+      console.log('[WelcomeScreen] LINE Register button clicked')
+      const loginUrl = getLineLoginUrl()
+      console.log('[WelcomeScreen] LINE Register URL generated, redirecting...')
+      // 新規登録であることをセッションストレージに保存（コールバックで区別するため）
+      sessionStorage.setItem('line_register_mode', 'true')
+      window.location.href = loginUrl
+    } catch (error) {
+      console.error('[WelcomeScreen] Error in handleLineRegister:', error)
+      alert('新規登録エラーが発生しました。コンソールを確認してください。')
+    }
   }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
@@ -605,7 +626,7 @@ export default function WelcomeScreen() {
               </button>
             </div>
             <button
-              onClick={handleLineLogin}
+              onClick={handleLineRegister}
               style={{
                 display: 'flex',
                 flexDirection: 'row',
