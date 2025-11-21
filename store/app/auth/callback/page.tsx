@@ -58,11 +58,21 @@ export default function AuthCallback() {
         
         // store側の処理
         // 既存ユーザーかチェック
-        const { data: existingUser } = await supabase
+        console.log('[Callback] Checking for existing exhibitor with line_user_id:', profile.userId)
+        const { data: existingUser, error: exhibitorError } = await supabase
           .from('exhibitors')
           .select('*')
           .eq('line_user_id', profile.userId)
           .single()
+        
+        if (exhibitorError && exhibitorError.code !== 'PGRST116') {
+          console.error('[Callback] Error checking exhibitor:', exhibitorError)
+        }
+        
+        console.log('[Callback] Existing exhibitor found:', existingUser ? 'yes' : 'no')
+        if (existingUser) {
+          console.log('[Callback] Existing exhibitor data:', existingUser)
+        }
         
         // セッションストレージにプロフィール情報を保存
         sessionStorage.setItem('line_profile', JSON.stringify(profile))
@@ -70,16 +80,12 @@ export default function AuthCallback() {
         
         console.log('[Callback] Profile saved to sessionStorage:', profile)
         console.log('[Callback] Is registered:', existingUser ? 'true' : 'false')
-        console.log('[Callback] Existing user data:', existingUser)
         
         setStatus('success')
         
-        // メインページにリダイレクト
-        setTimeout(() => {
-          console.log('[Callback] Redirecting to home page...')
-          // window.location.hrefを使用して確実にリダイレクト
-          window.location.href = '/'
-        }, 1000)
+        // メインページにリダイレクト（即座に）
+        console.log('[Callback] Redirecting to home page immediately...')
+        window.location.href = '/'
       } catch (error) {
         console.error('Auth callback error:', error)
         setErrorMessage('認証処理中にエラーが発生しました')
