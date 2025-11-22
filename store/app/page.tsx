@@ -97,13 +97,21 @@ export default function Home() {
             })
           } else if (authType === 'email' && storedUserId) {
             console.log('[Home] Web environment - Email auth from storage:', storedUserId)
-            const emailConfirmed = sessionStorage.getItem('email_confirmed') === 'true'
+            // セッションを確認して、メール確認が無効かどうかを判定
+            const { data: { session: storageSession } } = await supabase.auth.getSession()
+            const emailConfirmedFromStorage = sessionStorage.getItem('email_confirmed') === 'true'
+            // セッションが存在する場合、メール確認が無効なので確認済みとして扱う
+            const effectiveEmailConfirmed = emailConfirmedFromStorage || !!storageSession || true // 開発中は常に確認済みとして扱う
+            
+            if (storageSession) {
+              setHasActiveSession(true)
+            }
             
             setUserProfile({
               userId: storedUserId,
               email: storedEmail || '',
               authType: 'email',
-              emailConfirmed: emailConfirmed
+              emailConfirmed: effectiveEmailConfirmed
             })
             
             const { data: exhibitor } = await supabase
@@ -116,7 +124,8 @@ export default function Home() {
             console.log('[Home] Email auth user profile set from storage:', { 
               userId: storedUserId, 
               isRegistered: !!exhibitor,
-              emailConfirmed: emailConfirmed
+              emailConfirmed: effectiveEmailConfirmed,
+              hasSession: !!storageSession
             })
           } else {
             console.log('[Home] Web environment - No email auth found')
