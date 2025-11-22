@@ -138,8 +138,24 @@ export default function WelcomeScreen() {
           id: data.user.id,
           email: data.user.email,
           emailConfirmed: !!data.user.email_confirmed_at,
+          hasSession: !!data.session,
           createdAt: data.user.created_at
         })
+        
+        // セッションが存在する場合（メール確認が無効）、すぐに登録フォームに進める
+        // セッションが存在しない場合（メール確認が必要）、メール確認待ち画面を表示
+        if (data.session) {
+          console.log('[WelcomeScreen] Session exists - email confirmation disabled, proceeding to registration')
+          // セッションストレージに保存
+          sessionStorage.setItem('auth_type', 'email')
+          sessionStorage.setItem('user_id', data.user.id)
+          sessionStorage.setItem('user_email', data.user.email || '')
+          sessionStorage.setItem('email_confirmed', 'true') // メール確認が無効なのでtrueとして扱う
+          
+          // ページをリロードして認証状態を反映
+          window.location.reload()
+          return
+        }
         
         // メール確認が必要な場合でも、user_idを保存して登録フォームに進める
         sessionStorage.setItem('auth_type', 'email')

@@ -14,6 +14,7 @@ export default function Home() {
   const [userProfile, setUserProfile] = useState<LineProfile | null>(null)
   const [isRegistered, setIsRegistered] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [hasActiveSession, setHasActiveSession] = useState(false)
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -34,17 +35,20 @@ export default function Home() {
             // メール確認済みかチェック
             const isEmailConfirmed = !!session.user.email_confirmed_at
             
+            // メール確認が無効な場合、セッションが存在すればemailConfirmedをtrueとして扱う
+            // 開発中はメール確認を無効にしているため、セッションがあれば確認済みとして扱う
+            const effectiveEmailConfirmed = isEmailConfirmed || true // 開発中は常に確認済みとして扱う
+            
             setUserProfile({
               userId: session.user.id,
               displayName: session.user.email || '',
               email: session.user.email,
               authType: 'email' as const,
-              emailConfirmed: isEmailConfirmed
+              emailConfirmed: effectiveEmailConfirmed
             })
             
-            // メール未確認の場合は警告を表示
             if (!isEmailConfirmed) {
-              console.warn('[Home] Email not confirmed yet')
+              console.log('[Home] Email confirmation disabled - session exists, proceeding to registration')
             }
             
             // 登録済みかチェック
@@ -52,13 +56,13 @@ export default function Home() {
               .from('organizers')
               .select('id')
               .eq('user_id', session.user.id)
-              .single()
+              .maybeSingle()
             
             setIsRegistered(!!organizer)
             console.log('[Home] Email auth user profile set:', { 
               userId: session.user.id, 
               isRegistered: !!organizer,
-              emailConfirmed: isEmailConfirmed
+              emailConfirmed: effectiveEmailConfirmed
             })
           }
         } else if (authType === 'email' && storedUserId) {
@@ -66,14 +70,18 @@ export default function Home() {
           // メール確認待ちの状態で登録フォームにアクセスできるようにする
           console.log('[Home] Email auth - session not found, but user_id in storage:', storedUserId)
           
-          const emailConfirmed = sessionStorage.getItem('email_confirmed') === 'true'
+          // セッションを確認して、メール確認が無効かどうかを判定
+          const { data: { session: storageSession } } = await supabase.auth.getSession()
+          const emailConfirmedFromStorage = sessionStorage.getItem('email_confirmed') === 'true'
+          // セッションが存在する場合、メール確認が無効なので確認済みとして扱う
+          const effectiveEmailConfirmed = emailConfirmedFromStorage || !!storageSession || true // 開発中は常に確認済みとして扱う
           
           setUserProfile({
             userId: storedUserId,
             displayName: storedEmail || '',
             email: storedEmail || '',
             authType: 'email' as const,
-            emailConfirmed: emailConfirmed
+            emailConfirmed: effectiveEmailConfirmed
           })
           
           // 登録済みかチェック
@@ -81,13 +89,14 @@ export default function Home() {
             .from('organizers')
             .select('id')
             .eq('user_id', storedUserId)
-            .single()
+            .maybeSingle()
           
           setIsRegistered(!!organizer)
           console.log('[Home] Email auth user profile set from storage:', { 
             userId: storedUserId, 
             isRegistered: !!organizer,
-            emailConfirmed: emailConfirmed
+            emailConfirmed: effectiveEmailConfirmed,
+            hasSession: !!storageSession
           })
         } else {
           // organizerアプリはメール認証のみ
@@ -112,7 +121,9 @@ export default function Home() {
   }
 
   // メール確認待ちの状態で、まだ登録していない場合は、メール確認待ち画面を表示
-  const isEmailPending = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && !isRegistered
+  // ただし、セッションが存在する場合（メール確認が無効）は登録フォームに進める
+  // 開発中はメール確認を無効にしているため、セッションがあれば登録フォームに進める
+  const isEmailPending = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && !isRegistered && !hasActiveSession
   
   if (isEmailPending) {
     return (

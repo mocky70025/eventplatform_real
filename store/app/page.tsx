@@ -17,6 +17,7 @@ export default function Home() {
   const [isRegistered, setIsRegistered] = useState(false)
   const [userProfile, setUserProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [hasActiveSession, setHasActiveSession] = useState(false)
   const [currentView, setCurrentView] = useState<'events' | 'profile' | 'applications'>('events')
   const [navVisible, setNavVisible] = useState(true)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -65,15 +66,21 @@ export default function Home() {
             console.log('[Home] Web environment - Email auth session found:', session.user.id)
             const isEmailConfirmed = !!session.user.email_confirmed_at
             
+            // メール確認が無効な場合、セッションが存在すればemailConfirmedをtrueとして扱う
+            // これにより、メール確認待ち画面を表示せずに登録フォームに進める
+            // 開発中はメール確認を無効にしているため、セッションがあれば確認済みとして扱う
+            const effectiveEmailConfirmed = isEmailConfirmed || true // 開発中は常に確認済みとして扱う
+            
+            setHasActiveSession(true) // セッションが存在することを記録
             setUserProfile({
               userId: session.user.id,
               email: session.user.email,
               authType: 'email',
-              emailConfirmed: isEmailConfirmed
+              emailConfirmed: effectiveEmailConfirmed
             })
             
             if (!isEmailConfirmed) {
-              console.warn('[Home] Email not confirmed yet')
+              console.log('[Home] Email confirmation disabled - session exists, proceeding to registration')
             }
             
             const { data: exhibitor } = await supabase
@@ -86,7 +93,7 @@ export default function Home() {
             console.log('[Home] Email auth user profile set:', { 
               userId: session.user.id, 
               isRegistered: !!exhibitor,
-              emailConfirmed: isEmailConfirmed
+              emailConfirmed: effectiveEmailConfirmed
             })
           } else if (authType === 'email' && storedUserId) {
             console.log('[Home] Web environment - Email auth from storage:', storedUserId)
@@ -165,7 +172,9 @@ export default function Home() {
   })
 
   // メール確認待ちの状態で、まだ登録していない場合は、メール確認待ち画面を表示
-  const isEmailPending = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && !isRegistered
+  // ただし、セッションが存在する場合（メール確認が無効）は登録フォームに進める
+  // 開発中はメール確認を無効にしているため、セッションがあれば登録フォームに進める
+  const isEmailPending = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && !isRegistered && !hasActiveSession
   
   if (isEmailPending) {
     console.log('[Home] Email confirmation pending, showing EmailConfirmationPending')
@@ -187,7 +196,7 @@ export default function Home() {
               .from('exhibitors')
               .select('id')
               .eq('user_id', session.user.id)
-              .single()
+              .maybeSingle()
             setIsRegistered(!!exhibitor)
           }
         }}
