@@ -2,52 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { supabase, type Organizer, type Event } from '@/lib/supabase'
-import AdminLogin from '@/components/AdminLogin'
 
 export default function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [currentView, setCurrentView] = useState<'organizers' | 'events'>('organizers')
   const [organizers, setOrganizers] = useState<Organizer[]>([])
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // 認証状態を確認
-    const checkAuth = async () => {
-      const adminAuthenticated = sessionStorage.getItem('admin_authenticated') === 'true'
-      
-      if (adminAuthenticated) {
-        // セッションを確認
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session && session.user) {
-          setIsAuthenticated(true)
-          fetchData()
-        } else {
-          // セッションが無効な場合、認証をリセット
-          sessionStorage.removeItem('admin_authenticated')
-          sessionStorage.removeItem('admin_email')
-          setIsAuthenticated(false)
-          setLoading(false)
-        }
-      } else {
-        setLoading(false)
-      }
-    }
-
-    checkAuth()
-  }, [])
-
-  const handleLoginSuccess = () => {
-    setIsAuthenticated(true)
     fetchData()
-  }
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    sessionStorage.removeItem('admin_authenticated')
-    sessionStorage.removeItem('admin_email')
-    setIsAuthenticated(false)
-  }
+  }, [])
 
 
   const fetchData = async () => {
@@ -103,21 +67,6 @@ export default function AdminDashboard() {
     })
   }
 
-  // 認証されていない場合はログイン画面を表示
-  if (!isAuthenticated) {
-    if (loading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-2 border-[#06C755] border-t-transparent mx-auto mb-4"></div>
-            <p className="text-gray-600">認証を確認中...</p>
-          </div>
-        </div>
-      )
-    }
-    return <AdminLogin onLoginSuccess={handleLoginSuccess} />
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -133,14 +82,8 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* ヘッダー */}
       <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-4">
           <h1 className="text-2xl font-bold text-gray-800">運営管理</h1>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-md transition-colors"
-          >
-            ログアウト
-          </button>
         </div>
       </div>
 
