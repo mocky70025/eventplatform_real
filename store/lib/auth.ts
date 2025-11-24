@@ -14,26 +14,35 @@ export interface LineProfile {
 export const isLiffEnvironment = (): boolean => {
   if (typeof window === 'undefined') return false
   
-  // 環境変数でLIFF環境を強制判定（最も確実な方法）
+  // 環境変数でLIFF環境を強制判定（フォールバック用）
   const envIsLiff = process.env.NEXT_PUBLIC_IS_LIFF === 'true'
-  if (envIsLiff) {
-    console.log('[isLiffEnvironment] LIFF environment detected via NEXT_PUBLIC_IS_LIFF=true')
-    return true
-  }
   
-  // LIFF環境の判定方法を複数試す（フォールバック）
+  // 1. window.liffオブジェクトの存在をチェック（最も確実）
   const hasLiff = !!(window as any).liff
+  
+  // 2. URLパターンをチェック
   const currentUrl = window.location.href
   const hasLiffUrl = currentUrl.includes('liff.line.me')
   const hasLiffHost = window.location.hostname === 'liff.line.me'
   
-  // より確実な判定: URLパターンとwindow.liffの両方をチェック
-  const isLiff = hasLiff || hasLiffUrl || hasLiffHost
+  // 3. User-Agentをチェック（LINEアプリ内ブラウザの検出）
+  const userAgent = navigator.userAgent || ''
+  const isLineUserAgent = /Line/i.test(userAgent)
+  
+  // 4. Refererをチェック（document.referrer）
+  const referer = document.referrer || ''
+  const hasLiffReferer = referer.includes('liff.line.me')
+  
+  // 5. すべての判定方法を組み合わせる
+  const isLiff = envIsLiff || hasLiff || hasLiffUrl || hasLiffHost || (isLineUserAgent && hasLiffReferer)
   
   // デバッグログ（値を個別に表示）
+  console.log('[isLiffEnvironment] envIsLiff:', envIsLiff)
   console.log('[isLiffEnvironment] hasLiff:', hasLiff)
   console.log('[isLiffEnvironment] hasLiffUrl:', hasLiffUrl)
   console.log('[isLiffEnvironment] hasLiffHost:', hasLiffHost)
+  console.log('[isLiffEnvironment] isLineUserAgent:', isLineUserAgent, 'userAgent:', userAgent.substring(0, 50))
+  console.log('[isLiffEnvironment] hasLiffReferer:', hasLiffReferer, 'referer:', referer.substring(0, 50))
   console.log('[isLiffEnvironment] currentUrl:', currentUrl)
   console.log('[isLiffEnvironment] hostname:', window.location.hostname)
   console.log('[isLiffEnvironment] isLiff (result):', isLiff)
