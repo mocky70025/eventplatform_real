@@ -13,16 +13,24 @@ export interface LineProfile {
  */
 export const isLiffEnvironment = (): boolean => {
   if (typeof window === 'undefined') return false
-  // LIFF環境では、window.liff が存在するか、URLにliff.line.meが含まれる
+  
+  // LIFF環境の判定方法を複数試す
   const hasLiff = !!(window as any).liff
-  const hasLiffUrl = window.location.href.includes('liff.line.me')
-  const isLiff = hasLiff || hasLiffUrl
-  console.log('[isLiffEnvironment] Check:', {
-    hasLiff,
-    hasLiffUrl,
-    url: window.location.href,
-    isLiff
-  })
+  const currentUrl = window.location.href
+  const hasLiffUrl = currentUrl.includes('liff.line.me')
+  const hasLiffHost = window.location.hostname === 'liff.line.me'
+  
+  // より確実な判定: URLパターンとwindow.liffの両方をチェック
+  const isLiff = hasLiff || hasLiffUrl || hasLiffHost
+  
+  // デバッグログ（値を個別に表示）
+  console.log('[isLiffEnvironment] hasLiff:', hasLiff)
+  console.log('[isLiffEnvironment] hasLiffUrl:', hasLiffUrl)
+  console.log('[isLiffEnvironment] hasLiffHost:', hasLiffHost)
+  console.log('[isLiffEnvironment] currentUrl:', currentUrl)
+  console.log('[isLiffEnvironment] hostname:', window.location.hostname)
+  console.log('[isLiffEnvironment] isLiff (result):', isLiff)
+  
   return isLiff
 }
 
