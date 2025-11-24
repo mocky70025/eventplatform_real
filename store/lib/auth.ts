@@ -14,7 +14,16 @@ export interface LineProfile {
 export const isLiffEnvironment = (): boolean => {
   if (typeof window === 'undefined') return false
   // LIFF環境では、window.liff が存在するか、URLにliff.line.meが含まれる
-  return !!(window as any).liff || window.location.href.includes('liff.line.me')
+  const hasLiff = !!(window as any).liff
+  const hasLiffUrl = window.location.href.includes('liff.line.me')
+  const isLiff = hasLiff || hasLiffUrl
+  console.log('[isLiffEnvironment] Check:', {
+    hasLiff,
+    hasLiffUrl,
+    url: window.location.href,
+    isLiff
+  })
+  return isLiff
 }
 
 export type AuthMode = 'line_login' | 'unknown'
