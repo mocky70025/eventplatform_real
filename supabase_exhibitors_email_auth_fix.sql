@@ -1,5 +1,6 @@
 -- exhibitorsテーブルのメール認証対応RLSポリシー
 -- このSQLをSupabaseのSQL Editorで実行してください
+-- 注意: 先に supabase_exhibitors_add_user_id.sql を実行してください
 
 -- 既存のポリシーを削除
 DROP POLICY IF EXISTS "Users can view their own data" ON exhibitors;
