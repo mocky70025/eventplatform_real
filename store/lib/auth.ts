@@ -14,7 +14,14 @@ export interface LineProfile {
 export const isLiffEnvironment = (): boolean => {
   if (typeof window === 'undefined') return false
   
-  // LIFF環境の判定方法を複数試す
+  // 環境変数でLIFF環境を強制判定（最も確実な方法）
+  const envIsLiff = process.env.NEXT_PUBLIC_IS_LIFF === 'true'
+  if (envIsLiff) {
+    console.log('[isLiffEnvironment] LIFF environment detected via NEXT_PUBLIC_IS_LIFF=true')
+    return true
+  }
+  
+  // LIFF環境の判定方法を複数試す（フォールバック）
   const hasLiff = !!(window as any).liff
   const currentUrl = window.location.href
   const hasLiffUrl = currentUrl.includes('liff.line.me')
