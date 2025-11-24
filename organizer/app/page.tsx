@@ -60,7 +60,7 @@ export default function Home() {
             console.log('[Home] Email auth user profile set:', { 
               userId: session.user.id, 
               isRegistered: !!organizer,
-              emailConfirmed: effectiveEmailConfirmed
+              emailConfirmed: isEmailConfirmed || true
             })
           }
         } else if (authType === 'email' && storedUserId) {
