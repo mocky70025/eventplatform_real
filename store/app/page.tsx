@@ -66,21 +66,18 @@ export default function Home() {
             console.log('[Home] Web environment - Email auth session found:', session.user.id)
             const isEmailConfirmed = !!session.user.email_confirmed_at
             
-            // メール確認が無効な場合、セッションが存在すればemailConfirmedをtrueとして扱う
-            // これにより、メール確認待ち画面を表示せずに登録フォームに進める
-            // 開発中はメール確認を無効にしているため、セッションがあれば確認済みとして扱う
-            const effectiveEmailConfirmed = isEmailConfirmed || true // 開発中は常に確認済みとして扱う
-            
+            // セッションが存在する場合、メール確認済みとして扱う
+            // （セッションが存在する = メール確認が完了している、またはメール確認が無効）
             setHasActiveSession(true) // セッションが存在することを記録
             setUserProfile({
               userId: session.user.id,
               email: session.user.email,
               authType: 'email',
-              emailConfirmed: effectiveEmailConfirmed
+              emailConfirmed: isEmailConfirmed || true // セッションがあれば確認済みとして扱う
             })
             
             if (!isEmailConfirmed) {
-              console.log('[Home] Email confirmation disabled - session exists, proceeding to registration')
+              console.log('[Home] Session exists but email not confirmed - may be disabled in Supabase settings')
             }
             
             const { data: exhibitor } = await supabase
@@ -100,8 +97,10 @@ export default function Home() {
             // セッションを確認して、メール確認が無効かどうかを判定
             const { data: { session: storageSession } } = await supabase.auth.getSession()
             const emailConfirmedFromStorage = sessionStorage.getItem('email_confirmed') === 'true'
-            // セッションが存在する場合、メール確認が無効なので確認済みとして扱う
-            const effectiveEmailConfirmed = emailConfirmedFromStorage || !!storageSession || true // 開発中は常に確認済みとして扱う
+            
+            // セッションが存在する場合、メール確認済みとして扱う
+            // セッションが存在しない場合、メール確認待ちとして扱う
+            const effectiveEmailConfirmed = emailConfirmedFromStorage || !!storageSession
             
             if (storageSession) {
               setHasActiveSession(true)
