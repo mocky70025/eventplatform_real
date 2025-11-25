@@ -38,7 +38,7 @@ interface ApplicationData {
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
+    const { searchParams } = request.nextUrl
     const eventId = searchParams.get('eventId')
     const organizerId = searchParams.get('organizerId')
 
