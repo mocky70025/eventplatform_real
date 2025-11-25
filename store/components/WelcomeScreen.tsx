@@ -82,7 +82,7 @@ export default function WelcomeScreen() {
 
     try {
       // メール確認用のリダイレクトURLを設定
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin).replace(/\/$/, '') // 末尾のスラッシュを削除
       const redirectUrl = `${appUrl}/auth/verify-email`
       console.log('[WelcomeScreen] Email registration - redirectUrl:', redirectUrl)
       console.log('[WelcomeScreen] Email registration - window.location.origin:', window.location.origin)

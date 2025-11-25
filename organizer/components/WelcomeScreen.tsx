@@ -68,7 +68,7 @@ export default function WelcomeScreen() {
     try {
       // メール確認用のリダイレクトURLを設定
       // LIFF環境では、環境変数から取得したURLを使用するか、固定URLを使用
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin).replace(/\/$/, '') // 末尾のスラッシュを削除
       const redirectUrl = `${appUrl}/auth/verify-email`
       
       // デバッグ用：値を確認

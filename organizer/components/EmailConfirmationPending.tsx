@@ -18,7 +18,7 @@ export default function EmailConfirmationPending({ email, onEmailConfirmed }: Em
     
     try {
       // リダイレクトURLを設定（メール確認用）
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '')
+      const appUrl = (process.env.NEXT_PUBLIC_APP_URL || (typeof window !== 'undefined' ? window.location.origin : '')).replace(/\/$/, '') // 末尾のスラッシュを削除
       const redirectUrl = `${appUrl}/auth/verify-email`
       
       console.log('[EmailConfirmationPending] Resending confirmation email:', {
