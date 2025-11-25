@@ -8,6 +8,7 @@ import RegistrationForm from '@/components/RegistrationForm'
 import EventList from '@/components/EventList'
 import ExhibitorProfile from '@/components/ExhibitorProfile'
 import ApplicationManagement from '@/components/ApplicationManagement'
+import NotificationBox from '@/components/NotificationBox'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 import EmailConfirmationPending from '@/components/EmailConfirmationPending'
@@ -17,8 +18,9 @@ export default function Home() {
   const [userProfile, setUserProfile] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [hasActiveSession, setHasActiveSession] = useState(false)
-  const [currentView, setCurrentView] = useState<'events' | 'profile' | 'applications'>('events')
+  const [currentView, setCurrentView] = useState<'events' | 'profile' | 'applications' | 'notifications'>('events')
   const [navVisible, setNavVisible] = useState(true)
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
@@ -132,6 +134,31 @@ export default function Home() {
     initializeAuth()
   }, [])
 
+  // 未読通知数を取得
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (!userProfile?.userId || !isRegistered) return
+
+      try {
+        const { count } = await supabase
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userProfile.userId)
+          .eq('user_type', 'exhibitor')
+          .eq('is_read', false)
+
+        setUnreadNotificationCount(count || 0)
+      } catch (error) {
+        console.error('Failed to fetch unread notification count:', error)
+      }
+    }
+
+    fetchUnreadCount()
+    // 30秒ごとに未読通知数を更新
+    const interval = setInterval(fetchUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [userProfile, isRegistered])
+
   useEffect(() => {
     const handleScroll = () => {
       setNavVisible(false)
@@ -229,6 +256,8 @@ export default function Home() {
         return <ExhibitorProfile userProfile={userProfile} onBack={() => setCurrentView('events')} />
       case 'applications':
         return <ApplicationManagement userProfile={userProfile} onBack={() => setCurrentView('events')} />
+      case 'notifications':
+        return <NotificationBox userProfile={userProfile} onBack={() => setCurrentView('events')} onUnreadCountChange={setUnreadNotificationCount} />
       default:
         return <EventList userProfile={userProfile} onBack={() => setCurrentView('events')} />
     }
@@ -266,10 +295,20 @@ export default function Home() {
     </svg>
   )
 
+  const NotificationIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 2C8.13 2 5 5.13 5 9c0 5.25-2.5 7.5-2.5 7.5h19S19 14.25 19 9c0-3.87-3.13-7-7-7zm0 20c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+
   const tabItems: Array<{ key: typeof currentView; label: string; icon: JSX.Element }> = [
     { key: 'events', label: 'イベント', icon: <CalendarIcon /> },
     { key: 'profile', label: '登録情報', icon: <ProfileIcon /> },
-    { key: 'applications', label: '申し込み', icon: <ChecklistIcon /> }
+    { key: 'applications', label: '申し込み', icon: <ChecklistIcon /> },
+    { key: 'notifications', label: '通知', icon: <NotificationIcon /> }
   ]
 
   // メール未確認の場合はバナーを表示
@@ -329,8 +368,28 @@ export default function Home() {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <span style={{ color: isActive ? activeColor : inactiveColor }}>
+                <span style={{ color: isActive ? activeColor : inactiveColor, position: 'relative' }}>
                   {item.icon}
+                  {item.key === 'notifications' && unreadNotificationCount > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      right: '-4px',
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: '#FF3B30',
+                      color: '#FFFFFF',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
+                    </span>
+                  )}
                 </span>
                 <span style={{ fontSize: '12px', color: isActive ? activeColor : inactiveColor }}>{item.label}</span>
               </button>

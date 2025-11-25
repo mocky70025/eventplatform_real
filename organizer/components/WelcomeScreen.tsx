@@ -402,7 +402,7 @@ export default function WelcomeScreen() {
                   placeholder="your@example.com"
                 />
               </div>
-              <div style={{ marginBottom: '24px' }}>
+              <div style={{ marginBottom: '16px' }}>
                 <label style={{
                   fontFamily: 'Inter, sans-serif',
                   fontSize: '14px',
@@ -430,6 +430,19 @@ export default function WelcomeScreen() {
                   }}
                   placeholder="パスワードを入力"
                 />
+              </div>
+              <div style={{ marginBottom: '24px', textAlign: 'right' }}>
+                <a
+                  href="/auth/reset-password"
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '14px',
+                    color: '#06C755',
+                    textDecoration: 'none'
+                  }}
+                >
+                  パスワードを忘れた場合
+                </a>
               </div>
               <button
                 type="submit"

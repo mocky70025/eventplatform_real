@@ -108,12 +108,96 @@ export default function EventApplications({ eventId, eventName, organizerId, org
 
   const handleApplicationApproval = async (applicationId: string, status: 'approved' | 'rejected') => {
     try {
+      // 申し込み情報を取得
+      const { data: applicationData } = await supabase
+        .from('event_applications')
+        .select('id, exhibitor_id, event_id')
+        .eq('id', applicationId)
+        .single()
+
+      if (!applicationData) {
+        throw new Error('Application not found')
+      }
+
+      // ステータスを更新
       const { error } = await supabase
         .from('event_applications')
         .update({ application_status: status })
         .eq('id', applicationId)
 
       if (error) throw error
+
+      // イベント情報を取得
+      const { data: eventData } = await supabase
+        .from('events')
+        .select('event_name')
+        .eq('id', applicationData.event_id)
+        .single()
+
+      // 出店者情報を取得
+      const { data: exhibitorData } = await supabase
+        .from('exhibitors')
+        .select('email, user_id, line_user_id')
+        .eq('id', applicationData.exhibitor_id)
+        .single()
+
+      // 出店者に通知を作成
+      if (exhibitorData && eventData) {
+        const exhibitorUserId = exhibitorData.user_id || exhibitorData.line_user_id
+
+        if (exhibitorUserId) {
+          try {
+            const notificationType = status === 'approved' ? 'application_approved' : 'application_rejected'
+            const title = status === 'approved' ? '出店申し込みが承認されました' : '出店申し込みが却下されました'
+            const message = status === 'approved' 
+              ? `${eventData.event_name}への出店申し込みが承認されました。`
+              : `${eventData.event_name}への出店申し込みが却下されました。`
+
+            await fetch('/api/notifications/create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId: exhibitorUserId,
+                userType: 'exhibitor',
+                notificationType,
+                title,
+                message,
+                relatedEventId: applicationData.event_id,
+                relatedApplicationId: applicationId
+              })
+            })
+
+            // 出店者にメール通知を送信
+            if (exhibitorData.email) {
+              const emailSubject = status === 'approved' 
+                ? `【${eventData.event_name}】出店申し込みが承認されました`
+                : `【${eventData.event_name}】出店申し込みが却下されました`
+              const emailHtml = `
+                <div style="font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans JP', sans-serif; line-height: 1.6; color: #333;">
+                  <h2 style="color: ${status === 'approved' ? '#06C755' : '#FF3B30'}; margin-bottom: 16px;">${title}</h2>
+                  <p>${message}</p>
+                  <p style="margin-top: 24px; margin-bottom: 8px;">アプリ内で詳細を確認してください。</p>
+                  <hr style="border: none; border-top: 1px solid #E5E5E5; margin: 24px 0;">
+                  <p style="font-size: 12px; color: #666666;">このメールは自動送信されています。</p>
+                </div>
+              `
+
+              await fetch('/api/notifications/send-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  to: exhibitorData.email,
+                  subject: emailSubject,
+                  html: emailHtml
+                })
+              })
+            }
+          } catch (notificationError) {
+            console.error('Failed to create notification or send email:', notificationError)
+            // 通知の失敗はステータス更新の成功を妨げない
+          }
+        }
+      }
 
       // データを再取得
       await fetchApplications()

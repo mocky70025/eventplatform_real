@@ -6,6 +6,7 @@ import EventForm from './EventForm'
 import EventList from './EventList'
 import EventApplications from './EventApplications'
 import OrganizerProfile from './OrganizerProfile'
+import NotificationBox from './NotificationBox'
 
 import { type LineProfile } from '@/lib/auth'
 
@@ -19,14 +20,40 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const [showEventForm, setShowEventForm] = useState(false)
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null)
   const [eventForApplications, setEventForApplications] = useState<Event | null>(null)
-  const [currentView, setCurrentView] = useState<'events' | 'profile'>('events')
+  const [currentView, setCurrentView] = useState<'events' | 'profile' | 'notifications'>('events')
   const [loading, setLoading] = useState(true)
   const [navVisible, setNavVisible] = useState(true)
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
     fetchOrganizerData()
   }, [userProfile])
+
+  // 未読通知数を取得
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (!userProfile?.userId || !organizer) return
+
+      try {
+        const { count } = await supabase
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userProfile.userId)
+          .eq('user_type', 'organizer')
+          .eq('is_read', false)
+
+        setUnreadNotificationCount(count || 0)
+      } catch (error) {
+        console.error('Failed to fetch unread notification count:', error)
+      }
+    }
+
+    fetchUnreadCount()
+    // 30秒ごとに未読通知数を更新
+    const interval = setInterval(fetchUnreadCount, 30000)
+    return () => clearInterval(interval)
+  }, [userProfile, organizer])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -273,6 +300,10 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
             <OrganizerProfile userProfile={userProfile} />
           </div>
         )
+      case 'notifications':
+        return (
+          <NotificationBox userProfile={userProfile} onBack={() => setCurrentView('events')} onUnreadCountChange={setUnreadNotificationCount} />
+        )
       default:
         return null
     }
@@ -301,9 +332,19 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     </svg>
   )
 
+  const NotificationIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 2C8.13 2 5 5.13 5 9c0 5.25-2.5 7.5-2.5 7.5h19S19 14.25 19 9c0-3.87-3.13-7-7-7zm0 20c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+
   const tabItems: Array<{ key: typeof currentView; label: string; icon: JSX.Element }> = [
     { key: 'events', label: 'イベント', icon: <CalendarIcon /> },
-    { key: 'profile', label: '登録情報', icon: <ProfileIcon /> }
+    { key: 'profile', label: '登録情報', icon: <ProfileIcon /> },
+    { key: 'notifications', label: '通知', icon: <NotificationIcon /> }
   ]
 
   return (
@@ -355,8 +396,28 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <span style={{ color: isActive ? activeColor : inactiveColor }}>
+                <span style={{ color: isActive ? activeColor : inactiveColor, position: 'relative' }}>
                   {item.icon}
+                  {item.key === 'notifications' && unreadNotificationCount > 0 && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '-4px',
+                      right: '-4px',
+                      width: '16px',
+                      height: '16px',
+                      borderRadius: '50%',
+                      background: '#FF3B30',
+                      color: '#FFFFFF',
+                      fontFamily: 'Inter, sans-serif',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
+                    </span>
+                  )}
                 </span>
                 <span style={{ fontSize: '12px', color: isActive ? activeColor : inactiveColor }}>{item.label}</span>
               </button>
