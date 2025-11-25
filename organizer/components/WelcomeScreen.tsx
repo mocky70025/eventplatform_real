@@ -70,6 +70,10 @@ export default function WelcomeScreen() {
       // LIFF環境では、環境変数から取得したURLを使用するか、固定URLを使用
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
       const redirectUrl = `${appUrl}/auth/verify-email`
+      
+      // デバッグ用：値を確認
+      alert(`デバッグ情報:\n\nNEXT_PUBLIC_APP_URL: ${process.env.NEXT_PUBLIC_APP_URL || '(未設定)'}\nwindow.location.origin: ${window.location.origin}\nappUrl: ${appUrl}\nredirectUrl: ${redirectUrl}`)
+      
       console.log('[WelcomeScreen] Email registration - redirectUrl:', redirectUrl)
       console.log('[WelcomeScreen] Email registration - window.location.origin:', window.location.origin)
       console.log('[WelcomeScreen] Email registration - NEXT_PUBLIC_APP_URL:', process.env.NEXT_PUBLIC_APP_URL)
