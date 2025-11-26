@@ -61,20 +61,26 @@ export default function EventCard({ event, userProfile }: EventCardProps) {
         .single()
 
       if (eventData && eventData.organizer_id) {
+        console.log('[EventCard] Organizer ID:', eventData.organizer_id)
         // 主催者情報を取得
-        const { data: organizerData } = await supabase
+        const { data: organizerData, error: organizerError } = await supabase
           .from('organizers')
           .select('email, user_id, line_user_id')
           .eq('id', eventData.organizer_id)
           .single()
 
+        console.log('[EventCard] Organizer data:', organizerData)
+        console.log('[EventCard] Organizer error:', organizerError)
+
         if (organizerData) {
           const organizerUserId = organizerData.user_id || organizerData.line_user_id
+          console.log('[EventCard] Organizer user ID:', organizerUserId)
 
           // 主催者に通知を作成
           if (organizerUserId) {
             try {
-              await fetch('/api/notifications/create', {
+              console.log('[EventCard] Creating notification...')
+              const notificationResponse = await fetch('/api/notifications/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -87,6 +93,13 @@ export default function EventCard({ event, userProfile }: EventCardProps) {
                   relatedApplicationId: applicationData.id
                 })
               })
+
+              const notificationResult = await notificationResponse.json()
+              console.log('[EventCard] Notification response:', notificationResponse.status, notificationResult)
+
+              if (!notificationResponse.ok) {
+                console.error('[EventCard] Notification creation failed:', notificationResult)
+              }
 
               // 主催者にメール通知を送信
               if (organizerData.email) {
