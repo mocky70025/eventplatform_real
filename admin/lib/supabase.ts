@@ -33,6 +33,7 @@ export type Event = {
   venue_city?: string
   main_image_url?: string
   organizer_id: string
+  approval_status?: 'pending' | 'approved' | 'rejected'
   created_at: string
   updated_at: string
 }

@@ -16,22 +16,34 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
+      console.log('[Admin] Fetching data...')
       // 主催者一覧を取得
-      const { data: organizersData } = await supabase
+      const { data: organizersData, error: organizersError } = await supabase
         .from('organizers')
         .select('*')
         .order('created_at', { ascending: false })
 
+      if (organizersError) {
+        console.error('[Admin] Failed to fetch organizers:', organizersError)
+      }
+
       // イベント一覧を取得
-      const { data: eventsData } = await supabase
+      const { data: eventsData, error: eventsError } = await supabase
         .from('events')
         .select('*')
         .order('created_at', { ascending: false })
 
+      if (eventsError) {
+        console.error('[Admin] Failed to fetch events:', eventsError)
+      }
+
+      console.log('[Admin] Fetched events:', eventsData)
+      console.log('[Admin] Sample event approval_status:', eventsData?.[0]?.approval_status)
+
       setOrganizers(organizersData || [])
       setEvents(eventsData || [])
     } catch (error) {
-      console.error('Failed to fetch data:', error)
+      console.error('[Admin] Failed to fetch data:', error)
     } finally {
       setLoading(false)
     }
@@ -187,24 +199,18 @@ export default function AdminDashboard() {
                     <p className="text-gray-700 text-sm mt-2">{event.lead_text}</p>
 
                     {/* 承認ステータス */}
-                    {'approval_status' in event && (
-                      <div className="mt-3">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          // @ts-ignore
-                          event.approval_status === 'approved'
-                            ? 'bg-green-100 text-green-800'
-                            // @ts-ignore
-                            : event.approval_status === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {/* @ts-ignore */}
-                          {event.approval_status === 'approved' ? '承認済み' :
-                          // @ts-ignore
-                          event.approval_status === 'rejected' ? '却下' : '審査中'}
-                        </span>
-                      </div>
-                    )}
+                    <div className="mt-3">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        event.approval_status === 'approved'
+                          ? 'bg-green-100 text-green-800'
+                          : event.approval_status === 'rejected'
+                          ? 'bg-red-100 text-red-800'
+                          : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {event.approval_status === 'approved' ? '承認済み' :
+                        event.approval_status === 'rejected' ? '却下' : '審査中'}
+                      </span>
+                    </div>
 
                     {/* 承認/却下ボタン */}
                     <div className="flex space-x-2 mt-4">
