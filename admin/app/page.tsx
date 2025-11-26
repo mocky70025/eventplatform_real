@@ -218,27 +218,29 @@ export default function AdminDashboard() {
                         onClick={async () => {
                           try {
                             console.log('[Admin] Approving event:', event.id)
-                            const { error: updateError } = await supabase
+                            console.log('[Admin] Current approval_status:', event.approval_status)
+                            
+                            const { data, error } = await supabase
                               .from('events')
                               .update({ approval_status: 'approved' })
                               .eq('id', event.id)
+                              .select('id, approval_status')
 
-                            console.log('[Admin] Update error:', updateError)
+                            console.log('[Admin] Update result:', { data, error })
+                            console.log('[Admin] Updated rows:', data?.length || 0)
 
-                            if (updateError) {
-                              console.error('[Admin] Approval error:', updateError)
-                              throw updateError
+                            if (error) {
+                              console.error('[Admin] Approval error:', error)
+                              throw error
                             }
 
-                            // 更新後のデータを確認
-                            const { data: updatedData, error: selectError } = await supabase
-                              .from('events')
-                              .select('id, approval_status')
-                              .eq('id', event.id)
-                              .single()
+                            if (!data || data.length === 0) {
+                              console.error('[Admin] No rows updated - RLS policy may be blocking UPDATE')
+                              alert('承認に失敗しました。RLSポリシーを確認してください。\n\nSupabaseで`supabase_admin_events_update_fix.sql`を実行してください。')
+                              return
+                            }
 
-                            console.log('[Admin] Updated event data:', updatedData)
-                            console.log('[Admin] Select error:', selectError)
+                            console.log('[Admin] Successfully updated:', data[0])
 
                             // データを再取得
                             await fetchData()
@@ -256,27 +258,29 @@ export default function AdminDashboard() {
                         onClick={async () => {
                           try {
                             console.log('[Admin] Rejecting event:', event.id)
-                            const { error: updateError } = await supabase
+                            console.log('[Admin] Current approval_status:', event.approval_status)
+                            
+                            const { data, error } = await supabase
                               .from('events')
                               .update({ approval_status: 'rejected' })
                               .eq('id', event.id)
+                              .select('id, approval_status')
 
-                            console.log('[Admin] Update error:', updateError)
+                            console.log('[Admin] Update result:', { data, error })
+                            console.log('[Admin] Updated rows:', data?.length || 0)
 
-                            if (updateError) {
-                              console.error('[Admin] Rejection error:', updateError)
-                              throw updateError
+                            if (error) {
+                              console.error('[Admin] Rejection error:', error)
+                              throw error
                             }
 
-                            // 更新後のデータを確認
-                            const { data: updatedData, error: selectError } = await supabase
-                              .from('events')
-                              .select('id, approval_status')
-                              .eq('id', event.id)
-                              .single()
+                            if (!data || data.length === 0) {
+                              console.error('[Admin] No rows updated - RLS policy may be blocking UPDATE')
+                              alert('却下に失敗しました。RLSポリシーを確認してください。\n\nSupabaseで`supabase_admin_events_update_fix.sql`を実行してください。')
+                              return
+                            }
 
-                            console.log('[Admin] Updated event data:', updatedData)
-                            console.log('[Admin] Select error:', selectError)
+                            console.log('[Admin] Successfully updated:', data[0])
 
                             // データを再取得
                             await fetchData()
