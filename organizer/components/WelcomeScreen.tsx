@@ -48,6 +48,37 @@ export default function WelcomeScreen() {
     }
   }
 
+  const handleGoogleLogin = async () => {
+    try {
+      console.log('[WelcomeScreen] Google Login button clicked')
+      setLoading(true)
+      setError('')
+
+      const appUrl = (process.env.NEXT_PUBLIC_ORGANIZER_URL || window.location.origin).replace(/\/$/, '')
+      const redirectUrl = `${appUrl}/auth/callback`
+
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+        },
+      })
+
+      if (error) {
+        console.error('[WelcomeScreen] Google Login error:', error)
+        setError('Googleログインに失敗しました。もう一度お試しください。')
+        setLoading(false)
+      } else if (data.url) {
+        // リダイレクトURLに遷移
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('[WelcomeScreen] Error in handleGoogleLogin:', error)
+      setError('GoogleログインのURL生成に失敗しました。もう一度お試しください。')
+      setLoading(false)
+    }
+  }
+
   const handleEmailRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -255,7 +286,7 @@ export default function WelcomeScreen() {
           </>
         )}
 
-        {/* ログイン方法選択 - メール認証のみ */}
+        {/* ログイン方法選択 */}
         {authMode === 'login' && !loginMethod && (
           <div style={{
             background: '#FFFFFF',
@@ -291,12 +322,42 @@ export default function WelcomeScreen() {
                 ×
               </button>
             </div>
-        <button
-              onClick={() => setLoginMethod('email')}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Googleでログイン */}
+              <button
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '16px 24px',
+                  gap: '10px',
+                  width: '100%',
+                  height: '48px',
+                  background: '#06C755',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  lineHeight: '19px',
+                  color: '#FFFFFF',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1
+                }}
+              >
+                {loading ? '読み込み中...' : 'Googleでログイン'}
+              </button>
+              
+              {/* メールアドレスでログイン */}
+              <button
+                onClick={() => setLoginMethod('email')}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
             alignItems: 'center',
             padding: '16px 24px',
             gap: '10px',
@@ -502,30 +563,61 @@ export default function WelcomeScreen() {
                 ×
               </button>
             </div>
-            <button
-              onClick={() => setRegisterMethod('email')}
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '16px 24px',
-                gap: '10px',
-                width: '100%',
-                height: '48px',
-                background: '#06C755',
-                borderRadius: '8px',
-                border: 'none',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                fontWeight: 700,
-                lineHeight: '19px',
-                color: '#FFFFFF',
-                cursor: 'pointer'
-              }}
-            >
-              メールアドレスで新規登録
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Googleで新規登録 */}
+              <button
+                onClick={handleGoogleLogin}
+                disabled={loading}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '16px 24px',
+                  gap: '10px',
+                  width: '100%',
+                  height: '48px',
+                  background: '#06C755',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  lineHeight: '19px',
+                  color: '#FFFFFF',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1
+                }}
+              >
+                {loading ? '読み込み中...' : 'Googleで新規登録'}
+              </button>
+              
+              {/* メールアドレスで新規登録 */}
+              <button
+                onClick={() => setRegisterMethod('email')}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  padding: '16px 24px',
+                  gap: '10px',
+                  width: '100%',
+                  height: '48px',
+                  background: '#FFFFFF',
+                  borderRadius: '8px',
+                  border: '1px solid #E5E5E5',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  lineHeight: '19px',
+                  color: '#000000',
+                  cursor: 'pointer'
+                }}
+              >
+                メールアドレスで新規登録
+              </button>
+            </div>
           </div>
         )}
 

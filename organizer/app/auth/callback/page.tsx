@@ -15,10 +15,11 @@ export default function AuthCallback() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
-        // URLパラメータから認証コードを取得
+        // URLパラメータから認証情報を取得
         const code = searchParams.get('code')
         const state = searchParams.get('state')
         const error = searchParams.get('error')
+        const provider = searchParams.get('provider') || 'line' // デフォルトはLINE
         
         if (error) {
           setErrorMessage(`認証エラー: ${error}`)
@@ -26,6 +27,50 @@ export default function AuthCallback() {
           return
         }
         
+        // Google認証の場合
+        if (provider === 'google' || code) {
+          // Supabaseのセッションを確認
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+          
+          if (sessionError) {
+            console.error('[Callback] Session error:', sessionError)
+            setErrorMessage('セッションの取得に失敗しました')
+            setStatus('error')
+            return
+          }
+          
+          if (session && session.user) {
+            console.log('[Callback] Google auth session found:', session.user.id)
+            console.log('[Callback] User email:', session.user.email)
+            
+            // セッションストレージに保存
+            sessionStorage.setItem('auth_type', 'google')
+            sessionStorage.setItem('user_id', session.user.id)
+            sessionStorage.setItem('user_email', session.user.email || '')
+            
+            // 既存ユーザーかチェック（user_idで検索）
+            const { data: existingUser, error: organizerError } = await supabase
+              .from('organizers')
+              .select('*')
+              .eq('user_id', session.user.id)
+              .maybeSingle()
+            
+            if (organizerError) {
+              console.error('[Callback] Error checking organizer:', organizerError)
+            }
+            
+            const isRegistered = !!existingUser
+            console.log('[Callback] Existing organizer found:', isRegistered ? 'yes' : 'no')
+            
+            setStatus('success')
+            setTimeout(() => {
+              router.push('/')
+            }, 1000)
+            return
+          }
+        }
+        
+        // LINE認証の場合（既存の処理）
         if (!code || !state) {
           setErrorMessage('認証コードが取得できませんでした')
           setStatus('error')
