@@ -28,10 +28,10 @@ export default function Home() {
         const storedEmail = sessionStorage.getItem('user_email')
         
         if (session && session.user) {
-          // メールアドレス・パスワード認証の場合
-          console.log('[Home] Email auth session found:', session.user.id)
+          // メールアドレス・パスワード認証またはGoogle認証の場合
+          console.log('[Home] Auth session found:', session.user.id, 'authType:', authType)
           
-          if (authType === 'email') {
+          if (authType === 'email' || authType === 'google') {
             // メール確認済みかチェック
             const isEmailConfirmed = !!session.user.email_confirmed_at
             
@@ -41,11 +41,11 @@ export default function Home() {
               userId: session.user.id,
               displayName: session.user.email || '',
               email: session.user.email,
-              authType: 'email' as const,
+              authType: (authType === 'google' ? 'google' : 'email') as const,
               emailConfirmed: isEmailConfirmed || true // セッションがあれば確認済みとして扱う
             })
             
-            if (!isEmailConfirmed) {
+            if (!isEmailConfirmed && authType === 'email') {
               console.log('[Home] Session exists but email not confirmed - may be disabled in Supabase settings')
             }
             
@@ -57,13 +57,14 @@ export default function Home() {
               .maybeSingle()
             
             setIsRegistered(!!organizer)
-            console.log('[Home] Email auth user profile set:', { 
+            console.log('[Home] Auth user profile set:', { 
               userId: session.user.id, 
+              authType: authType,
               isRegistered: !!organizer,
               emailConfirmed: isEmailConfirmed || true
             })
           }
-        } else if (authType === 'email' && storedUserId) {
+        } else if ((authType === 'email' || authType === 'google') && storedUserId) {
           // セッションが存在しないが、セッションストレージにuser_idがある場合
           // メール確認待ちの状態で登録フォームにアクセスできるようにする
           console.log('[Home] Email auth - session not found, but user_id in storage:', storedUserId)

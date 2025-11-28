@@ -35,17 +35,23 @@ export default function AuthCallback() {
         if (provider === 'google' || accessToken) {
           console.log('[Callback] Google authentication detected')
           
-          // Supabaseが自動的にセッションを確立するまで少し待つ
-          await new Promise(resolve => setTimeout(resolve, 500))
-          
-          // Supabaseのセッションを確認
-          const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-          
-          if (sessionError) {
-            console.error('[Callback] Session error:', sessionError)
-            setErrorMessage('セッションの取得に失敗しました')
-            setStatus('error')
-            return
+          // Supabaseが自動的にセッションを確立するのを待つ
+          // 最大5秒間、セッションが確立されるまで待機
+          let session = null
+          for (let i = 0; i < 10; i++) {
+            const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession()
+            
+            if (sessionError) {
+              console.error('[Callback] Session error:', sessionError)
+            }
+            
+            if (currentSession && currentSession.user) {
+              session = currentSession
+              break
+            }
+            
+            // 500ms待機してから再試行
+            await new Promise(resolve => setTimeout(resolve, 500))
           }
           
           if (session && session.user) {
@@ -72,9 +78,10 @@ export default function AuthCallback() {
             console.log('[Callback] Existing organizer found:', isRegistered ? 'yes' : 'no')
             
             setStatus('success')
+            // 少し待ってからリダイレクト（UI更新のため）
             setTimeout(() => {
               router.push('/')
-            }, 1000)
+            }, 500)
             return
           } else {
             console.error('[Callback] No session found after Google authentication')

@@ -55,21 +55,21 @@ export default function Home() {
         const storedUserId = sessionStorage.getItem('user_id')
         const storedEmail = sessionStorage.getItem('user_email')
         
-        // LINE認証のプロフィールがない場合のみ、メール認証を確認
+        // LINE認証のプロフィールがない場合のみ、メール認証またはGoogle認証を確認
         if (!savedProfile) {
-          if (session && session.user && authType === 'email') {
-            console.log('[Home] Email auth session found:', session.user.id)
+          if (session && session.user && (authType === 'email' || authType === 'google')) {
+            console.log('[Home] Auth session found:', session.user.id, 'authType:', authType)
             const isEmailConfirmed = !!session.user.email_confirmed_at
             
             setHasActiveSession(true)
             setUserProfile({
               userId: session.user.id,
               email: session.user.email,
-              authType: 'email',
+              authType: authType === 'google' ? 'google' : 'email',
               emailConfirmed: isEmailConfirmed || true
             })
             
-            if (!isEmailConfirmed) {
+            if (!isEmailConfirmed && authType === 'email') {
               console.log('[Home] Session exists but email not confirmed - may be disabled in Supabase settings')
             }
             
