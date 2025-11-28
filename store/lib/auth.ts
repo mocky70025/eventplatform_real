@@ -3,7 +3,7 @@ export interface LineProfile {
   displayName: string
   pictureUrl?: string
   statusMessage?: string
-  authType?: 'line' | 'email'
+  authType?: 'line' | 'email' | 'google'
   email?: string
   emailConfirmed?: boolean
 }
