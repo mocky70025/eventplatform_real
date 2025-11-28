@@ -41,7 +41,7 @@ export default function Home() {
               userId: session.user.id,
               displayName: session.user.email || '',
               email: session.user.email,
-              authType: (authType === 'google' ? 'google' : 'email') as const,
+              authType: authType === 'google' ? 'google' : 'email',
               emailConfirmed: isEmailConfirmed || true // セッションがあれば確認済みとして扱う
             })
             
