@@ -525,130 +525,217 @@ export default function WelcomeScreen() {
 
       {/* ログイン方法選択 */}
       {authMode === 'login' && !loginMethod && (
+        <>
+          {/* ログインセクション */}
           <div style={{
-            background: '#FFFFFF',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px'
+            position: 'absolute',
+            width: '256px',
+            height: '0px',
+            left: '69px',
+            top: '427.5px',
+            border: '1px solid #06C755'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '72px',
+            height: '16px',
+            left: '161px',
+            top: '420px',
+            background: '#FFFFFF'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '72px',
+            height: '24px',
+            left: '161px',
+            top: '416px',
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 700,
+            fontSize: '16px',
+            lineHeight: '24px',
+            textAlign: 'center',
+            color: '#000000'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '20px',
-                fontWeight: 700,
-                lineHeight: '120%',
-                color: '#000000'
-              }}>
-                ログイン
-              </h2>
-              <button
-                onClick={() => {
-                  setAuthMode('initial')
-                  setLoginMethod(null)
-                }}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '16px',
-                  color: '#06C755',
-                  cursor: 'pointer'
-                }}
-              >
-                ×
-              </button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {/* LINEでログイン */}
-              <button
-                onClick={handleLineLogin}
-                disabled={loading}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '16px 24px',
-                  gap: '10px',
-                  width: '100%',
-                  height: '48px',
-                  background: '#06C755',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  lineHeight: '24px',
-                  color: '#FFFFFF',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1
-                }}
-              >
-                <LineIcon />
-                <span>LINEでログイン</span>
-              </button>
-              
-              {/* Googleでログイン */}
-              <button
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '16px 24px',
-                  gap: '10px',
-                  width: '100%',
-                  height: '48px',
-                  background: '#06C755',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  lineHeight: '24px',
-                  color: '#FFFFFF',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1
-                }}
-              >
-                <GoogleIcon />
-                <span>{loading ? '読み込み中...' : 'Googleでログイン'}</span>
-              </button>
-              
-              {/* メールアドレスでログイン */}
-              {(
-                <button
-                  onClick={() => setLoginMethod('email')}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '16px 24px',
-                    gap: '10px',
-                    width: '100%',
-                    height: '48px',
-                    background: '#FFFFFF',
-                    borderRadius: '8px',
-                    border: '1px solid #E5E5E5',
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 700,
-                    lineHeight: '24px',
-                    color: '#000000',
-                    cursor: 'pointer'
-                  }}
-                >
-                  <MailIcon color="#000000" />
-                  <span>メールアドレスでログイン</span>
-                </button>
-              )}
-            </div>
+            ログイン
           </div>
-        )}
+
+          {/* LINEログインボタン */}
+          <button
+            type="button"
+            onClick={handleLineLogin}
+            disabled={loading}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: '16px 24px',
+              position: 'absolute',
+              width: '288px',
+              height: '48px',
+              left: '53px',
+              top: '456px',
+              background: '#06C755',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '24px',
+              color: '#FFFFFF',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1,
+              zIndex: 100,
+              pointerEvents: loading ? 'none' : 'auto'
+            }}
+          >
+            <div style={{ position: 'absolute', left: '16px' }}>
+              <LineIcon />
+            </div>
+            <span style={{ width: '100%', textAlign: 'center' }}>LINE</span>
+          </button>
+
+          {/* Googleログインボタン */}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: '16px 24px',
+              position: 'absolute',
+              width: '287px',
+              height: '47px',
+              left: '53.5px',
+              top: '520.5px',
+              background: '#FFFFFF',
+              borderRadius: '7.5px',
+              border: '1px solid #E5E5E5',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '24px',
+              color: '#000000',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1,
+              zIndex: 100,
+              pointerEvents: loading ? 'none' : 'auto'
+            }}
+          >
+            <div style={{ position: 'absolute', left: '16px' }}>
+              <GoogleIcon />
+            </div>
+            <span style={{ width: '100%', textAlign: 'center' }}>Google</span>
+          </button>
+
+          {/* メールアドレスログインボタン */}
+          <button
+            type="button"
+            onClick={() => setLoginMethod('email')}
+            disabled={loading}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              padding: '16px 24px',
+              position: 'absolute',
+              width: '287px',
+              height: '47px',
+              left: '53.5px',
+              top: '584px',
+              background: '#FFFFFF',
+              borderRadius: '7.5px',
+              border: '1px solid #E5E5E5',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '24px',
+              color: '#000000',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading ? 0.6 : 1,
+              zIndex: 100,
+              pointerEvents: loading ? 'none' : 'auto'
+            }}
+          >
+            <div style={{ position: 'absolute', left: '16px' }}>
+              <MailIcon color="#000000" />
+            </div>
+            <span style={{ width: '100%', textAlign: 'center' }}>メールアドレス</span>
+          </button>
+
+          {/* またはセパレーター */}
+          <div style={{
+            position: 'absolute',
+            width: '256px',
+            height: '0px',
+            left: '69px',
+            top: '655.5px',
+            border: '1px solid #06C755',
+            zIndex: 1
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '64px',
+            height: '16px',
+            left: '165px',
+            top: '648px',
+            background: '#FFFFFF',
+            zIndex: 2
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '64px',
+            height: '24px',
+            left: '165px',
+            top: '644px',
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 700,
+            fontSize: '16px',
+            lineHeight: '24px',
+            textAlign: 'center',
+            color: '#000000',
+            zIndex: 2
+          }}>
+            または
+          </div>
+
+          {/* 新規登録ボタン */}
+          <button
+            type="button"
+            onClick={() => setAuthMode('initial')}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '16px 24px',
+              gap: '10px',
+              position: 'absolute',
+              width: '287px',
+              height: '47px',
+              left: '53.5px',
+              top: '684.5px',
+              background: '#FFFFFF',
+              border: '1px solid #E5E5E5',
+              borderRadius: '7.5px',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '24px',
+              textAlign: 'center',
+              color: '#000000',
+              cursor: 'pointer',
+              zIndex: 100,
+              pointerEvents: 'auto'
+            }}
+          >
+            新規登録
+          </button>
+        </>
+      )}
 
       {/* メールアドレスでログイン */}
       {authMode === 'login' && loginMethod === 'email' && (
