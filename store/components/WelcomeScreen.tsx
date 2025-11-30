@@ -285,7 +285,7 @@ export default function WelcomeScreen() {
         textAlign: 'center',
         color: '#000000'
       }}>
-        イベントに呼びたい<br />キッチンカー・屋台を探すなら
+        キッチンカー・屋台の<br />イベントを探すなら
       </div>
 
       {/* ロゴプレースホルダー */}
@@ -1082,7 +1082,7 @@ export default function WelcomeScreen() {
             textAlign: 'center',
             color: '#000000'
           }}>
-            イベントに呼びたい<br />キッチンカー・屋台を探すなら
+            キッチンカー・屋台の<br />イベントを探すなら
           </div>
 
           {/* ロゴプレースホルダー */}
