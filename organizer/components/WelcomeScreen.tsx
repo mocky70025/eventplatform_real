@@ -757,7 +757,8 @@ export default function WelcomeScreen() {
               lineHeight: '24px',
               color: '#000000',
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
+              opacity: loading ? 0.6 : 1,
+              zIndex: 10
             }}
           >
             <div style={{ position: 'absolute', left: '16px' }}>
@@ -789,7 +790,8 @@ export default function WelcomeScreen() {
               lineHeight: '24px',
               color: '#000000',
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
+              opacity: loading ? 0.6 : 1,
+              zIndex: 10
             }}
           >
             <div style={{ position: 'absolute', left: '16px' }}>
@@ -805,7 +807,8 @@ export default function WelcomeScreen() {
             height: '0px',
             left: '69px',
             top: '591.5px',
-            border: '1px solid #06C755'
+            border: '1px solid #06C755',
+            zIndex: 1
           }} />
           <div style={{
             position: 'absolute',
@@ -813,7 +816,8 @@ export default function WelcomeScreen() {
             height: '16px',
             left: '165px',
             top: '584px',
-            background: '#FFFFFF'
+            background: '#FFFFFF',
+            zIndex: 2
           }} />
           <div style={{
             position: 'absolute',
@@ -827,7 +831,8 @@ export default function WelcomeScreen() {
             fontSize: '16px',
             lineHeight: '24px',
             textAlign: 'center',
-            color: '#000000'
+            color: '#000000',
+            zIndex: 2
           }}>
             または
           </div>
@@ -856,7 +861,8 @@ export default function WelcomeScreen() {
               lineHeight: '24px',
               textAlign: 'center',
               color: '#000000',
-              cursor: 'pointer'
+              cursor: 'pointer',
+              zIndex: 10
             }}
           >
             ログイン
