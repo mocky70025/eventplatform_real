@@ -904,6 +904,7 @@ export default function WelcomeScreen() {
 
           {/* LINEログインボタン */}
           <button
+            type="button"
             onClick={handleLineLogin}
             disabled={loading}
             style={{
@@ -926,7 +927,8 @@ export default function WelcomeScreen() {
               color: '#FFFFFF',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
-              zIndex: 10
+              zIndex: 100,
+              pointerEvents: loading ? 'none' : 'auto'
             }}
           >
             <div style={{ position: 'absolute', left: '16px' }}>
@@ -937,6 +939,7 @@ export default function WelcomeScreen() {
 
           {/* Googleログインボタン */}
           <button
+            type="button"
             onClick={handleGoogleLogin}
             disabled={loading}
             style={{
@@ -959,7 +962,8 @@ export default function WelcomeScreen() {
               color: '#000000',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
-              zIndex: 10
+              zIndex: 100,
+              pointerEvents: loading ? 'none' : 'auto'
             }}
           >
             <div style={{ position: 'absolute', left: '16px' }}>
@@ -970,7 +974,11 @@ export default function WelcomeScreen() {
 
           {/* メールアドレスログインボタン */}
           <button
-            onClick={() => setRegisterMethod('email')}
+            type="button"
+            onClick={() => {
+              console.log('[WelcomeScreen] Email registration button clicked')
+              setRegisterMethod('email')
+            }}
             disabled={loading}
             style={{
               display: 'flex',
@@ -992,7 +1000,8 @@ export default function WelcomeScreen() {
               color: '#000000',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
-              zIndex: 10
+              zIndex: 100,
+              pointerEvents: loading ? 'none' : 'auto'
             }}
           >
             <div style={{ position: 'absolute', left: '16px' }}>
@@ -1040,6 +1049,7 @@ export default function WelcomeScreen() {
 
           {/* ログインボタン */}
           <button
+            type="button"
             onClick={() => setAuthMode('initial')}
             style={{
               display: 'flex',
@@ -1063,7 +1073,8 @@ export default function WelcomeScreen() {
               textAlign: 'center',
               color: '#000000',
               cursor: 'pointer',
-              zIndex: 10
+              zIndex: 100,
+              pointerEvents: 'auto'
             }}
           >
             ログイン
