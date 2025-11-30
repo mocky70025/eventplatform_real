@@ -35,11 +35,42 @@ export default function WelcomeScreen() {
   const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null)
+  const [isAnimating, setIsAnimating] = useState(false)
   
   // デバッグ用: 状態変化を監視
   useEffect(() => {
     console.log('[WelcomeScreen] State changed - authMode:', authMode, 'registerMethod:', registerMethod, 'loginMethod:', loginMethod)
   }, [authMode, registerMethod, loginMethod])
+
+  // アニメーション完了後に状態をリセット
+  useEffect(() => {
+    if (isAnimating) {
+      const timer = setTimeout(() => {
+        setIsAnimating(false)
+        setSlideDirection(null)
+      }, 300) // アニメーション時間に合わせる
+      return () => clearTimeout(timer)
+    }
+  }, [isAnimating])
+
+  const handleNavigateToRegister = () => {
+    setIsAnimating(true)
+    setSlideDirection('right')
+    setTimeout(() => {
+      setAuthMode('register')
+    }, 10)
+  }
+
+  const handleNavigateToLogin = () => {
+    setIsAnimating(true)
+    setSlideDirection('left')
+    setTimeout(() => {
+      setAuthMode('initial')
+      setLoginMethod(null)
+      setRegisterMethod(null)
+    }, 10)
+  }
 
   const handleGoogleLogin = async () => {
     try {
@@ -213,7 +244,14 @@ export default function WelcomeScreen() {
 
       {/* 初期画面：ログイン or 新規登録を選択 */}
       {authMode === 'initial' && (
-        <>
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          transform: slideDirection === 'right' && isAnimating ? 'translateX(-100%)' : slideDirection === 'left' && isAnimating ? 'translateX(100%)' : 'translateX(0)',
+          transition: 'transform 0.3s ease-in-out',
+          opacity: isAnimating && slideDirection === 'right' ? 0 : 1
+        }}>
           {/* ログインセクション */}
           <div style={{
             position: 'absolute',
@@ -355,7 +393,7 @@ export default function WelcomeScreen() {
 
           {/* 新規登録ボタン */}
           <button
-            onClick={() => setAuthMode('register')}
+            onClick={handleNavigateToRegister}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -382,7 +420,7 @@ export default function WelcomeScreen() {
           >
             新規登録
           </button>
-        </>
+        </div>
       )}
 
       {/* ログイン方法選択 */}
@@ -793,7 +831,14 @@ export default function WelcomeScreen() {
 
       {/* 新規登録方法選択 */}
       {authMode === 'register' && !registerMethod && (
-        <>
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          transform: slideDirection === 'left' && isAnimating ? 'translateX(-100%)' : slideDirection === 'right' && isAnimating ? 'translateX(100%)' : 'translateX(0)',
+          transition: 'transform 0.3s ease-in-out',
+          opacity: isAnimating && slideDirection === 'left' ? 0 : 1
+        }}>
           {/* 新規登録セクション */}
           <div style={{
             position: 'absolute',
@@ -943,7 +988,7 @@ export default function WelcomeScreen() {
           {/* ログインボタン */}
           <button
             type="button"
-            onClick={() => setAuthMode('initial')}
+            onClick={handleNavigateToLogin}
             style={{
               display: 'flex',
               flexDirection: 'row',
@@ -972,7 +1017,7 @@ export default function WelcomeScreen() {
           >
             ログイン
           </button>
-        </>
+        </div>
       )}
 
       {/* メールアドレスで新規登録 */}
