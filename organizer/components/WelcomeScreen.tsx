@@ -202,7 +202,7 @@ export default function WelcomeScreen() {
           textAlign: 'center',
           color: '#000000'
         }}>
-          将来的にロゴ
+          将来のロゴ
         </div>
       </div>
 
@@ -923,7 +923,7 @@ export default function WelcomeScreen() {
             textAlign: 'center',
             color: '#000000'
           }}>
-            将来的にロゴ
+            将来のロゴ
           </div>
 
           {/* 新規登録セパレーター */}
