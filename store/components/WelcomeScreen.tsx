@@ -135,12 +135,6 @@ export default function WelcomeScreen() {
     setLoading(true)
     setError('')
 
-    if (registerPassword !== registerPasswordConfirm) {
-      setError('パスワードが一致しません')
-      setLoading(false)
-      return
-    }
-
     if (registerPassword.length < 6) {
       setError('パスワードは6文字以上で入力してください')
       setLoading(false)
@@ -291,7 +285,7 @@ export default function WelcomeScreen() {
         textAlign: 'center',
         color: '#000000'
       }}>
-        キッチンカー・屋台の<br />イベントを探すなら
+        イベントに呼びたい<br />キッチンカー・屋台を探すなら
       </div>
 
       {/* ロゴプレースホルダー */}
@@ -1072,170 +1066,276 @@ export default function WelcomeScreen() {
 
       {/* メールアドレスで新規登録 */}
       {authMode === 'register' && registerMethod === 'email' && (
-        <div style={{
-            background: '#FFFFFF',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px'
+        <>
+          {/* タイトル */}
+          <div style={{
+            position: 'absolute',
+            width: '333px',
+            height: '96px',
+            left: '30px',
+            top: '32px',
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 700,
+            fontSize: '24px',
+            lineHeight: '48px',
+            textAlign: 'center',
+            color: '#000000'
           }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '20px',
-                fontWeight: 700,
-                lineHeight: '120%',
-                color: '#000000'
-              }}>
-                新規登録
-              </h2>
-              <button
-                onClick={() => {
-                  setRegisterMethod(null)
-                  setError('')
-                  setRegisterEmail('')
-                  setRegisterPassword('')
-                  setRegisterPasswordConfirm('')
-                }}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '16px',
-                  color: '#06C755',
-                  cursor: 'pointer'
-                }}
-              >
-                ×
-              </button>
-            </div>
-            {error && (
-              <div style={{
-                padding: '12px',
-                background: '#FFEBEE',
-                borderRadius: '8px',
-                marginBottom: '16px'
-              }}>
-                <p style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  color: '#C62828'
-                }}>
-                  {error}
-                </p>
-              </div>
-            )}
-            <form onSubmit={handleEmailRegister}>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>
-                  メールアドレス
-                </label>
-                <input
-                  type="email"
-                  value={registerEmail}
-                  onChange={(e) => setRegisterEmail(e.target.value)}
-                  required
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1px solid #E5E5E5',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    boxSizing: 'border-box'
-                  }}
-                  placeholder="your@example.com"
-                />
-              </div>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>
-                  パスワード（6文字以上）
-                </label>
-                <input
-                  type="password"
-                  value={registerPassword}
-                  onChange={(e) => setRegisterPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1px solid #E5E5E5',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    boxSizing: 'border-box'
-                  }}
-                  placeholder="パスワードを入力"
-                />
-              </div>
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>
-                  パスワード（確認）
-                </label>
-                <input
-                  type="password"
-                  value={registerPasswordConfirm}
-                  onChange={(e) => setRegisterPasswordConfirm(e.target.value)}
-                  required
-                  minLength={6}
-                  style={{
-                    width: '100%',
-                    padding: '12px 16px',
-                    border: '1px solid #E5E5E5',
-                    borderRadius: '8px',
-                    fontFamily: 'Inter, sans-serif',
-                    fontSize: '16px',
-                    boxSizing: 'border-box'
-                  }}
-                  placeholder="パスワードを再入力"
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  padding: '16px 24px',
-                  background: loading ? '#CCCCCC' : '#06C755',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  color: '#FFFFFF',
-                  cursor: loading ? 'not-allowed' : 'pointer'
-                }}
-              >
-                {loading ? '登録中...' : '登録する'}
-              </button>
-            </form>
+            イベントに呼びたい<br />キッチンカー・屋台を探すなら
           </div>
-        )}
+
+          {/* ロゴプレースホルダー */}
+          <div style={{
+            position: 'absolute',
+            width: '256px',
+            height: '256px',
+            left: '69px',
+            top: '144px',
+            background: '#D9D9D9'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '192px',
+            height: '48px',
+            left: '101px',
+            top: '248px',
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 700,
+            fontSize: '32px',
+            lineHeight: '48px',
+            textAlign: 'center',
+            color: '#000000'
+          }}>
+            将来的にロゴ
+          </div>
+
+          {/* 新規登録セパレーター */}
+          <div style={{
+            position: 'absolute',
+            width: '256px',
+            height: '0px',
+            left: '69px',
+            top: '427.5px',
+            border: '1px solid #06C755'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '72px',
+            height: '16px',
+            left: '161px',
+            top: '420px',
+            background: '#FFFFFF'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '72px',
+            height: '24px',
+            left: '161px',
+            top: '416px',
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 700,
+            fontSize: '16px',
+            lineHeight: '24px',
+            textAlign: 'center',
+            color: '#000000'
+          }}>
+            新規登録
+          </div>
+
+          {/* エラーメッセージ */}
+          {error && (
+            <div style={{
+              position: 'absolute',
+              width: '288px',
+              left: '53px',
+              top: '440px',
+              padding: '8px',
+              background: '#FFEBEE',
+              borderRadius: '8px',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '14px',
+              color: '#C62828',
+              textAlign: 'center'
+            }}>
+              {error}
+            </div>
+          )}
+
+          {/* メールアドレス入力フィールド */}
+          <form onSubmit={handleEmailRegister}>
+            <input
+              type="email"
+              value={registerEmail}
+              onChange={(e) => setRegisterEmail(e.target.value)}
+              required
+              style={{
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: '12px 16px',
+                gap: '10px',
+                position: 'absolute',
+                width: '288px',
+                height: '48px',
+                left: '53px',
+                top: '456px',
+                background: '#FFFFFF',
+                border: '1px solid #E5E5E5',
+                borderRadius: '8px',
+                fontFamily: '"Noto Sans JP", sans-serif',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: registerEmail ? '#000000' : '#999999'
+              }}
+              placeholder="入力してください"
+            />
+
+            {/* パスワード入力フィールド */}
+            <input
+              type="password"
+              value={registerPassword}
+              onChange={(e) => setRegisterPassword(e.target.value)}
+              required
+              minLength={6}
+              style={{
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                padding: '12px 16px',
+                gap: '10px',
+                position: 'absolute',
+                width: '288px',
+                height: '48px',
+                left: '53px',
+                top: '520px',
+                background: '#FFFFFF',
+                border: '1px solid #E5E5E5',
+                borderRadius: '8px',
+                fontFamily: '"Noto Sans JP", sans-serif',
+                fontStyle: 'normal',
+                fontWeight: 400,
+                fontSize: '16px',
+                lineHeight: '24px',
+                color: registerPassword ? '#000000' : '#999999'
+              }}
+              placeholder="入力してください"
+            />
+
+            {/* 新規登録ボタン */}
+            <button
+              type="submit"
+              disabled={loading}
+              style={{
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: '16px 24px',
+                gap: '10px',
+                position: 'absolute',
+                width: '288px',
+                height: '48px',
+                left: '53px',
+                top: '584px',
+                background: loading ? '#CCCCCC' : '#06C755',
+                border: '1px solid #E5E5E5',
+                borderRadius: '8px',
+                fontFamily: '"Noto Sans JP", sans-serif',
+                fontStyle: 'normal',
+                fontWeight: 700,
+                fontSize: '16px',
+                lineHeight: '24px',
+                textAlign: 'center',
+                color: '#FFFFFF',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1
+              }}
+            >
+              {loading ? '登録中...' : '新規登録'}
+            </button>
+          </form>
+
+          {/* またはセパレーター */}
+          <div style={{
+            position: 'absolute',
+            width: '256px',
+            height: '0px',
+            left: '69px',
+            top: '655.5px',
+            border: '1px solid #06C755'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '64px',
+            height: '16px',
+            left: '165px',
+            top: '648px',
+            background: '#FFFFFF'
+          }} />
+          <div style={{
+            position: 'absolute',
+            width: '64px',
+            height: '24px',
+            left: '165px',
+            top: '644px',
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 700,
+            fontSize: '16px',
+            lineHeight: '24px',
+            textAlign: 'center',
+            color: '#000000'
+          }}>
+            または
+          </div>
+
+          {/* 別の方法で新規登録ボタン */}
+          <button
+            onClick={() => {
+              setRegisterMethod(null)
+              setError('')
+              setRegisterEmail('')
+              setRegisterPassword('')
+              setRegisterPasswordConfirm('')
+            }}
+            style={{
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '16px 24px',
+              gap: '10px',
+              position: 'absolute',
+              width: '287px',
+              height: '47px',
+              left: '53.5px',
+              top: '684px',
+              background: '#FFFFFF',
+              border: '1px solid #E5E5E5',
+              borderRadius: '7.5px',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontStyle: 'normal',
+              fontWeight: 700,
+              fontSize: '16px',
+              lineHeight: '24px',
+              textAlign: 'center',
+              color: '#000000',
+              cursor: 'pointer'
+            }}
+          >
+            別の方法で新規登録
+          </button>
+        </>
+      )}
     </div>
   )
 }
