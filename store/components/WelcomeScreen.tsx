@@ -802,7 +802,7 @@ export default function WelcomeScreen() {
               lineHeight: '24px',
               color: '#999999'
             }}
-            placeholder="入力してください"
+            placeholder="メールアドレス"
           />
 
           {/* パスワード入力フィールド */}
@@ -833,7 +833,7 @@ export default function WelcomeScreen() {
               lineHeight: '24px',
               color: '#999999'
             }}
-            placeholder="入力してください"
+            placeholder="パスワード"
           />
 
           {/* ログインボタン */}
@@ -1312,7 +1312,7 @@ export default function WelcomeScreen() {
                 lineHeight: '24px',
                 color: registerEmail ? '#000000' : '#999999'
               }}
-              placeholder="入力してください"
+              placeholder="メールアドレス"
             />
 
             {/* パスワード入力フィールド */}
@@ -1344,7 +1344,7 @@ export default function WelcomeScreen() {
                 lineHeight: '24px',
                 color: registerPassword ? '#000000' : '#999999'
               }}
-              placeholder="入力してください"
+              placeholder="パスワード"
             />
 
             {/* 新規登録ボタン */}
