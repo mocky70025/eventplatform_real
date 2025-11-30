@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 
 type AuthMode = 'initial' | 'login' | 'register'
@@ -35,6 +35,11 @@ export default function WelcomeScreen() {
   const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  
+  // デバッグ用: 状態変化を監視
+  useEffect(() => {
+    console.log('[WelcomeScreen] State changed - authMode:', authMode, 'registerMethod:', registerMethod, 'loginMethod:', loginMethod)
+  }, [authMode, registerMethod, loginMethod])
 
   const handleGoogleLogin = async () => {
     try {
@@ -774,7 +779,9 @@ export default function WelcomeScreen() {
             type="button"
             onClick={() => {
               console.log('[WelcomeScreen] Email registration button clicked')
+              console.log('[WelcomeScreen] Current state - authMode:', authMode, 'registerMethod:', registerMethod)
               setRegisterMethod('email')
+              console.log('[WelcomeScreen] After setRegisterMethod - registerMethod should be email')
             }}
             disabled={loading}
             style={{
