@@ -150,7 +150,13 @@ export default function WelcomeScreen() {
       const appUrl = (process.env.NEXT_PUBLIC_ORGANIZER_URL || window.location.origin).replace(/\/$/, '')
       const redirectUrl = `${appUrl}/auth/verify-email`
       
-      console.log('[WelcomeScreen] Email registration - redirectUrl:', redirectUrl)
+      console.log('[WelcomeScreen] Attempting email registration:', {
+        email: registerEmail,
+        redirectUrl: redirectUrl,
+        appUrl: appUrl,
+        windowOrigin: window.location.origin,
+        timestamp: new Date().toISOString()
+      })
       
       const { data, error } = await supabase.auth.signUp({
         email: registerEmail,
@@ -158,6 +164,20 @@ export default function WelcomeScreen() {
         options: {
           emailRedirectTo: redirectUrl
         }
+      })
+
+      console.log('[WelcomeScreen] SignUp response:', {
+        hasUser: !!data.user,
+        userId: data.user?.id,
+        email: data.user?.email,
+        emailConfirmed: !!data.user?.email_confirmed_at,
+        hasSession: !!data.session,
+        timestamp: new Date().toISOString(),
+        error: error ? {
+          message: error.message,
+          status: error.status,
+          name: error.name
+        } : null
       })
 
       if (error) {

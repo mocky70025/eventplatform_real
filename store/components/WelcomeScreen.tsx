@@ -190,6 +190,14 @@ export default function WelcomeScreen() {
       console.log('[WelcomeScreen] Email registration - NEXT_PUBLIC_APP_URL:', process.env.NEXT_PUBLIC_APP_URL)
       console.log('[WelcomeScreen] Email registration - email:', registerEmail)
       
+      console.log('[WelcomeScreen] Attempting email registration:', {
+        email: registerEmail,
+        redirectUrl: redirectUrl,
+        appUrl: appUrl,
+        windowOrigin: window.location.origin,
+        timestamp: new Date().toISOString()
+      })
+
       const { data, error } = await supabase.auth.signUp({
         email: registerEmail,
         password: registerPassword,
@@ -204,6 +212,7 @@ export default function WelcomeScreen() {
         email: data.user?.email,
         emailConfirmed: !!data.user?.email_confirmed_at,
         hasSession: !!data.session,
+        timestamp: new Date().toISOString(),
         error: error ? {
           message: error.message,
           status: error.status,
