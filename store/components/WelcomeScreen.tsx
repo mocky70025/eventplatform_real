@@ -55,8 +55,6 @@ export default function WelcomeScreen() {
   const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null)
-  const [isAnimating, setIsAnimating] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
   // 画面サイズを検出
@@ -77,35 +75,21 @@ export default function WelcomeScreen() {
   // アニメーション状態の管理はhandleNavigateToRegister/Login内で行う
 
   const handleNavigateToRegister = () => {
-    if (isAnimating) return // アニメーション中は無効化
-    setIsAnimating(true)
-    setSlideDirection('right')
     // 状態をクリア
     setLoginMethod(null)
     setRegisterMethod(null)
     setError('')
-    // アニメーション完了後に状態を変更
-    setTimeout(() => {
-      setAuthMode('register')
-      setIsAnimating(false)
-      setSlideDirection(null)
-    }, isDesktop ? 400 : 300) // アニメーション時間に合わせる
+    // 即座に状態を変更
+    setAuthMode('register')
   }
 
   const handleNavigateToLogin = () => {
-    if (isAnimating) return // アニメーション中は無効化
-    setIsAnimating(true)
-    setSlideDirection('left')
     // 状態をクリア
     setLoginMethod(null)
     setRegisterMethod(null)
     setError('')
-    // アニメーション完了後に状態を変更
-    setTimeout(() => {
-      setAuthMode('initial')
-      setIsAnimating(false)
-      setSlideDirection(null)
-    }, isDesktop ? 400 : 300) // アニメーション時間に合わせる
+    // 即座に状態を変更
+    setAuthMode('initial')
   }
 
   const handleLineLogin = () => {
@@ -381,17 +365,11 @@ export default function WelcomeScreen() {
       </div>
 
       {/* 初期画面：ログイン or 新規登録を選択 */}
-      {(authMode === 'initial' || (isAnimating && slideDirection === 'left')) && !loginMethod && !registerMethod && (
+      {authMode === 'initial' && !loginMethod && !registerMethod && (
         <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
+          position: 'relative',
           width: '100%',
-          height: '100%',
-          transform: slideDirection === 'right' && isAnimating ? 'translateX(-100%)' : slideDirection === 'left' && isAnimating && authMode !== 'initial' ? 'translateX(-100%)' : slideDirection === 'left' && isAnimating && authMode === 'initial' ? 'translateX(0)' : authMode === 'initial' ? 'translateX(0)' : 'translateX(-100%)',
-          transition: `transform ${isDesktop ? '0.4s' : '0.3s'} cubic-bezier(0.4, 0, 0.2, 1)`,
-          pointerEvents: isAnimating && slideDirection === 'right' ? 'none' : 'auto',
-          zIndex: authMode === 'initial' ? 10 : isAnimating ? 5 : 1
+          height: '100%'
         }}>
           {/* ログインセクション */}
           <div style={{
@@ -603,7 +581,7 @@ export default function WelcomeScreen() {
           width: '100%',
           height: '100%',
           zIndex: 20,
-          pointerEvents: isAnimating ? 'none' : 'auto'
+          pointerEvents: 'auto'
         }}>
           {/* ログインセクション */}
           <div style={{
@@ -823,7 +801,7 @@ export default function WelcomeScreen() {
           width: '100%',
           height: '100%',
           zIndex: 30,
-          pointerEvents: isAnimating ? 'none' : 'auto'
+          pointerEvents: 'auto'
         }}>
           {/* ログインセクション */}
           <div style={{
@@ -1050,17 +1028,11 @@ export default function WelcomeScreen() {
       )}
 
       {/* 新規登録方法選択 */}
-      {(authMode === 'register' || (isAnimating && slideDirection === 'right')) && !registerMethod && !loginMethod && (
+      {authMode === 'register' && !registerMethod && !loginMethod && (
         <div style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
+          position: 'relative',
           width: '100%',
-          height: '100%',
-          transform: slideDirection === 'left' && isAnimating ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode !== 'register' ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode === 'register' ? 'translateX(0)' : authMode === 'register' ? 'translateX(0)' : 'translateX(100%)',
-          transition: `transform ${isDesktop ? '0.4s' : '0.3s'} cubic-bezier(0.4, 0, 0.2, 1)`,
-          pointerEvents: isAnimating && slideDirection === 'left' ? 'none' : 'auto',
-          zIndex: authMode === 'register' ? 10 : isAnimating ? 5 : 1
+          height: '100%'
         }}>
           {/* 新規登録セクション */}
           <div style={{
@@ -1285,7 +1257,7 @@ export default function WelcomeScreen() {
           width: '100%',
           height: '100%',
           zIndex: 30,
-          pointerEvents: isAnimating ? 'none' : 'auto'
+          pointerEvents: 'auto'
         }}>
           {/* タイトル */}
           <div style={{
