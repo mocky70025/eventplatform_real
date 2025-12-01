@@ -69,7 +69,7 @@ export default function WelcomeScreen() {
       setAuthMode('register')
       setIsAnimating(false)
       setSlideDirection(null)
-    }, 300) // アニメーション時間に合わせる
+    }, isDesktop ? 400 : 300) // アニメーション時間に合わせる
   }
 
   const handleNavigateToLogin = () => {
@@ -85,7 +85,7 @@ export default function WelcomeScreen() {
       setAuthMode('initial')
       setIsAnimating(false)
       setSlideDirection(null)
-    }, 300) // アニメーション時間に合わせる
+    }, isDesktop ? 400 : 300) // アニメーション時間に合わせる
   }
 
   const handleGoogleLogin = async () => {
@@ -294,7 +294,7 @@ export default function WelcomeScreen() {
           width: '100%',
           height: '100%',
           transform: slideDirection === 'right' && isAnimating ? 'translateX(-100%)' : slideDirection === 'left' && isAnimating && authMode !== 'initial' ? 'translateX(-100%)' : slideDirection === 'left' && isAnimating && authMode === 'initial' ? 'translateX(0)' : authMode === 'initial' ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.3s ease-in-out',
+          transition: `transform ${isDesktop ? '0.4s' : '0.3s'} cubic-bezier(0.4, 0, 0.2, 1)`,
           pointerEvents: isAnimating && slideDirection === 'right' ? 'none' : 'auto',
           zIndex: authMode === 'initial' ? 10 : isAnimating ? 5 : 1
         }}>
@@ -884,7 +884,7 @@ export default function WelcomeScreen() {
           width: '100%',
           height: '100%',
           transform: slideDirection === 'left' && isAnimating ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode !== 'register' ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode === 'register' ? 'translateX(0)' : authMode === 'register' ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.3s ease-in-out',
+          transition: `transform ${isDesktop ? '0.4s' : '0.3s'} cubic-bezier(0.4, 0, 0.2, 1)`,
           pointerEvents: isAnimating && slideDirection === 'left' ? 'none' : 'auto',
           zIndex: authMode === 'register' ? 10 : isAnimating ? 5 : 1
         }}>
