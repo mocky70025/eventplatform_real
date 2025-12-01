@@ -266,7 +266,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   })
 
   const labelStyle = {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '14px',
     fontWeight: 500,
     lineHeight: '120%',
@@ -276,7 +276,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   }
 
   const inputStyle = (hasValue: boolean) => ({
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     lineHeight: '150%',
     color: hasValue ? '#000000' : '#6B6B6B',
@@ -564,7 +564,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             style={{
               left: '8px',
               transform: 'translateX(-50%)',
-              fontFamily: 'Inter, sans-serif'
+              fontFamily: '"Noto Sans JP", sans-serif'
             }}
           >
             情報登録
@@ -575,7 +575,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             style={{
               left: '125px',
               transform: 'translateX(-50%)',
-              fontFamily: 'Inter, sans-serif'
+              fontFamily: '"Noto Sans JP", sans-serif'
             }}
           >
             情報確認
@@ -586,7 +586,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             style={{
               left: '242.5px',
               transform: 'translateX(-50%)',
-              fontFamily: 'Inter, sans-serif'
+              fontFamily: '"Noto Sans JP", sans-serif'
             }}
           >
             登録完了
@@ -599,10 +599,17 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   // 利用規約ページ
   if (showTermsPage) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
           <h2 style={{ 
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '20px',
             fontWeight: 700,
             lineHeight: '120%',
@@ -623,7 +630,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             minHeight: '400px'
           }}>
             <p style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#666666'
@@ -646,7 +653,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               background: '#06C755',
               borderRadius: '8px',
               border: 'none',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               fontWeight: 700,
               lineHeight: '19px',
@@ -663,12 +670,19 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   }
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: '393px',
+      minHeight: '852px',
+      margin: '0 auto',
+      background: '#FFFFFF'
+    }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <ProgressIndicator />
         
         <h2 style={{ 
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: '"Noto Sans JP", sans-serif',
           fontSize: '20px',
           fontWeight: 700,
           lineHeight: '120%',
@@ -757,7 +771,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                         }}
                       />
                       <span style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '16px',
                         lineHeight: '150%',
                         color: '#000000'
@@ -910,7 +924,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 setShowTermsPage(true)
               }}
               style={{
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '16px',
                 lineHeight: '150%',
                 color: '#06C755',
@@ -930,7 +944,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               </svg>
             </span>
             <span style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#000000'
@@ -960,7 +974,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             background: termsAccepted && !loading ? '#06C755' : '#D9D9D9',
             borderRadius: '8px',
             border: 'none',
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             fontWeight: 700,
             lineHeight: '19px',

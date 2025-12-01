@@ -312,7 +312,17 @@ export default function EventApplications({ eventId, eventName, organizerId, org
 
   if (loading) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '48px',
@@ -324,7 +334,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             margin: '0 auto 16px'
           }}></div>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             lineHeight: '150%',
             color: '#666666'
@@ -336,15 +346,22 @@ export default function EventApplications({ eventId, eventName, organizerId, org
 
   if (selectedExhibitor) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
             <button
               onClick={() => setSelectedExhibitor(null)}
               style={{
                 background: 'transparent',
                 border: 'none',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '16px',
                 lineHeight: '150%',
                 color: '#06C755',
@@ -357,7 +374,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               ← 戻る
             </button>
             <h1 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '20px',
               fontWeight: 700,
               lineHeight: '120%',
@@ -374,7 +391,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             marginBottom: '16px'
           }}>
             <h2 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '18px',
               fontWeight: 700,
               lineHeight: '120%',
@@ -385,14 +402,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <div>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   lineHeight: '120%',
                   color: '#666666',
                   marginBottom: '4px'
                 }}>名前</p>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '120%',
                   color: '#000000'
@@ -401,14 +418,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               
               <div>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   lineHeight: '120%',
                   color: '#666666',
                   marginBottom: '4px'
                 }}>性別</p>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '120%',
                   color: '#000000'
@@ -417,14 +434,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               
               <div>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   lineHeight: '120%',
                   color: '#666666',
                   marginBottom: '4px'
                 }}>年齢</p>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '120%',
                   color: '#000000'
@@ -433,14 +450,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               
               <div>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   lineHeight: '120%',
                   color: '#666666',
                   marginBottom: '4px'
                 }}>電話番号</p>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '120%',
                   color: '#000000'
@@ -449,14 +466,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               
               <div>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   lineHeight: '120%',
                   color: '#666666',
                   marginBottom: '4px'
                 }}>メールアドレス</p>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '120%',
                   color: '#000000'
@@ -466,14 +483,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.genre_category && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
                     marginBottom: '4px'
                   }}>ジャンルカテゴリ</p>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '16px',
                     lineHeight: '120%',
                     color: '#000000'
@@ -484,14 +501,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.genre_free_text && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
                     marginBottom: '4px'
                   }}>ジャンル自由回答</p>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '16px',
                     lineHeight: '120%',
                     color: '#000000'
@@ -509,7 +526,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             marginBottom: '16px'
           }}>
             <h2 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '18px',
               fontWeight: 700,
               lineHeight: '120%',
@@ -521,7 +538,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.business_license_image_url && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -542,7 +559,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.vehicle_inspection_image_url && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -563,7 +580,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.automobile_inspection_image_url && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -584,7 +601,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.pl_insurance_image_url && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -605,7 +622,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
               {selectedExhibitor.fire_equipment_layout_image_url && (
                 <div>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -629,7 +646,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                !selectedExhibitor.pl_insurance_image_url && 
                !selectedExhibitor.fire_equipment_layout_image_url && (
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   lineHeight: '120%',
                   color: '#666666'
@@ -643,15 +660,22 @@ export default function EventApplications({ eventId, eventName, organizerId, org
   }
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: '393px',
+      minHeight: '852px',
+      margin: '0 auto',
+      background: '#FFFFFF'
+    }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
           <button
             onClick={onBack}
             style={{
               background: 'transparent',
               border: 'none',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#06C755',
@@ -664,7 +688,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             ← 戻る
           </button>
           <h1 style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '20px',
             fontWeight: 700,
             lineHeight: '120%',
@@ -675,7 +699,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
 
         <div style={{ marginBottom: '16px' }}>
           <h2 style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '18px',
             fontWeight: 700,
             lineHeight: '120%',
@@ -684,7 +708,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
           }}>{eventName}</h2>
           {isApplicationClosed && (
             <p style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '14px',
               lineHeight: '120%',
               color: '#666666',
@@ -708,7 +732,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                 color: '#FFFFFF',
                 borderRadius: '8px',
                 border: 'none',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '16px',
                 fontWeight: 700,
                 lineHeight: '19px',
@@ -729,7 +753,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             textAlign: 'center'
           }}>
             <p style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#666666'
@@ -752,7 +776,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                     <div>
                       <h3 style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '18px',
                         fontWeight: 700,
                         lineHeight: '120%',
@@ -762,14 +786,14 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                         {application.exhibitor.name}
                       </h3>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666',
                         marginBottom: '4px'
                       }}>{application.exhibitor.email}</p>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666'
@@ -778,7 +802,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                     <span style={{
                       padding: '4px 12px',
                       borderRadius: '12px',
-                      fontFamily: 'Inter, sans-serif',
+                      fontFamily: '"Noto Sans JP", sans-serif',
                       fontSize: '12px',
                       fontWeight: 500,
                       lineHeight: '120%',
@@ -790,7 +814,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                   </div>
 
                   <div style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -806,11 +830,11 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                       style={{
                         width: '100%',
                         padding: '12px 16px',
-                        background: '#F7F7F7',
+                        background: '#FFFFFF',
                         color: '#000000',
                         borderRadius: '8px',
                         border: '1px solid #E5E5E5',
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '16px',
                         fontWeight: 500,
                         lineHeight: '19px',
@@ -831,7 +855,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                             color: '#FFFFFF',
                             borderRadius: '8px',
                             border: 'none',
-                            fontFamily: 'Inter, sans-serif',
+                            fontFamily: '"Noto Sans JP", sans-serif',
                             fontSize: '16px',
                             fontWeight: 700,
                             lineHeight: '19px',
@@ -849,7 +873,7 @@ export default function EventApplications({ eventId, eventName, organizerId, org
                             color: '#FFFFFF',
                             borderRadius: '8px',
                             border: 'none',
-                            fontFamily: 'Inter, sans-serif',
+                            fontFamily: '"Noto Sans JP", sans-serif',
                             fontSize: '16px',
                             fontWeight: 700,
                             lineHeight: '19px',

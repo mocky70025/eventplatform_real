@@ -421,7 +421,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     border: '1px solid #E5E5E5',
     background: '#FFFFFF',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     fontWeight: 700,
     lineHeight: '120%',
@@ -454,7 +454,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   }
 
   const searchLabelStyle = {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '14px',
     fontWeight: 500,
     lineHeight: '120%',
@@ -473,7 +473,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     minHeight: '48px',
     border: '1px solid #E5E5E5',
     borderRadius: '8px',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     lineHeight: '150%',
     color: '#000000',
@@ -524,7 +524,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   }
 
   const rangeSeparatorStyle = {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     fontWeight: 700,
     color: '#666666',
@@ -540,7 +540,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     border: 'none',
     outline: 'none',
     background: 'transparent',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     lineHeight: '150%',
     color: '#000000'
@@ -554,7 +554,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     height: '56px',
     border: '1px solid #E5E5E5',
     borderRadius: '8px',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     lineHeight: '150%',
     color: '#000000',
@@ -573,7 +573,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     borderRadius: '8px',
     border: '1px solid #E5E5E5',
     background: '#FFFFFF',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     fontWeight: 600,
     lineHeight: '19px',
@@ -587,7 +587,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     borderRadius: '8px',
     border: 'none',
     background: '#06C755',
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
     fontWeight: 700,
     lineHeight: '19px',
@@ -597,7 +597,17 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   if (loading) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '48px',
@@ -609,7 +619,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
             margin: '0 auto 16px'
           }}></div>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             lineHeight: '150%',
             color: '#666666'
@@ -621,15 +631,22 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   if (selectedEvent) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
             <button
               onClick={() => setSelectedEvent(null)}
               style={{
                 background: 'transparent',
                 border: 'none',
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '16px',
                 lineHeight: '150%',
                 color: '#06C755',
@@ -642,7 +659,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
               ← 戻る
             </button>
             <h1 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '20px',
               fontWeight: 700,
               lineHeight: '120%',
@@ -668,12 +685,12 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     height: '200px',
                     objectFit: 'contain',
                     borderRadius: '8px',
-                    background: '#F7F7F7'
+                    background: '#FFFFFF'
                   }}
                 />
                 {selectedEvent.main_image_caption && (
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -686,7 +703,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
                 <h2 style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '20px',
                   fontWeight: 700,
                   lineHeight: '120%',
@@ -694,7 +711,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                   marginBottom: '8px'
                 }}>{selectedEvent.event_name}</h2>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#666666'
@@ -704,7 +721,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <label style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -713,7 +730,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     display: 'block'
                   }}>ジャンル</label>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '16px',
                     lineHeight: '150%',
                     color: '#000000'
@@ -722,7 +739,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
                 <div>
                   <label style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -731,7 +748,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     display: 'block'
                   }}>開催期間</label>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '16px',
                     lineHeight: '150%',
                     color: '#000000'
@@ -742,7 +759,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
                 <div>
                   <label style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -751,7 +768,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     display: 'block'
                   }}>開催時間</label>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '16px',
                     lineHeight: '150%',
                     color: '#000000'
@@ -760,7 +777,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
                 <div>
                   <label style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -769,14 +786,14 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     display: 'block'
                   }}>会場</label>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '16px',
                     lineHeight: '150%',
                     color: '#000000'
                   }}>{selectedEvent.venue_name}</p>
                   {selectedEvent.venue_city && (
                     <p style={{
-                      fontFamily: 'Inter, sans-serif',
+                      fontFamily: '"Noto Sans JP", sans-serif',
                       fontSize: '14px',
                       lineHeight: '120%',
                       color: '#666666',
@@ -788,7 +805,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -797,7 +814,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                   display: 'block'
                 }}>リード文</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#000000'
@@ -806,7 +823,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -815,7 +832,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                   display: 'block'
                 }}>イベント説明</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#000000'
@@ -825,7 +842,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
               {selectedEvent.homepage_url && (
                 <div>
                   <label style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -838,7 +855,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
-                      fontFamily: 'Inter, sans-serif',
+                      fontFamily: '"Noto Sans JP", sans-serif',
                       fontSize: '16px',
                       lineHeight: '150%',
                       color: '#06C755',
@@ -867,7 +884,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                   background: '#06C755',
                   borderRadius: '8px',
                   border: 'none',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 700,
                   lineHeight: '19px',
@@ -888,7 +905,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     const backButtonStyle = {
       background: 'transparent',
       border: 'none',
-      fontFamily: 'Inter, sans-serif',
+      fontFamily: '"Noto Sans JP", sans-serif',
       fontSize: '16px',
       lineHeight: '150%',
       color: '#06C755',
@@ -899,8 +916,15 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
     }
 
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
             <button
               type="button"
@@ -910,7 +934,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
               ← 戻る
             </button>
             <h1 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '20px',
               fontWeight: 700,
               lineHeight: '120%',
@@ -1016,8 +1040,15 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   return (
     <>
-      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <div style={searchEntryWrapperStyle}>
           <button
             type="button"
@@ -1035,7 +1066,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
         <div style={{ marginBottom: '24px' }}>
           <h1 style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '20px',
             fontWeight: 700,
             lineHeight: '120%',
@@ -1053,7 +1084,7 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
             textAlign: 'center'
           }}>
             <p style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#666666'
@@ -1083,13 +1114,13 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                       width: '100%',
                       height: '200px',
                       objectFit: 'contain',
-                      background: '#F7F7F7'
+                      background: '#FFFFFF'
                     }}
                   />
                 )}
                 <div style={{ padding: '16px' }}>
                   <h3 style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '18px',
                     fontWeight: 700,
                     lineHeight: '120%',
@@ -1097,14 +1128,14 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     marginBottom: '8px'
                   }}>{event.event_name}</h3>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
                     marginBottom: '8px'
                   }}>{event.genre}</p>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
@@ -1113,14 +1144,14 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
                     {formatDate(event.event_start_date)} 〜 {formatDate(event.event_end_date)}
                   </p>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#666666',
                     marginBottom: '8px'
                   }}>{event.venue_name}</p>
                   <p style={{
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     lineHeight: '120%',
                     color: '#000000',

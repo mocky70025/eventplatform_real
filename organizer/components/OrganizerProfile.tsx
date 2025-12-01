@@ -92,7 +92,17 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
   if (loading) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '48px',
@@ -104,7 +114,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
             margin: '0 auto 16px'
           }}></div>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             lineHeight: '150%',
             color: '#666666'
@@ -126,12 +136,19 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
   }
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: '393px',
+      minHeight: '852px',
+      margin: '0 auto',
+      background: '#FFFFFF'
+    }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
           <div style={{ width: '60px' }}></div>
           <h1 style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '20px',
             fontWeight: 700,
             lineHeight: '120%',
@@ -146,7 +163,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
               color: '#FFFFFF',
               borderRadius: '8px',
               border: 'none',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '14px',
               fontWeight: 500,
               lineHeight: '120%',
@@ -167,7 +184,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
             textAlign: 'center'
           }}>
             <p style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#666666'
@@ -184,7 +201,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -193,7 +210,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>会社名</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -203,7 +220,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -212,7 +229,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>お名前</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -222,7 +239,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -231,7 +248,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>性別</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -241,7 +258,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -250,7 +267,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>年齢</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -260,7 +277,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -269,7 +286,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>電話番号</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -279,7 +296,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -288,7 +305,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>メールアドレス</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -298,7 +315,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -307,7 +324,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>承認状態</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -317,7 +334,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -326,7 +343,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>登録日時</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#000000'
@@ -337,7 +354,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -346,7 +363,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
                   display: 'block'
                 }}>最終更新日時</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#000000'
@@ -396,7 +413,7 @@ export default function OrganizerProfile({ userProfile }: OrganizerProfileProps)
               color: '#FFFFFF',
               borderRadius: '8px',
               border: 'none',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               fontWeight: 600,
               lineHeight: '120%',

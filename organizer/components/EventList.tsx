@@ -44,7 +44,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
         textAlign: 'center'
       }}>
         <p style={{
-          fontFamily: 'Inter, sans-serif',
+          fontFamily: '"Noto Sans JP", sans-serif',
           fontSize: '16px',
           lineHeight: '150%',
           color: '#666666'
@@ -84,7 +84,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
                     width: '100%',
                     height: '100%',
                     objectFit: 'contain',
-                    background: '#F7F7F7'
+                    background: '#FFFFFF'
                   }}
                 />
               </div>
@@ -92,7 +92,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
             
             <div style={{ padding: '16px' }}>
               <h3 style={{
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '18px',
                 fontWeight: 700,
                 lineHeight: '120%',
@@ -103,7 +103,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
               </h3>
               
               <div style={{
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '14px',
                 lineHeight: '120%',
                 color: '#666666',
@@ -118,7 +118,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
               </div>
 
               <p style={{
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: '"Noto Sans JP", sans-serif',
                 fontSize: '14px',
                 lineHeight: '120%',
                 color: '#000000',
@@ -129,7 +129,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
 
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                 <div style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '12px',
                   lineHeight: '120%',
                   color: '#999999'
@@ -139,7 +139,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
                 <span style={{
                   padding: '4px 12px',
                   borderRadius: '12px',
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '12px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -159,7 +159,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
                     color: '#FFFFFF',
                     borderRadius: '8px',
                     border: 'none',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -176,7 +176,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
                     color: '#FFFFFF',
                     borderRadius: '8px',
                     border: 'none',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -194,7 +194,7 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
                     color: '#FFFFFF',
                     borderRadius: '8px',
                     border: 'none',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',

@@ -152,7 +152,17 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   if (loading) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '48px',
@@ -164,7 +174,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
             margin: '0 auto 16px'
           }}></div>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             lineHeight: '150%',
             color: '#666666'
@@ -176,10 +186,20 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   if (!organizer) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <div style={{ textAlign: 'center' }}>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             lineHeight: '150%',
             color: '#666666'
@@ -191,8 +211,15 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
 
   if (!organizer.is_approved) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
           <div style={{
             background: '#FFF9E6',
             border: '1px solid #F5D76E',
@@ -202,7 +229,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
             marginTop: '24px'
           }}>
             <h2 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '18px',
               fontWeight: 700,
               lineHeight: '120%',
@@ -212,7 +239,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
               承認待ち
             </h2>
             <p style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
               color: '#B8860B'
@@ -256,11 +283,18 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     switch (currentView) {
       case 'events':
         return (
-          <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-            <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px', paddingBottom: '24px' }}>
+          <div style={{ 
+            position: 'relative',
+            width: '100%',
+            maxWidth: '393px',
+            minHeight: '852px',
+            margin: '0 auto',
+            background: '#FFFFFF'
+          }}>
+            <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px', paddingBottom: '24px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
                 <h1 style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '20px',
                   fontWeight: 700,
                   lineHeight: '120%',
@@ -274,7 +308,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                     color: '#FFFFFF',
                     borderRadius: '8px',
                     border: 'none',
-                    fontFamily: 'Inter, sans-serif',
+                    fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
                     lineHeight: '120%',
@@ -348,7 +382,15 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   ]
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh', paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)' }}>
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: '393px',
+      minHeight: '852px',
+      margin: '0 auto',
+      background: '#FFFFFF',
+      paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)'
+    }}>
       {renderCurrentView()}
 
       <nav
@@ -393,7 +435,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   alignItems: 'center',
                   gap: '4px',
                   cursor: 'pointer',
-                  fontFamily: 'Inter, sans-serif'
+                  fontFamily: '"Noto Sans JP", sans-serif'
                 }}
               >
                 <span style={{ color: isActive ? activeColor : inactiveColor, position: 'relative' }}>
@@ -408,7 +450,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                       borderRadius: '50%',
                       background: '#FF3B30',
                       color: '#FFFFFF',
-                      fontFamily: 'Inter, sans-serif',
+                      fontFamily: '"Noto Sans JP", sans-serif',
                       fontSize: '10px',
                       fontWeight: 600,
                       display: 'flex',

@@ -112,7 +112,17 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
   if (loading) {
     return (
-      <div style={{ background: '#F7F7F7', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        minHeight: '852px',
+        margin: '0 auto',
+        background: '#FFFFFF',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{
             width: '48px',
@@ -124,7 +134,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
             margin: '0 auto 16px'
           }}></div>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
             lineHeight: '150%',
             color: '#666666'
@@ -146,12 +156,19 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
   }
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: '393px',
+      minHeight: '852px',
+      margin: '0 auto',
+      background: '#FFFFFF'
+    }}>
+      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
           <div style={{ width: '60px' }}></div>
           <h1 style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '20px',
             fontWeight: 700,
             lineHeight: '120%',
@@ -166,7 +183,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
               color: '#FFFFFF',
               borderRadius: '8px',
               border: 'none',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '14px',
               fontWeight: 500,
               lineHeight: '120%',
@@ -188,7 +205,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -197,7 +214,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>お名前</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -207,7 +224,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -216,7 +233,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>性別</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -226,7 +243,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -235,7 +252,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>年齢</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -245,7 +262,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -254,7 +271,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>電話番号</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -264,7 +281,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -273,7 +290,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>メールアドレス</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -283,7 +300,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -292,7 +309,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>ジャンル</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -302,7 +319,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -311,7 +328,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>ジャンル詳細</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   fontWeight: 600,
                   lineHeight: '150%',
@@ -322,7 +339,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
               {/* 書類画像の表示 */}
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -334,7 +351,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   {getImageUrl(exhibitorData.business_license_image_url) && (
                     <div>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666',
@@ -352,7 +369,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                           height: '200px',
                           objectFit: 'contain',
                           borderRadius: '8px',
-                          background: '#F7F7F7',
+                          background: '#FFFFFF',
                           border: '1px solid #E5E5E5'
                         }}
                       />
@@ -361,7 +378,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   {getImageUrl(exhibitorData.vehicle_inspection_image_url) && (
                     <div>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666',
@@ -379,7 +396,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                           height: '200px',
                           objectFit: 'contain',
                           borderRadius: '8px',
-                          background: '#F7F7F7',
+                          background: '#FFFFFF',
                           border: '1px solid #E5E5E5'
                         }}
                       />
@@ -388,7 +405,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   {getImageUrl(exhibitorData.automobile_inspection_image_url) && (
                     <div>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666',
@@ -406,7 +423,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                           height: '200px',
                           objectFit: 'contain',
                           borderRadius: '8px',
-                          background: '#F7F7F7',
+                          background: '#FFFFFF',
                           border: '1px solid #E5E5E5'
                         }}
                       />
@@ -415,7 +432,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   {getImageUrl(exhibitorData.pl_insurance_image_url) && (
                     <div>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666',
@@ -433,7 +450,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                           height: '200px',
                           objectFit: 'contain',
                           borderRadius: '8px',
-                          background: '#F7F7F7',
+                          background: '#FFFFFF',
                           border: '1px solid #E5E5E5'
                         }}
                       />
@@ -442,7 +459,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   {getImageUrl(exhibitorData.fire_equipment_layout_image_url) && (
                     <div>
                       <p style={{
-                        fontFamily: 'Inter, sans-serif',
+                        fontFamily: '"Noto Sans JP", sans-serif',
                         fontSize: '14px',
                         lineHeight: '120%',
                         color: '#666666',
@@ -460,7 +477,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                           height: '200px',
                           objectFit: 'contain',
                           borderRadius: '8px',
-                          background: '#F7F7F7',
+                          background: '#FFFFFF',
                           border: '1px solid #E5E5E5'
                         }}
                       />
@@ -471,7 +488,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -480,7 +497,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>登録日時</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#000000'
@@ -491,7 +508,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
               <div>
                 <label style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '14px',
                   fontWeight: 500,
                   lineHeight: '120%',
@@ -500,7 +517,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                   display: 'block'
                 }}>最終更新日時</label>
                 <p style={{
-                  fontFamily: 'Inter, sans-serif',
+                  fontFamily: '"Noto Sans JP", sans-serif',
                   fontSize: '16px',
                   lineHeight: '150%',
                   color: '#000000'
@@ -550,7 +567,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
               color: '#FFFFFF',
               borderRadius: '8px',
               border: 'none',
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               fontWeight: 600,
               lineHeight: '120%',
