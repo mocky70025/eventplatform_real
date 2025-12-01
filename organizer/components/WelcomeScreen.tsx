@@ -477,17 +477,17 @@ export default function WelcomeScreen() {
       )}
 
       {/* ログイン方法選択 */}
-      {((authMode === 'login' && !loginMethod) || (isAnimating && slideDirection === 'right' && loginMethod === 'email')) && (
+      {((authMode === 'login' && !loginMethod) || (isAnimating && slideDirection === 'left' && authMode !== 'login')) && (
         <div style={{
           position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          transform: (slideDirection === 'right' && isAnimating && loginMethod === 'email') ? 'translateX(-100%)' : (authMode === 'login' && !loginMethod) ? 'translateX(0)' : 'translateX(-100%)',
+          transform: (slideDirection === 'left' && isAnimating) ? 'translateX(0)' : (authMode === 'login' && !loginMethod) ? 'translateX(0)' : 'translateX(-100%)',
           transition: 'transform 0.3s ease-in-out',
-          zIndex: (authMode === 'login' && !loginMethod) ? 20 : isAnimating ? 5 : 1,
-          pointerEvents: (isAnimating && slideDirection === 'right') ? 'none' : 'auto'
+          zIndex: (authMode === 'login' && !loginMethod) ? 20 : isAnimating ? 15 : 1,
+          pointerEvents: (isAnimating && slideDirection === 'left') ? 'none' : 'auto'
         }}>
           {/* ログインセクション */}
           <div style={{
