@@ -72,8 +72,6 @@ export default function WelcomeScreen() {
     console.log('[WelcomeScreen] State changed - authMode:', authMode, 'registerMethod:', registerMethod, 'loginMethod:', loginMethod)
   }, [authMode, registerMethod, loginMethod])
 
-  // アニメーション状態の管理はhandleNavigateToRegister/Login内で行う
-
   const handleNavigateToRegister = () => {
     // 状態をクリア
     setLoginMethod(null)
