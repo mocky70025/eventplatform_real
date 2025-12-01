@@ -1030,7 +1030,7 @@ export default function WelcomeScreen() {
           left: 0,
           width: '100%',
           height: '100%',
-          transform: slideDirection === 'left' && isAnimating ? 'translateX(-100%)' : slideDirection === 'right' && isAnimating && authMode !== 'register' ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode === 'register' ? 'translateX(0)' : authMode === 'register' ? 'translateX(0)' : 'translateX(100%)',
+          transform: slideDirection === 'left' && isAnimating ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode !== 'register' ? 'translateX(100%)' : slideDirection === 'right' && isAnimating && authMode === 'register' ? 'translateX(0)' : authMode === 'register' ? 'translateX(0)' : 'translateX(100%)',
           transition: 'transform 0.3s ease-in-out',
           pointerEvents: isAnimating && slideDirection === 'left' ? 'none' : 'auto',
           zIndex: authMode === 'register' ? 10 : isAnimating ? 5 : 1
