@@ -858,7 +858,7 @@ export default function WelcomeScreen() {
               fontWeight: 400,
               fontSize: '16px',
               lineHeight: '24px',
-              color: '#999999'
+              color: email ? '#000000' : '#999999'
             }}
             placeholder="メールアドレス"
           />
@@ -889,7 +889,7 @@ export default function WelcomeScreen() {
               fontWeight: 400,
               fontSize: '16px',
               lineHeight: '24px',
-              color: '#999999'
+              color: password ? '#000000' : '#999999'
             }}
             placeholder="パスワード"
           />
