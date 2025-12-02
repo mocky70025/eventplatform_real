@@ -442,6 +442,13 @@ export default function EventApplications({ eventId, eventName, organizerId, org
       }
 
       setSelectedExhibitor(exhibitor)
+      // 出店者詳細を開くときに期限確認の状態をリセット
+      setLicenseVerificationStatus({
+        verifying: false,
+        result: null,
+        expirationDate: null,
+        reason: null
+      })
     } catch (error: any) {
       console.error('Failed to fetch exhibitor detail:', error)
       alert(`出店者情報の取得に失敗しました: ${error.message}`)

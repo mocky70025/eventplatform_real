@@ -89,6 +89,17 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [hasViewedTerms, setHasViewedTerms] = useState(false)
   const [draftLoaded, setDraftLoaded] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [licenseVerificationStatus, setLicenseVerificationStatus] = useState<{
+    verifying: boolean
+    result: 'yes' | 'no' | null
+    expirationDate: string | null
+    reason: string | null
+  }>({
+    verifying: false,
+    result: null,
+    expirationDate: null,
+    reason: null
+  })
 
   // 画面サイズを検出
   useEffect(() => {
@@ -409,6 +420,55 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
   const handleBack = () => {
     setCurrentStep(1)
+  }
+
+  const verifyBusinessLicense = async (imageUrl: string) => {
+    setLicenseVerificationStatus({
+      verifying: true,
+      result: null,
+      expirationDate: null,
+      reason: null
+    })
+
+    try {
+      const response = await fetch('/api/events/verify-business-license', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageUrl
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to verify business license')
+      }
+
+      const data = await response.json()
+      
+      setLicenseVerificationStatus({
+        verifying: false,
+        result: data.result,
+        expirationDate: data.expirationDate,
+        reason: data.reason
+      })
+
+      // 期限切れの場合は警告を表示（登録は可能）
+      if (data.result === 'no') {
+        alert('⚠️ 営業許可証の期限が切れています。\n\n登録は可能ですが、期限切れの営業許可証ではイベントへの出店ができない場合があります。\n\n営業許可証の更新をお願いします。')
+      }
+    } catch (error: any) {
+      console.error('Failed to verify business license:', error)
+      // エラー時は警告を表示しない（登録は可能）
+      setLicenseVerificationStatus({
+        verifying: false,
+        result: null,
+        expirationDate: null,
+        reason: null
+      })
+    }
   }
 
   const handleSubmit = async () => {
@@ -853,26 +913,92 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 書類アップロード */}
-            <ImageUpload
-              label="営業許可証"
-              documentType="business_license"
-              userId={userProfile.userId}
-              currentImageUrl={documentUrls.business_license}
-              onUploadComplete={(url) => {
-                console.log('[RegistrationForm] business_license upload complete, URL:', url)
-                setDocumentUrls(prev => {
-                  const updated = { ...prev, business_license: url }
-                  console.log('[RegistrationForm] Updated documentUrls:', updated)
-                  return updated
-                })
-                if (errors.business_license) setErrors({ ...errors, business_license: false })
-              }}
-              onUploadError={(error) => alert(error)}
-              onImageDelete={() => {
-                setDocumentUrls(prev => ({ ...prev, business_license: '' }))
-              }}
-              hasError={errors.business_license}
-            />
+            <div>
+              <ImageUpload
+                label="営業許可証"
+                documentType="business_license"
+                userId={userProfile.userId}
+                currentImageUrl={documentUrls.business_license}
+                onUploadComplete={async (url) => {
+                  console.log('[RegistrationForm] business_license upload complete, URL:', url)
+                  setDocumentUrls(prev => {
+                    const updated = { ...prev, business_license: url }
+                    console.log('[RegistrationForm] Updated documentUrls:', updated)
+                    return updated
+                  })
+                  if (errors.business_license) setErrors({ ...errors, business_license: false })
+                  
+                  // アップロード完了後、自動で期限確認を実行
+                  await verifyBusinessLicense(url)
+                }}
+                onUploadError={(error) => alert(error)}
+                onImageDelete={() => {
+                  setDocumentUrls(prev => ({ ...prev, business_license: '' }))
+                  setLicenseVerificationStatus({
+                    verifying: false,
+                    result: null,
+                    expirationDate: null,
+                    reason: null
+                  })
+                }}
+                hasError={errors.business_license}
+              />
+              {licenseVerificationStatus.result && (
+                <div style={{
+                  marginTop: '8px',
+                  padding: '8px 12px',
+                  background: licenseVerificationStatus.result === 'yes' ? '#E6F7E6' : '#FFE6E6',
+                  borderRadius: '6px',
+                  border: `1px solid ${licenseVerificationStatus.result === 'yes' ? '#06C755' : '#FF3B30'}`
+                }}>
+                  <p style={{
+                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontSize: '12px',
+                    lineHeight: '120%',
+                    color: '#000000',
+                    margin: 0,
+                    fontWeight: 700
+                  }}>
+                    期限: {licenseVerificationStatus.result === 'yes' ? '有効' : '期限切れ'}
+                    {licenseVerificationStatus.expirationDate && ` (${licenseVerificationStatus.expirationDate})`}
+                  </p>
+                  {licenseVerificationStatus.reason && (
+                    <p style={{
+                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '11px',
+                      lineHeight: '120%',
+                      color: '#666666',
+                      margin: '4px 0 0 0'
+                    }}>
+                      {licenseVerificationStatus.reason}
+                    </p>
+                  )}
+                  {licenseVerificationStatus.result === 'no' && (
+                    <p style={{
+                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '11px',
+                      lineHeight: '120%',
+                      color: '#FF3B30',
+                      margin: '4px 0 0 0',
+                      fontWeight: 700
+                    }}>
+                      ⚠️ 期限切れの営業許可証です。更新が必要です。
+                    </p>
+                  )}
+                </div>
+              )}
+              {licenseVerificationStatus.verifying && (
+                <p style={{
+                  fontFamily: '"Noto Sans JP", sans-serif',
+                  fontSize: '12px',
+                  lineHeight: '120%',
+                  color: '#666666',
+                  marginTop: '8px'
+                }}>
+                  期限を確認中...
+                </p>
+              )}
+            </div>
             
             <ImageUpload
               label="車検証"
