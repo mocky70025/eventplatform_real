@@ -57,6 +57,17 @@ export default function EventApplications({ eventId, eventName, organizerId, org
   const [closingApplication, setClosingApplication] = useState(false)
   const [selectedExhibitor, setSelectedExhibitor] = useState<ExhibitorDetail | null>(null)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [licenseVerificationStatus, setLicenseVerificationStatus] = useState<{
+    verifying: boolean
+    result: 'yes' | 'no' | null
+    expirationDate: string | null
+    reason: string | null
+  }>({
+    verifying: false,
+    result: null,
+    expirationDate: null,
+    reason: null
+  })
 
   // 画面サイズを検出
   useEffect(() => {
@@ -364,6 +375,55 @@ export default function EventApplications({ eventId, eventName, organizerId, org
     }
   }
 
+  const handleVerifyBusinessLicense = async () => {
+    if (!selectedExhibitor?.business_license_image_url) {
+      alert('営業許可証の画像が見つかりません')
+      return
+    }
+
+    setLicenseVerificationStatus({
+      verifying: true,
+      result: null,
+      expirationDate: null,
+      reason: null
+    })
+
+    try {
+      const response = await fetch('/api/events/verify-business-license', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          imageUrl: selectedExhibitor.business_license_image_url
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to verify business license')
+      }
+
+      const data = await response.json()
+      
+      setLicenseVerificationStatus({
+        verifying: false,
+        result: data.result,
+        expirationDate: data.expirationDate,
+        reason: data.reason
+      })
+    } catch (error: any) {
+      console.error('Failed to verify business license:', error)
+      alert(`営業許可証の確認に失敗しました: ${error.message}`)
+      setLicenseVerificationStatus({
+        verifying: false,
+        result: null,
+        expirationDate: null,
+        reason: null
+      })
+    }
+  }
+
   const handleViewExhibitorDetail = async (exhibitorId: string) => {
     setLoadingExhibitorDetail(true)
     try {
@@ -437,7 +497,15 @@ export default function EventApplications({ eventId, eventName, organizerId, org
         <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '1000px' : '393px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
             <button
-              onClick={() => setSelectedExhibitor(null)}
+              onClick={() => {
+                setSelectedExhibitor(null)
+                setLicenseVerificationStatus({
+                  verifying: false,
+                  result: null,
+                  expirationDate: null,
+                  reason: null
+                })
+              }}
               style={{
                 background: 'transparent',
                 border: 'none',
@@ -617,13 +685,65 @@ export default function EventApplications({ eventId, eventName, organizerId, org
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               {selectedExhibitor.business_license_image_url && (
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    lineHeight: '120%',
-                    color: '#666666',
-                    marginBottom: '8px'
-                  }}>営業許可証</p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <p style={{
+                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      lineHeight: '120%',
+                      color: '#666666',
+                      margin: 0
+                    }}>営業許可証</p>
+                    <button
+                      onClick={handleVerifyBusinessLicense}
+                      disabled={licenseVerificationStatus.verifying}
+                      style={{
+                        padding: '6px 12px',
+                        background: licenseVerificationStatus.verifying ? '#CCCCCC' : '#06C755',
+                        color: '#FFFFFF',
+                        borderRadius: '6px',
+                        border: 'none',
+                        fontFamily: '"Noto Sans JP", sans-serif',
+                        fontSize: '12px',
+                        fontWeight: 500,
+                        lineHeight: '120%',
+                        cursor: licenseVerificationStatus.verifying ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {licenseVerificationStatus.verifying ? '確認中...' : '期限確認'}
+                    </button>
+                  </div>
+                  {licenseVerificationStatus.result && (
+                    <div style={{
+                      marginBottom: '8px',
+                      padding: '8px 12px',
+                      background: licenseVerificationStatus.result === 'yes' ? '#E6F7E6' : '#FFE6E6',
+                      borderRadius: '6px',
+                      border: `1px solid ${licenseVerificationStatus.result === 'yes' ? '#06C755' : '#FF3B30'}`
+                    }}>
+                      <p style={{
+                        fontFamily: '"Noto Sans JP", sans-serif',
+                        fontSize: '12px',
+                        lineHeight: '120%',
+                        color: '#000000',
+                        margin: 0,
+                        fontWeight: 700
+                      }}>
+                        期限: {licenseVerificationStatus.result === 'yes' ? '有効' : '期限切れ'}
+                        {licenseVerificationStatus.expirationDate && ` (${licenseVerificationStatus.expirationDate})`}
+                      </p>
+                      {licenseVerificationStatus.reason && (
+                        <p style={{
+                          fontFamily: '"Noto Sans JP", sans-serif',
+                          fontSize: '11px',
+                          lineHeight: '120%',
+                          color: '#666666',
+                          margin: '4px 0 0 0'
+                        }}>
+                          {licenseVerificationStatus.reason}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <img
                     src={selectedExhibitor.business_license_image_url}
                     alt="営業許可証"
