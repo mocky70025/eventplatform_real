@@ -79,6 +79,7 @@ export async function POST(request: NextRequest) {
           ]
         }
       ],
+      response_format: { type: "json_object" },
       max_tokens: 500
     })
 
@@ -97,18 +98,30 @@ export async function POST(request: NextRequest) {
       } else {
         parsedResponse = JSON.parse(responseContent)
       }
+      console.log('[verify-business-license] Parsed response:', parsedResponse)
     } catch (parseError) {
+      console.error('[verify-business-license] JSON parse error:', parseError)
+      console.error('[verify-business-license] Raw response:', responseContent)
       // JSONパースに失敗した場合、テキストから推測
       const isValid = responseContent.toLowerCase().includes('yes') || responseContent.toLowerCase().includes('有効')
       return NextResponse.json({
         isValid,
         result: isValid ? 'yes' : 'no',
+        expirationDate: null,
+        reason: 'AIの応答を解析できませんでした',
         rawResponse: responseContent
       })
     }
 
     const isValid = parsedResponse.isValid === true
     const result = isValid ? 'yes' : 'no'
+
+    console.log('[verify-business-license] Final result:', {
+      isValid,
+      result,
+      expirationDate: parsedResponse.expirationDate,
+      reason: parsedResponse.reason
+    })
 
     return NextResponse.json({
       isValid,

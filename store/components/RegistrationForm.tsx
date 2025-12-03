@@ -423,6 +423,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   }
 
   const verifyBusinessLicense = async (imageUrl: string) => {
+    console.log('[RegistrationForm] Starting business license verification, imageUrl:', imageUrl)
     setLicenseVerificationStatus({
       verifying: true,
       result: null,
@@ -441,15 +442,25 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         })
       })
 
+      console.log('[RegistrationForm] API response status:', response.status)
+
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('[RegistrationForm] API error:', errorData)
         throw new Error(errorData.error || 'Failed to verify business license')
       }
 
       const data = await response.json()
+      console.log('[RegistrationForm] API response data:', data)
       
       setLicenseVerificationStatus({
         verifying: false,
+        result: data.result,
+        expirationDate: data.expirationDate,
+        reason: data.reason
+      })
+
+      console.log('[RegistrationForm] License verification status updated:', {
         result: data.result,
         expirationDate: data.expirationDate,
         reason: data.reason
@@ -460,13 +471,13 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         alert('⚠️ 営業許可証の期限が切れています。\n\n登録は可能ですが、期限切れの営業許可証ではイベントへの出店ができない場合があります。\n\n営業許可証の更新をお願いします。')
       }
     } catch (error: any) {
-      console.error('Failed to verify business license:', error)
-      // エラー時は警告を表示しない（登録は可能）
+      console.error('[RegistrationForm] Failed to verify business license:', error)
+      // エラー時も結果を表示（登録は可能）
       setLicenseVerificationStatus({
         verifying: false,
-        result: null,
+        result: 'no',
         expirationDate: null,
-        reason: null
+        reason: error.message || '期限確認に失敗しました。画像を確認してください。'
       })
     }
   }
