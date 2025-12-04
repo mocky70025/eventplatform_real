@@ -318,28 +318,43 @@ export default function WelcomeScreen() {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              padding: '16px 24px',
+              justifyContent: 'center',
+              padding: '14px 24px',
               position: 'absolute',
               width: '287px',
-              height: '47px',
+              height: '48px',
               left: '53.5px',
               top: '456px',
               background: '#FFFFFF',
-              borderRadius: '7.5px',
-              border: '1px solid #E5E5E5',
+              borderRadius: '8px',
+              border: '1px solid #e5e7eb',
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '24px',
-              color: '#000000',
+              fontWeight: 600,
+              lineHeight: '1.5',
+              color: '#111827',
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1
+              opacity: loading ? 0.6 : 1,
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                e.currentTarget.style.borderColor = '#d1d5db'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) {
+                e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                e.currentTarget.style.borderColor = '#e5e7eb'
+              }
             }}
           >
-            <div style={{ position: 'absolute', left: '16px' }}>
+            <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center' }}>
               <GoogleIcon />
             </div>
-            <span style={{ width: '100%', textAlign: 'center' }}>Google</span>
+            <span>Googleでログイン</span>
           </button>
 
           {/* メールアドレスログインボタン */}
@@ -355,30 +370,45 @@ export default function WelcomeScreen() {
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              padding: '16px 24px',
+              justifyContent: 'center',
+              padding: '14px 24px',
               position: 'absolute',
               width: '287px',
-              height: '47px',
+              height: '48px',
               left: '53.5px',
               top: '520.5px',
               background: '#FFFFFF',
-              borderRadius: '7.5px',
-              border: '1px solid #E5E5E5',
+              borderRadius: '8px',
+              border: '1px solid #e5e7eb',
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '24px',
-              color: '#000000',
+              fontWeight: 600,
+              lineHeight: '1.5',
+              color: '#111827',
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.6 : 1,
               zIndex: 50,
-              pointerEvents: loading ? 'none' : 'auto'
+              pointerEvents: loading ? 'none' : 'auto',
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                e.currentTarget.style.borderColor = '#d1d5db'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) {
+                e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                e.currentTarget.style.borderColor = '#e5e7eb'
+              }
             }}
           >
-            <div style={{ position: 'absolute', left: '16px' }}>
-              <MailIcon color="#000000" />
+            <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center' }}>
+              <MailIcon color="#111827" />
             </div>
-            <span style={{ width: '100%', textAlign: 'center' }}>メールアドレス</span>
+            <span>メールアドレスでログイン</span>
           </button>
 
           {/* またはセパレーター */}
@@ -423,23 +453,35 @@ export default function WelcomeScreen() {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '16px 24px',
+              padding: '14px 24px',
               gap: '10px',
               position: 'absolute',
               width: '287px',
-              height: '47px',
+              height: '48px',
               left: '53.5px',
               top: '620.5px',
-              background: '#FFFFFF',
-              border: '1px solid #E5E5E5',
-              borderRadius: '7.5px',
+              background: '#2563eb',
+              border: 'none',
+              borderRadius: '8px',
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '24px',
+              fontWeight: 600,
+              lineHeight: '1.5',
               textAlign: 'center',
-              color: '#000000',
-              cursor: 'pointer'
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1d4ed8'
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#2563eb'
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              e.currentTarget.style.transform = 'translateY(0)'
             }}
           >
             新規登録
