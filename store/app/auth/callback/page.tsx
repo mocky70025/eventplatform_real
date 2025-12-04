@@ -34,6 +34,36 @@ export default function AuthCallback() {
         // Google認証の場合（URLフラグメントにaccess_tokenがある、またはproviderがgoogle）
         if (provider === 'google' || accessToken) {
           console.log('[Callback] Google authentication detected')
+          console.log('[Callback] Current URL:', window.location.href)
+          console.log('[Callback] Current origin:', window.location.origin)
+          
+          // セッションストレージからアプリタイプを確認（主催者アプリから来た場合）
+          const appType = sessionStorage.getItem('app_type')
+          const isFromOrganizer = appType === 'organizer'
+          
+          // 主催者アプリのURLパターンを確認
+          const currentOrigin = window.location.origin
+          const organizerUrl = process.env.NEXT_PUBLIC_ORGANIZER_URL
+          
+          console.log('[Callback] App type from sessionStorage:', appType)
+          console.log('[Callback] Is from organizer:', isFromOrganizer)
+          console.log('[Callback] Current origin:', currentOrigin)
+          console.log('[Callback] Organizer URL:', organizerUrl)
+          
+          // 主催者アプリから来た場合、主催者アプリにリダイレクト
+          if (isFromOrganizer && organizerUrl && organizerUrl !== currentOrigin) {
+            console.log('[Callback] Redirected from organizer app, redirecting back to organizer')
+            // セッションストレージをクリア
+            sessionStorage.removeItem('app_type')
+            const redirectUrl = `${organizerUrl}/auth/callback${window.location.search}${window.location.hash}`
+            window.location.href = redirectUrl
+            return
+          }
+          
+          // 出店者アプリの場合は、app_typeをクリア
+          if (appType) {
+            sessionStorage.removeItem('app_type')
+          }
           
           // Supabaseが自動的にセッションを確立するのを待つ
           // 最大5秒間、セッションが確立されるまで待機

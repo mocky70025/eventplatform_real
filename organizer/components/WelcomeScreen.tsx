@@ -78,14 +78,13 @@ export default function WelcomeScreen() {
       console.log('[WelcomeScreen] Google Login - redirectUrl:', redirectUrl)
       console.log('[WelcomeScreen] Google Login - current origin:', window.location.origin)
 
+      // セッションストレージにアプリタイプを保存（リダイレクト後に判定するため）
+      sessionStorage.setItem('app_type', 'organizer')
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: redirectUrl,
-          queryParams: {
-            // 主催者アプリであることを示すパラメータを追加
-            app_type: 'organizer',
-          },
         },
       })
 
