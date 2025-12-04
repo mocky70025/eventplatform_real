@@ -300,19 +300,21 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                 }}>イベント管理</h1>
                 {!organizer.is_approved && (
                   <div style={{
-                    background: '#FFF9E6',
-                    border: '1px solid #F5D76E',
+                    background: '#fef3c7',
+                    border: '1px solid #fbbf24',
                     borderRadius: '8px',
                     padding: '12px 16px',
                     marginBottom: '16px',
-                    width: '100%'
+                    width: '100%',
+                    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
                   }}>
                     <p style={{
                       fontFamily: '"Noto Sans JP", sans-serif',
                       fontSize: '14px',
-                      lineHeight: '150%',
-                      color: '#B8860B',
-                      margin: 0
+                      lineHeight: '1.5',
+                      color: '#92400e',
+                      margin: 0,
+                      fontWeight: 500
                     }}>
                       承認待ち: 運営側の承認後、イベントの掲載が可能になります。
                     </p>
@@ -328,16 +330,32 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   }}
                   disabled={!organizer.is_approved}
                   style={{
-                    padding: '8px 16px',
-                    background: organizer.is_approved ? '#06C755' : '#D9D9D9',
+                    padding: '10px 20px',
+                    background: organizer.is_approved ? '#2563eb' : '#9ca3af',
                     color: '#FFFFFF',
                     borderRadius: '8px',
                     border: 'none',
                     cursor: organizer.is_approved ? 'pointer' : 'not-allowed',
                     fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%'
+                    fontWeight: 600,
+                    lineHeight: '1.5',
+                    transition: 'all 0.2s ease-in-out',
+                    boxShadow: organizer.is_approved ? '0 1px 2px 0 rgba(0, 0, 0, 0.05)' : 'none'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (organizer.is_approved) {
+                      e.currentTarget.style.background = '#1d4ed8'
+                      e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                      e.currentTarget.style.transform = 'translateY(-1px)'
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (organizer.is_approved) {
+                      e.currentTarget.style.background = '#2563eb'
+                      e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                      e.currentTarget.style.transform = 'translateY(0)'
+                    }
                   }}
                 >
                   新しいイベントを掲載
