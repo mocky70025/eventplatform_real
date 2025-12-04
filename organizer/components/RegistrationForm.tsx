@@ -58,7 +58,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [showTermsPage, setShowTermsPage] = useState(false)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [hasViewedTerms, setHasViewedTerms] = useState(false)
-  const [currentStep] = useState<1 | 2 | 3>(1) // 主催者は常にステップ1
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1) // ステップ1: 情報登録、ステップ2: 情報確認
   const [draftLoaded, setDraftLoaded] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
@@ -332,13 +332,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    console.log('[RegistrationForm] Submit started')
-    console.log('[RegistrationForm] Form data:', formData)
-    console.log('[RegistrationForm] Terms accepted:', termsAccepted)
-    
+  const handleNext = () => {
     if (!validateForm()) {
       console.log('[RegistrationForm] Validation failed, errors:', errors)
       const firstErrorKey = Object.keys(errors).find(key => errors[key])
@@ -360,6 +354,20 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       alert('利用規約に同意してください。')
       return
     }
+
+    setCurrentStep(2)
+  }
+
+  const handleBack = () => {
+    setCurrentStep(1)
+  }
+
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    
+    console.log('[RegistrationForm] Submit started')
+    console.log('[RegistrationForm] Form data:', formData)
+    console.log('[RegistrationForm] Terms accepted:', termsAccepted)
 
     setLoading(true)
 
@@ -509,7 +517,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         <div 
           className="absolute"
           style={{
-            width: '101.75px',
+            width: '218.5px',
             height: '4px',
             left: '15.75px',
             top: '6px',
@@ -523,44 +531,13 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           style={{
             width: '16px',
             height: '16px',
-            left: '117px',
+            left: '234.5px',
             top: '0px',
             backgroundColor: currentStep >= 2 ? '#06C755' : 'transparent',
             border: currentStep >= 2 ? 'none' : '1px solid #06C755',
           }}
         >
-          {currentStep > 2 && (
-            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          )}
-        </div>
-        
-        {/* 線2（ステップ2と3の間） */}
-        <div 
-          className="absolute"
-          style={{
-            width: '101.75px',
-            height: '4px',
-            left: '133px',
-            top: '6px',
-            backgroundColor: currentStep >= 3 ? '#06C755' : '#D9D9D9',
-          }}
-        />
-        
-        {/* ステップ3の円 */}
-        <div 
-          className="absolute rounded-full flex items-center justify-center"
-          style={{
-            width: '16px',
-            height: '16px',
-            left: '234.5px',
-            top: '0px',
-            backgroundColor: currentStep >= 3 ? '#06C755' : 'transparent',
-            border: currentStep >= 3 ? 'none' : '1px solid #06C755',
-          }}
-        >
-          {currentStep >= 3 && (
+          {currentStep >= 2 && (
             <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
@@ -580,18 +557,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           >
             情報登録
           </span>
-          {/* 情報確認 - 円の中心は125px（left: 117px + 円の半径8px） */}
-          <span 
-            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
-            style={{
-              left: '125px',
-              transform: 'translateX(-50%)',
-              fontFamily: '"Noto Sans JP", sans-serif'
-            }}
-          >
-            情報確認
-          </span>
-          {/* 登録完了 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
+          {/* 情報確認 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
           <span 
             className="absolute text-[14px] text-gray-700 whitespace-nowrap"
             style={{
@@ -600,7 +566,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               fontFamily: '"Noto Sans JP", sans-serif'
             }}
           >
-            登録完了
+            情報確認
           </span>
         </div>
       </div>
@@ -680,14 +646,143 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     )
   }
 
-  return (
+  // ステップ2: 情報確認
+  const renderStep2 = () => (
     <div style={{ 
       position: 'relative',
       width: '100%',
-      maxWidth: '393px',
-      minHeight: '852px',
+      maxWidth: isDesktop ? '600px' : '393px',
+      minHeight: isDesktop ? '800px' : '852px',
       margin: '0 auto',
-      background: '#FFFFFF'
+      background: '#FFFFFF',
+      ...(isDesktop && {
+        padding: '40px 0',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '12px'
+      })
+    }}>
+      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
+        <ProgressIndicator />
+        
+        <h2 style={{ 
+          fontFamily: '"Noto Sans JP", sans-serif',
+          fontSize: '20px',
+          fontWeight: 700,
+          lineHeight: '120%',
+          color: '#000000',
+          marginBottom: '24px',
+          textAlign: 'center'
+        }}>
+          情報確認をしてください
+        </h2>
+        
+        <div style={{
+          background: '#FFFFFF',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '24px'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>会社名</label>
+              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.company_name}</p>
+            </div>
+            <div>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>名前</label>
+              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.name}</p>
+            </div>
+            <div>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>性別</label>
+              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>
+                {formData.gender === '男' ? '男性' : formData.gender === '女' ? '女性' : formData.gender === 'それ以外' ? 'その他' : ''}
+              </p>
+            </div>
+            <div>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>年齢</label>
+              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.age}歳</p>
+            </div>
+            <div>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>電話番号</label>
+              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.phone_number}</p>
+            </div>
+            <div>
+              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>メールアドレス</label>
+              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.email}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* ボタン */}
+        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+          <button
+            onClick={handleBack}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '16px 24px',
+              gap: '10px',
+              height: '48px',
+              background: '#FFFFFF',
+              border: '2px solid #06C755',
+              borderRadius: '8px',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '19px',
+              color: '#06C755',
+              cursor: 'pointer'
+            }}
+          >
+            修正する
+          </button>
+          <button
+            onClick={() => handleSubmit()}
+            disabled={loading}
+            style={{
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '16px 24px',
+              gap: '10px',
+              height: '48px',
+              background: loading ? '#D9D9D9' : '#06C755',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '19px',
+              color: '#FFFFFF',
+              cursor: loading ? 'not-allowed' : 'pointer'
+            }}
+          >
+            {loading ? '登録中...' : '登録する'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  // ステップ1: 情報登録
+  const renderStep1 = () => (
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: isDesktop ? '600px' : '393px',
+      minHeight: isDesktop ? '800px' : '852px',
+      margin: '0 auto',
+      background: '#FFFFFF',
+      ...(isDesktop && {
+        padding: '40px 0',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '12px'
+      })
     }}>
       <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
         <ProgressIndicator />
@@ -958,8 +1053,8 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         </div>
 
         <button
-          type="submit"
-          onClick={handleSubmit}
+          type="button"
+          onClick={handleNext}
           disabled={loading || !termsAccepted}
           style={{
             display: 'flex',
@@ -984,9 +1079,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             marginRight: 'auto'
           }}
         >
-          {loading ? '登録中...' : '登録する'}
+          次に進む
         </button>
       </div>
     </div>
   )
+
+  if (currentStep === 2) return renderStep2()
+  return renderStep1()
 }

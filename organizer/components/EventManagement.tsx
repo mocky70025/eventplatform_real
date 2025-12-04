@@ -248,48 +248,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     )
   }
 
-  if (!organizer.is_approved) {
-    return (
-      <div style={{ 
-        position: 'relative',
-        width: '100%',
-        maxWidth: isDesktop ? '1000px' : '393px',
-        minHeight: '852px',
-        margin: '0 auto',
-        background: '#FFFFFF'
-      }}>
-        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '1000px' : '393px' }}>
-          <div style={{
-            background: '#FFF9E6',
-            border: '1px solid #F5D76E',
-            borderRadius: '12px',
-            padding: '24px',
-            textAlign: 'center',
-            marginTop: '24px'
-          }}>
-            <h2 style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '18px',
-              fontWeight: 700,
-              lineHeight: '120%',
-              color: '#B8860B',
-              marginBottom: '8px'
-            }}>
-              承認待ち
-            </h2>
-            <p style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '16px',
-              lineHeight: '150%',
-              color: '#B8860B'
-            }}>
-              運営側の承認をお待ちください。承認後、イベントの掲載が可能になります。
-            </p>
-          </div>
-        </div>
-      </div>
-    )
-  }
+  // 承認待ちでもイベント掲載ページを表示（ただしイベント作成は無効化）
 
   if (showEventForm) {
     return (
@@ -339,14 +298,42 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   lineHeight: '120%',
                   color: '#000000'
                 }}>イベント管理</h1>
+                {!organizer.is_approved && (
+                  <div style={{
+                    background: '#FFF9E6',
+                    border: '1px solid #F5D76E',
+                    borderRadius: '8px',
+                    padding: '12px 16px',
+                    marginBottom: '16px',
+                    width: '100%'
+                  }}>
+                    <p style={{
+                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      lineHeight: '150%',
+                      color: '#B8860B',
+                      margin: 0
+                    }}>
+                      承認待ち: 運営側の承認後、イベントの掲載が可能になります。
+                    </p>
+                  </div>
+                )}
                 <button
-                  onClick={() => setShowEventForm(true)}
+                  onClick={() => {
+                    if (!organizer.is_approved) {
+                      alert('運営側の承認が必要です。承認後、イベントの掲載が可能になります。')
+                      return
+                    }
+                    setShowEventForm(true)
+                  }}
+                  disabled={!organizer.is_approved}
                   style={{
                     padding: '8px 16px',
-                    background: '#06C755',
+                    background: organizer.is_approved ? '#06C755' : '#D9D9D9',
                     color: '#FFFFFF',
                     borderRadius: '8px',
                     border: 'none',
+                    cursor: organizer.is_approved ? 'pointer' : 'not-allowed',
                     fontFamily: '"Noto Sans JP", sans-serif',
                     fontSize: '14px',
                     fontWeight: 500,
