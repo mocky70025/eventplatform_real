@@ -16,21 +16,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 https://app.supabase.com/project/[your-project]/settings/api
 
 ============================================
-LINE Login設定（必須）
-============================================
-NEXT_PUBLIC_LINE_LOGIN_CHANNEL_ID=your_line_login_channel_id
-LINE_LOGIN_CHANNEL_SECRET=your_line_login_channel_secret
-
-取得方法: LINE Developers Console
-https://developers.line.biz/console/
-
-============================================
 アプリURL設定（ローカル開発用）
 ============================================
 NEXT_PUBLIC_ORGANIZER_URL=http://localhost:3000
-NEXT_PUBLIC_LINE_LOGIN_REDIRECT_URI=http://localhost:3000/auth/callback
 
 注意: ポート番号は実際に使用するポートに合わせて変更してください
+注意: 主催者アプリにはLINEログイン機能はありません（メール/Googleログインのみ）
 
 ============================================
 OpenAI API設定（オプション）
