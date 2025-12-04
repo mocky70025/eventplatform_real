@@ -272,25 +272,29 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     width: '100%',
     height: '48px',
     background: '#FFFFFF',
-    border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
-    borderRadius: '8px'
+    border: hasError ? '2px solid #ef4444' : '1px solid #e5e7eb',
+    borderRadius: '8px',
+    transition: 'all 0.2s ease-in-out',
+    fontSize: '16px',
+    lineHeight: '1.5',
+    color: '#111827'
   })
 
   const labelStyle = {
     fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '14px',
     fontWeight: 500,
-    lineHeight: '120%',
-    color: '#000000',
-    marginBottom: '10px',
+    lineHeight: '1.4',
+    color: '#111827',
+    marginBottom: '8px',
     display: 'block' as const
   }
 
   const inputStyle = (hasValue: boolean) => ({
     fontFamily: '"Noto Sans JP", sans-serif',
     fontSize: '16px',
-    lineHeight: '150%',
-    color: hasValue ? '#000000' : '#6B6B6B',
+    lineHeight: '1.5',
+    color: hasValue ? '#111827' : '#6b7280',
     border: 'none',
     outline: 'none',
     width: '100%',
@@ -678,10 +682,11 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         
         <div style={{
           background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
           borderRadius: '12px',
           padding: '24px',
-          marginBottom: '24px'
+          marginBottom: '24px',
+          border: '1px solid #f3f4f6'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div>
@@ -723,18 +728,28 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '16px 24px',
+              padding: '14px 24px',
               gap: '10px',
               height: '48px',
               background: '#FFFFFF',
-              border: '2px solid #06C755',
+              border: '2px solid #2563eb',
               borderRadius: '8px',
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '19px',
-              color: '#06C755',
-              cursor: 'pointer'
+              fontWeight: 600,
+              lineHeight: '1.5',
+              color: '#2563eb',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#f9fafb'
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#FFFFFF'
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
             }}
           >
             修正する
@@ -748,18 +763,34 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '16px 24px',
+              padding: '14px 24px',
               gap: '10px',
               height: '48px',
-              background: loading ? '#D9D9D9' : '#06C755',
+              background: loading ? '#9ca3af' : '#2563eb',
               borderRadius: '8px',
               border: 'none',
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '19px',
+              fontWeight: 600,
+              lineHeight: '1.5',
               color: '#FFFFFF',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: loading ? 'none' : '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              if (!loading) {
+                e.currentTarget.style.background = '#1d4ed8'
+                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!loading) {
+                e.currentTarget.style.background = '#2563eb'
+                e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }
             }}
           >
             {loading ? '登録中...' : '登録する'}
@@ -802,10 +833,11 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         
         <div style={{
           background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
           borderRadius: '12px',
           padding: '24px',
-          marginBottom: '24px'
+          marginBottom: '24px',
+          border: '1px solid #f3f4f6'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
             {/* 会社名 */}
@@ -826,7 +858,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 </div>
               </div>
               {errors.company_name && (
-                <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
               )}
             </div>
 
@@ -848,7 +880,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 </div>
               </div>
               {errors.name && (
-                <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
               )}
             </div>
 
@@ -875,7 +907,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                   </div>
                 </div>
                 {errors.gender && (
-                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                  <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
                 )}
               </div>
 
@@ -900,7 +932,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                   </div>
                 </div>
                 {errors.age && (
-                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                  <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
                 )}
               </div>
             </div>
@@ -923,7 +955,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 </div>
               </div>
               {errors.phone_number && (
-                <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
               )}
             </div>
 
@@ -945,7 +977,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 </div>
               </div>
               {errors.email && (
-                <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
               )}
             </div>
           </div>
@@ -1042,13 +1074,13 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
-              color: '#000000'
+              color: '#111827'
             }}>
               に同意する
             </span>
           </label>
           {errors.termsAccepted && (
-            <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>利用規約への同意が必要です</p>
+            <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>利用規約への同意が必要です</p>
           )}
         </div>
 
@@ -1061,22 +1093,38 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '16px 24px',
+            padding: '14px 24px',
             gap: '10px',
             width: '100%',
             maxWidth: '330px',
             height: '48px',
-            background: termsAccepted && !loading ? '#06C755' : '#D9D9D9',
+            background: termsAccepted && !loading ? '#2563eb' : '#9ca3af',
             borderRadius: '8px',
             border: 'none',
             fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '16px',
-            fontWeight: 700,
-            lineHeight: '19px',
+            fontWeight: 600,
+            lineHeight: '1.5',
             color: '#FFFFFF',
             cursor: termsAccepted && !loading ? 'pointer' : 'not-allowed',
             marginLeft: 'auto',
-            marginRight: 'auto'
+            marginRight: 'auto',
+            transition: 'all 0.2s ease-in-out',
+            boxShadow: termsAccepted && !loading ? '0 1px 2px 0 rgba(0, 0, 0, 0.05)' : 'none'
+          }}
+          onMouseEnter={(e) => {
+            if (termsAccepted && !loading) {
+              e.currentTarget.style.background = '#1d4ed8'
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (termsAccepted && !loading) {
+              e.currentTarget.style.background = '#2563eb'
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }
           }}
         >
           次に進む
