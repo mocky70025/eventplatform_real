@@ -50,17 +50,22 @@ export default function Home() {
             }
             
             // 登録済みかチェック
-            const { data: organizer } = await supabase
+            const { data: organizer, error: organizerError } = await supabase
               .from('organizers')
-              .select('id')
+              .select('id, is_approved')
               .eq('user_id', session.user.id)
               .maybeSingle()
+            
+            if (organizerError) {
+              console.error('[Home] Error fetching organizer:', organizerError)
+            }
             
             setIsRegistered(!!organizer)
             console.log('[Home] Auth user profile set:', { 
               userId: session.user.id, 
               authType: authType,
               isRegistered: !!organizer,
+              is_approved: organizer?.is_approved,
               emailConfirmed: isEmailConfirmed || true
             })
           }
@@ -86,16 +91,21 @@ export default function Home() {
           })
           
           // 登録済みかチェック
-          const { data: organizer } = await supabase
+          const { data: organizer, error: organizerError } = await supabase
             .from('organizers')
-            .select('id')
+            .select('id, is_approved')
             .eq('user_id', storedUserId)
             .maybeSingle()
+          
+          if (organizerError) {
+            console.error('[Home] Error fetching organizer from storage:', organizerError)
+          }
           
           setIsRegistered(!!organizer)
           console.log('[Home] Email auth user profile set from storage:', { 
             userId: storedUserId, 
             isRegistered: !!organizer,
+            is_approved: organizer?.is_approved,
             emailConfirmed: effectiveEmailConfirmed,
             hasSession: !!storageSession
           })
