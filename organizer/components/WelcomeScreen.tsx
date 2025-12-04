@@ -272,6 +272,40 @@ export default function WelcomeScreen() {
           </p>
         </div>
 
+        {/* エラーメッセージ */}
+        {error && (
+          <div style={{
+            marginBottom: '24px',
+            padding: '14px 18px',
+            background: '#fef2f2',
+            border: '2px solid #fecaca',
+            borderRadius: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <div style={{
+              width: '20px',
+              height: '20px',
+              borderRadius: '50%',
+              background: '#ef4444',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}>
+              <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 700 }}>!</span>
+            </div>
+            <p style={{
+              margin: 0,
+              fontSize: '14px',
+              color: '#991b1b',
+              fontWeight: 500,
+              lineHeight: 1.5
+            }}>{error}</p>
+          </div>
+        )}
+
         {/* 初期画面：ログイン or 新規登録を選択 */}
         {authMode === 'initial' && !loginMethod && !registerMethod && (
           <div>
