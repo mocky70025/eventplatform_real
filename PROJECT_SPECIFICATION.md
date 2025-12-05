@@ -826,6 +826,741 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
 
 ---
 
+## 🎨 UIコンポーネント詳細仕様（デザインAI向け）
+
+このセクションは、デザインAIがUIコンポーネントを作成するために必要な詳細な仕様を記載しています。
+各コンポーネントについて、機能要件、データ構造、インタラクション、レイアウト要件を詳しく説明します。
+
+### 共通要件
+
+#### レスポンシブブレークポイント
+- **モバイル**: 0px - 767px
+- **タブレット**: 768px - 1023px
+- **デスクトップ**: 1024px以上
+
+#### 画面サイズ検出
+各コンポーネントは`useEffect`で画面サイズを検出し、`isDesktop`状態を管理します：
+```typescript
+const [isDesktop, setIsDesktop] = useState(false)
+
+useEffect(() => {
+  const checkScreenSize = () => {
+    setIsDesktop(window.innerWidth >= 1024)
+  }
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+  return () => window.removeEventListener('resize', checkScreenSize)
+}, [])
+```
+
+#### ローディング状態
+- データ取得中は`LoadingSpinner`コンポーネントを表示
+- ボタンは`loading`状態で無効化し、テキストを「...中」に変更
+
+#### エラーハンドリング
+- エラー発生時は`alert()`でエラーメッセージを表示
+- フォームバリデーションエラーは各フィールドの下に赤色で表示
+
+---
+
+### 1. WelcomeScreen（ログイン・新規登録画面）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/WelcomeScreen.tsx`
+- 出店者アプリ: `store/components/WelcomeScreen.tsx`
+
+#### Props
+なし（スタンドアロンコンポーネント）
+
+#### State管理
+```typescript
+const [authMode, setAuthMode] = useState<'initial' | 'login' | 'register'>('initial')
+const [loginMethod, setLoginMethod] = useState<'line' | 'email' | 'google' | null>(null)
+const [registerMethod, setRegisterMethod] = useState<'line' | 'email' | 'google' | null>(null)
+const [email, setEmail] = useState('')
+const [password, setPassword] = useState('')
+const [registerEmail, setRegisterEmail] = useState('')
+const [registerPassword, setRegisterPassword] = useState('')
+const [registerPasswordConfirm, setRegisterPasswordConfirm] = useState('')
+const [loading, setLoading] = useState(false)
+const [error, setError] = useState('')
+const [isDesktop, setIsDesktop] = useState(false)
+```
+
+#### 機能要件
+
+**主催者アプリ:**
+- 認証方法: Google、メールアドレス・パスワード
+- 背景: 青系グラデーション（#667eea → #764ba2）
+- アイコン: 🎪（イベント）
+
+**出店者アプリ:**
+- 認証方法: LINE Login、Google、メールアドレス・パスワード
+- 背景: 緑系グラデーション（#10b981 → #059669）
+- アイコン: 🚚（トラック）
+
+#### レイアウト要件
+- 中央配置のカード型レイアウト
+- モバイル: 全幅、パディング24px 16px
+- デスクトップ: 最大幅480px、パディング48px 24px
+- カード背景: rgba(255, 255, 255, 0.98)
+- ボーダーラディウス: モバイル20px、デスクトップ24px
+- シャドウ: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)
+
+#### インタラクション
+- 「ログイン」ボタンクリック → `authMode`を`'login'`に変更
+- 「新規登録」ボタンクリック → `authMode`を`'register'`に変更
+- 認証方法ボタンクリック → 対応する認証処理を実行
+- エラー発生時 → エラーメッセージをカード内に表示
+
+#### バリデーション
+- パスワード: 6文字以上
+- パスワード確認: パスワードと一致
+- メールアドレス: 基本的なメール形式チェック
+
+---
+
+### 2. RegistrationForm（登録フォーム）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/RegistrationForm.tsx`
+- 出店者アプリ: `store/components/RegistrationForm.tsx`
+
+#### Props
+```typescript
+interface RegistrationFormProps {
+  userProfile: LineProfile | any
+  onRegistrationComplete: () => void
+}
+```
+
+#### State管理
+
+**主催者アプリ:**
+```typescript
+const [formData, setFormData] = useState<OrganizerFormState>({
+  company_name: '',
+  name: '',
+  gender: '' | '男' | '女' | 'それ以外',
+  age: 0,
+  phone_number: '',
+  email: ''
+})
+const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
+const [errors, setErrors] = useState<Record<string, boolean>>({})
+const [termsAccepted, setTermsAccepted] = useState(false)
+const [hasViewedTerms, setHasViewedTerms] = useState(false)
+const [loading, setLoading] = useState(false)
+const [showTermsPage, setShowTermsPage] = useState(false)
+const [draftLoaded, setDraftLoaded] = useState(false)
+```
+
+**出店者アプリ:**
+```typescript
+const [formData, setFormData] = useState<ExhibitorFormState>({
+  name: '',
+  gender: '' | '男' | '女' | 'それ以外',
+  age: 0,
+  phone_number: '',
+  email: '',
+  genre_category: '',
+  genre_free_text: ''
+})
+const [documentUrls, setDocumentUrls] = useState<ExhibitorDocumentState>({
+  business_license: '',
+  vehicle_inspection: '',
+  automobile_inspection: '',
+  pl_insurance: '',
+  fire_equipment_layout: ''
+})
+const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1)
+const [licenseVerificationStatus, setLicenseVerificationStatus] = useState<{
+  verifying: boolean
+  result: 'yes' | 'no' | null
+  expirationDate: string | null
+  reason: string | null
+}>({...})
+```
+
+#### ステップ構成
+
+**主催者アプリ（3ステップ）:**
+1. **情報登録**: 会社名、名前、性別、年齢、電話番号、メールアドレス、利用規約同意
+2. **情報確認**: 入力内容の確認表示、「修正する」「登録する」ボタン
+3. **登録完了**: 完了メッセージ、「マイページへ」ボタン
+
+**出店者アプリ（3ステップ）:**
+1. **情報登録**: 名前、性別、年齢、電話番号、メールアドレス、ジャンル、書類アップロード、利用規約同意
+2. **情報確認**: 入力内容・画像の確認表示、「修正する」「登録する」ボタン
+3. **登録完了**: 完了メッセージ、「マイページへ」ボタン
+
+#### 進捗インジケーター
+- 3ステップのプログレスバー
+- 各ステップ: 円形マーカー + ラベル（情報登録、情報確認、登録完了）
+- 完了ステップ: 緑色で塗りつぶし、チェックマーク表示
+- 未完了ステップ: 緑色の輪郭のみ
+- ステップ間の線: 完了時は緑色、未完了時はグレー
+
+#### バリデーション
+
+**主催者アプリ:**
+- 会社名: 必須
+- 名前: 必須
+- 性別: 必須
+- 年齢: 必須、0-100の範囲
+- 電話番号: 必須、10-15桁の数字（全角/半角対応、ハイフン削除）
+- メールアドレス: 必須、メール形式
+- 利用規約: 必須（利用規約を閲覧した後）
+
+**出店者アプリ:**
+- 名前: 必須
+- 性別: 必須
+- 年齢: 必須、0-100の範囲
+- 電話番号: 必須、10-15桁の数字（全角/半角対応、ハイフン削除）
+- メールアドレス: 必須、メール形式
+- ジャンルカテゴリ: 必須（飲食、物販、サービス、その他）
+- より詳しいジャンル: 必須
+- 営業許可証: 必須
+- 車検証: 必須
+- 自動車検査証: 必須
+- PL保険: 必須
+- 火器類配置図: 必須
+- 利用規約: 必須（利用規約を閲覧した後）
+
+#### 下書き保存機能
+- 入力内容を800msのデバウンスで自動保存
+- `form_drafts`テーブルに保存
+- ページ再読み込み時に自動復元
+
+#### 画像アップロード（出店者アプリ）
+- `ImageUpload`コンポーネントを使用
+- 対応形式: JPEG, PNG, GIF, WebP, HEIC（最大10MB）
+- アップロード完了後、URLを`documentUrls`に保存
+- 営業許可証はアップロード後にAI確認を実行
+
+#### 営業許可証AI確認（出店者アプリ）
+- アップロード完了後、自動でAPI呼び出し
+- 結果表示: 有効/期限切れ、期限日、理由
+- 期限切れの場合: 警告表示（登録は可能）
+
+---
+
+### 3. EventForm（イベント作成・編集フォーム）
+
+#### ファイルパス
+`organizer/components/EventForm.tsx`
+
+#### Props
+```typescript
+interface EventFormProps {
+  organizer: Organizer
+  onEventCreated: (event: Event) => void
+  onCancel: () => void
+  initialEvent?: Partial<Event> // 編集時に事前入力
+}
+```
+
+#### State管理
+```typescript
+const [formData, setFormData] = useState<EventFormState>({
+  event_name: '',
+  event_name_furigana: '',
+  genre: '',
+  is_shizuoka_vocational_assoc_related: false,
+  opt_out_newspaper_publication: false,
+  event_start_date: '',
+  event_end_date: '',
+  event_display_period: '',
+  event_period_notes: '',
+  event_time: '',
+  application_start_date: '',
+  application_end_date: '',
+  application_display_period: '',
+  application_notes: '',
+  ticket_release_start_date: '',
+  ticket_sales_location: '',
+  lead_text: '',
+  event_description: '',
+  event_introduction_text: '',
+  venue_name: '',
+  venue_postal_code: '',
+  venue_city: '',
+  venue_town: '',
+  venue_address: '',
+  venue_latitude: '',
+  venue_longitude: '',
+  homepage_url: '',
+  related_page_url: '',
+  contact_name: '',
+  contact_phone: '',
+  contact_email: '',
+  parking_info: '',
+  fee_info: '',
+  organizer_info: ''
+})
+const [imageUrls, setImageUrls] = useState<EventImageState>({
+  main: '',
+  additional1: '',
+  additional2: '',
+  additional3: '',
+  additional4: ''
+})
+const [errors, setErrors] = useState<Record<string, boolean>>({})
+const [loading, setLoading] = useState(false)
+const [addressLoading, setAddressLoading] = useState(false)
+```
+
+#### フォーム項目（セクション別）
+
+**1. 基本情報**
+- イベント名（必須）
+- イベント名ふりがな（必須）
+- ジャンル（必須）
+- 静岡県職業能力開発協会関連（チェックボックス）
+- 新聞掲載辞退（チェックボックス）
+
+**2. 開催期間・時間**
+- 開催開始日（必須、日付選択）
+- 開催終了日（必須、日付選択）
+- 開催期間表示（必須）
+- 開催期間備考
+- 開催時間
+
+**3. 申し込み期間**
+- 申し込み開始日（日付選択）
+- 申し込み終了日（日付選択）
+- 申し込み期間表示
+- 申し込み備考
+
+**4. チケット情報**
+- チケット発売開始日（日付選択）
+- チケット販売場所
+
+**5. イベント内容**
+- リード文（必須）
+- イベント説明（必須）
+- イベント紹介文
+
+**6. 画像**
+- メイン画像（必須、`ImageUpload`コンポーネント）
+- 追加画像1-4（任意、`ImageUpload`コンポーネント）
+
+**7. 会場情報**
+- 会場名（必須）
+- 郵便番号（郵便番号から住所自動入力機能付き）
+- 都道府県・市区町村・町名・番地
+- 緯度・経度（任意）
+
+**8. URL情報**
+- ホームページURL
+- 関連ページURL
+
+**9. 連絡先情報**
+- 連絡先名前（必須）
+- 連絡先電話番号（必須）
+- 連絡先メールアドレス
+
+**10. その他情報**
+- 駐車場情報
+- 料金情報
+- 主催者情報
+
+#### バリデーション
+- 必須項目: イベント名、イベント名ふりがな、ジャンル、開催開始日、開催終了日、開催期間表示、リード文、イベント説明、会場名、連絡先名前、連絡先電話番号、メイン画像
+- 日付の整合性: 開始日 ≤ 終了日、申し込み開始日 ≤ 申し込み終了日
+
+#### 下書き保存機能
+- 入力内容を800msのデバウンスで自動保存
+- `form_drafts`テーブルに保存
+- 編集時は下書き保存を無効化
+
+#### 郵便番号から住所自動入力
+- 郵便番号入力後、API呼び出しで住所を自動入力
+- ローディング中は`addressLoading`状態を表示
+
+---
+
+### 4. EventList（イベント一覧）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/EventList.tsx`
+- 出店者アプリ: `store/components/EventList.tsx`
+
+#### Props
+
+**主催者アプリ:**
+```typescript
+interface EventListProps {
+  userProfile: LineProfile
+  onBack: () => void
+}
+```
+
+**出店者アプリ:**
+```typescript
+interface EventListProps {
+  userProfile: any
+  onBack: () => void
+}
+```
+
+#### State管理
+```typescript
+const [events, setEvents] = useState<Event[]>([])
+const [loading, setLoading] = useState(true)
+const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
+const [showSearchPage, setShowSearchPage] = useState(false)
+const [keyword, setKeyword] = useState('')
+const [periodStart, setPeriodStart] = useState('')
+const [periodEnd, setPeriodEnd] = useState('')
+const [prefecture, setPrefecture] = useState('')
+const [city, setCity] = useState('')
+const [hasSearched, setHasSearched] = useState(false)
+```
+
+#### 機能要件
+
+**主催者アプリ:**
+- 自分のイベント一覧を表示
+- イベントカードクリック → イベント詳細表示
+- イベント編集・削除機能
+
+**出店者アプリ:**
+- 公開されているイベント一覧を表示
+- 検索機能: キーワード、期間、都道府県、市区町村
+- イベントカードクリック → イベント詳細表示
+- 「申し込む」ボタン → 確認ダイアログ → 申し込み送信
+
+#### レイアウト要件
+- カード型グリッドレイアウト
+- モバイル: 1列
+- タブレット: 2列
+- デスクトップ: 3列
+- カード間のギャップ: 16px
+
+#### 検索機能（出店者アプリ）
+- 検索ページ: キーワード、期間開始日、期間終了日、都道府県、市区町村
+- 検索実行後、結果をイベント一覧に表示
+- 検索条件をリセット可能
+
+---
+
+### 5. EventCard（イベントカード）
+
+#### ファイルパス
+`store/components/EventCard.tsx`
+
+#### Props
+```typescript
+interface EventCardProps {
+  event: Event
+  userProfile: any
+}
+```
+
+#### State管理
+```typescript
+const [showDetails, setShowDetails] = useState(false)
+const [applying, setApplying] = useState(false)
+```
+
+#### 表示項目
+- メイン画像（存在する場合）
+- イベント名
+- 開催期間（`event_display_period`）
+- 開催時間（存在する場合）
+- 会場名
+- リード文（`lead_text`）
+
+#### インタラクション
+- 「詳細を見る」ボタン → `showDetails`を`true`に変更、イベント説明を表示
+- 「このイベントに申し込む」ボタン → 確認ダイアログ → 申し込み送信
+- 申し込み中はボタンを無効化、「申し込み中...」表示
+
+#### 申し込み処理
+1. 確認ダイアログ表示
+2. 出店者情報を取得（認証タイプに応じて`user_id`または`line_user_id`で検索）
+3. `event_applications`テーブルに`pending`ステータスで挿入
+4. 主催者に通知を作成
+5. 主催者にメール通知を送信（オプション）
+6. 成功メッセージ表示
+
+---
+
+### 6. EventApplications（出店申し込み管理）
+
+#### ファイルパス
+`organizer/components/EventApplications.tsx`
+
+#### Props
+```typescript
+interface EventApplicationsProps {
+  eventId: string
+  eventName: string
+  organizerId: string
+  organizerEmail: string
+  onBack: () => void
+}
+```
+
+#### State管理
+```typescript
+const [applications, setApplications] = useState<Application[]>([])
+const [loading, setLoading] = useState(true)
+const [isApplicationClosed, setIsApplicationClosed] = useState(false)
+const [closingApplication, setClosingApplication] = useState(false)
+const [selectedExhibitor, setSelectedExhibitor] = useState<ExhibitorDetail | null>(null)
+const [licenseVerificationStatus, setLicenseVerificationStatus] = useState<{...}>()
+```
+
+#### 表示項目
+- 申し込み一覧: 出店者名、申し込み日時、ステータス（pending/approved/rejected）
+- 各申し込みに「詳細を見る」「承認」「却下」ボタン
+
+#### インタラクション
+- 「詳細を見る」 → 出店者詳細情報をモーダル表示
+- 「承認」 → 確認ダイアログ → ステータスを`approved`に更新 → 出店者に通知
+- 「却下」 → 確認ダイアログ → ステータスを`rejected`に更新 → 出店者に通知
+- 「営業許可証AI確認」 → API呼び出し → 結果表示
+- 「CSV形式でダウンロード」 → CSVエクスポートAPI呼び出し → ファイルダウンロード
+- 「申し込みを締め切る」 → 確認ダイアログ → `is_application_closed`を`true`に更新
+
+#### 出店者詳細表示
+- 基本情報: 名前、性別、年齢、電話番号、メールアドレス、ジャンル
+- 書類画像: 営業許可証、車検証、自動車検査証、PL保険、火器類配置図
+
+#### CSVエクスポート
+- 承認済み申し込みのみエクスポート
+- エクスポート項目: 出店者情報、申し込み日時
+- UTF-8 BOM付きCSV形式
+
+---
+
+### 7. ApplicationManagement（申し込み管理 - 出店者アプリ）
+
+#### ファイルパス
+`store/components/ApplicationManagement.tsx`
+
+#### Props
+```typescript
+interface ApplicationManagementProps {
+  userProfile: any
+  onBack: () => void
+}
+```
+
+#### State管理
+```typescript
+const [applications, setApplications] = useState<Application[]>([])
+const [loading, setLoading] = useState(true)
+```
+
+#### 表示項目
+- 申し込み一覧: イベント名、開催期間、会場、申し込み日時、ステータス
+- ステータス表示:
+  - `pending`: 承認待ち（黄色/オレンジ）
+  - `approved`: 承認済み（緑色）
+  - `rejected`: 却下（赤色）
+
+#### レイアウト要件
+- カード型レイアウト
+- 各カードにイベント画像、イベント名、ステータスバッジを表示
+
+---
+
+### 8. NotificationBox（通知一覧）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/NotificationBox.tsx`
+- 出店者アプリ: `store/components/NotificationBox.tsx`
+
+#### Props
+```typescript
+interface NotificationBoxProps {
+  userProfile: any
+  onBack: () => void
+  onUnreadCountChange?: (count: number) => void
+}
+```
+
+#### State管理
+```typescript
+const [notifications, setNotifications] = useState<Notification[]>([])
+const [loading, setLoading] = useState(true)
+const [unreadCount, setUnreadCount] = useState(0)
+```
+
+#### 表示項目
+- 通知一覧: タイトル、メッセージ、日時、関連イベント名（存在する場合）
+- 未読/既読の視覚的区別:
+  - 未読: 背景色を変える、または左側にバーを表示
+  - 既読: 通常の背景色
+
+#### インタラクション
+- 通知クリック → 既読にマーク、`onUnreadCountChange`コールバック呼び出し
+- 関連イベントがある場合、クリックでイベント詳細へ遷移
+
+#### 通知タイプ
+- `application_received`: 出店申し込み受信（主催者へ）
+- `application_approved`: 申し込み承認（出店者へ）
+- `application_rejected`: 申し込み却下（出店者へ）
+
+---
+
+### 9. OrganizerProfile / ExhibitorProfile（プロフィール）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/OrganizerProfile.tsx`
+- 出店者アプリ: `store/components/ExhibitorProfile.tsx`
+
+#### Props
+
+**主催者アプリ:**
+```typescript
+interface OrganizerProfileProps {
+  userProfile: LineProfile
+}
+```
+
+**出店者アプリ:**
+```typescript
+interface ExhibitorProfileProps {
+  userProfile: any
+  onBack: () => void
+}
+```
+
+#### State管理
+```typescript
+const [organizerData, setOrganizerData] = useState<OrganizerData | null>(null)
+const [exhibitorData, setExhibitorData] = useState<ExhibitorData | null>(null)
+const [loading, setLoading] = useState(true)
+const [isEditing, setIsEditing] = useState(false)
+```
+
+#### 表示項目
+
+**主催者アプリ:**
+- 会社名、名前、性別、年齢、電話番号、メールアドレス、承認状態
+
+**出店者アプリ:**
+- 名前、性別、年齢、電話番号、メールアドレス、ジャンル
+- 書類画像: 営業許可証、車検証、自動車検査証、PL保険、火器類配置図
+
+#### インタラクション
+- 「編集」ボタン → `OrganizerEditForm` / `ExhibitorEditForm`を表示
+- 編集完了 → プロフィール情報を更新
+
+---
+
+### 10. OrganizerEditForm / ExhibitorEditForm（プロフィール編集）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/OrganizerEditForm.tsx`
+- 出店者アプリ: `store/components/ExhibitorEditForm.tsx`
+
+#### Props
+
+**主催者アプリ:**
+```typescript
+interface OrganizerEditFormProps {
+  organizer: OrganizerData
+  onUpdateComplete: (updatedData: OrganizerData) => void
+  onCancel: () => void
+}
+```
+
+**出店者アプリ:**
+```typescript
+interface ExhibitorEditFormProps {
+  exhibitor: ExhibitorData
+  onUpdateComplete: (updatedData: ExhibitorData) => void
+  onCancel: () => void
+}
+```
+
+#### 機能要件
+- 登録フォームと同様の入力項目
+- 既存データを事前入力
+- バリデーションは登録フォームと同じ
+- 更新完了後、`onUpdateComplete`コールバックを呼び出し
+
+---
+
+### 11. ImageUpload（画像アップロード）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/ImageUpload.tsx`
+- 出店者アプリ: `store/components/ImageUpload.tsx`
+
+#### Props
+```typescript
+interface ImageUploadProps {
+  label: string
+  documentType: string
+  userId: string
+  currentImageUrl?: string
+  onUploadComplete: (url: string) => void
+  onUploadError: (error: string) => void
+  onImageDelete?: () => void
+  hasError?: boolean
+}
+```
+
+#### 機能要件
+- ドラッグ&ドロップ対応
+- クリックでファイル選択
+- 画像プレビュー表示
+- アップロード中はローディング表示
+- アップロード完了後、URLを`onUploadComplete`コールバックで返す
+- 画像削除機能（`onImageDelete`コールバック）
+- エラー表示（`hasError`が`true`の場合）
+
+#### 対応形式
+- JPEG, PNG, GIF, WebP, HEIC
+- 最大ファイルサイズ: 10MB
+
+---
+
+### 12. LoadingSpinner（ローディング表示）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/LoadingSpinner.tsx`
+- 出店者アプリ: `store/components/LoadingSpinner.tsx`
+
+#### Props
+なし
+
+#### レイアウト要件
+- 画面中央に配置
+- スピナーアニメーション（回転）
+- 背景: #F7F7F7
+
+---
+
+### 13. EmailConfirmationBanner / EmailConfirmationPending（メール確認）
+
+#### ファイルパス
+- 主催者アプリ: `organizer/components/EmailConfirmationBanner.tsx`, `EmailConfirmationPending.tsx`
+- 出店者アプリ: `store/components/EmailConfirmationBanner.tsx`, `EmailConfirmationPending.tsx`
+
+#### 機能要件
+- メール確認待ち状態を表示
+- メール再送信機能（将来的に実装予定）
+
+---
+
+### デザイン実装時の注意事項
+
+1. **既存のデザインシステムを参考にしつつ、完全に新しいデザインを作成**
+2. **機能要件は必ず維持**（入力項目、バリデーション、インタラクションなど）
+3. **レスポンシブ対応は必須**（モバイル、タブレット、デスクトップ）
+4. **アクセシビリティを考慮**（キーボードナビゲーション、スクリーンリーダー対応）
+5. **パフォーマンスを考慮**（不要なアニメーションは避ける）
+6. **一貫性を保つ**（全コンポーネントで統一されたデザイン言語）
+
+---
+
 **最終更新日**: 2024年12月
 **バージョン**: 1.0.0
 
