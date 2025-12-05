@@ -107,6 +107,9 @@ export default function AuthCallback() {
             const isRegistered = !!existingUser
             console.log('[Callback] Existing exhibitor found:', isRegistered ? 'yes' : 'no')
             
+            // セッションストレージに登録状態を保存
+            sessionStorage.setItem('is_registered', isRegistered ? 'true' : 'false')
+            
             setStatus('success')
             // 少し待ってからリダイレクト（UI更新のため）
             setTimeout(() => {

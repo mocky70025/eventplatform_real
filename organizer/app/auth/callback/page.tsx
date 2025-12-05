@@ -37,6 +37,10 @@ export default function AuthCallback() {
           console.log('[Callback] Current URL:', window.location.href)
           console.log('[Callback] Current origin:', window.location.origin)
           
+          // セッションストレージからアプリタイプを確認
+          const appType = sessionStorage.getItem('app_type')
+          const isFromOrganizer = appType === 'organizer'
+          
           // 主催者アプリのURLか確認
           const currentOrigin = window.location.origin
           const organizerUrl = process.env.NEXT_PUBLIC_ORGANIZER_URL || currentOrigin
@@ -44,14 +48,24 @@ export default function AuthCallback() {
                                  organizerUrl.includes(currentOrigin) ||
                                  currentOrigin === organizerUrl.replace(/\/$/, '')
           
+          console.log('[Callback] App type from sessionStorage:', appType)
+          console.log('[Callback] Is from organizer:', isFromOrganizer)
           console.log('[Callback] Is organizer app:', isOrganizerApp)
           console.log('[Callback] Organizer URL:', organizerUrl)
+          console.log('[Callback] Current origin:', currentOrigin)
           
-          // もし出店者アプリにリダイレクトされてしまった場合、主催者アプリにリダイレクト
-          if (!isOrganizerApp && organizerUrl && organizerUrl !== currentOrigin) {
+          // 主催者アプリから来た場合、または出店者アプリにリダイレクトされてしまった場合、主催者アプリにリダイレクト
+          if ((isFromOrganizer || !isOrganizerApp) && organizerUrl && organizerUrl !== currentOrigin) {
             console.log('[Callback] Redirected to wrong app, redirecting to organizer app')
+            // セッションストレージをクリア
+            sessionStorage.removeItem('app_type')
             window.location.href = `${organizerUrl}/auth/callback${window.location.search}${window.location.hash}`
             return
+          }
+          
+          // 主催者アプリの場合は、app_typeをクリア
+          if (appType) {
+            sessionStorage.removeItem('app_type')
           }
           
           // Supabaseが自動的にセッションを確立するのを待つ
@@ -95,6 +109,9 @@ export default function AuthCallback() {
             
             const isRegistered = !!existingUser
             console.log('[Callback] Existing organizer found:', isRegistered ? 'yes' : 'no')
+            
+            // セッションストレージに登録状態を保存
+            sessionStorage.setItem('is_registered', isRegistered ? 'true' : 'false')
             
             setStatus('success')
             // 少し待ってからリダイレクト（UI更新のため）
