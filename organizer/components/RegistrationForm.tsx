@@ -58,7 +58,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const [showTermsPage, setShowTermsPage] = useState(false)
   const [errors, setErrors] = useState<Record<string, boolean>>({})
   const [hasViewedTerms, setHasViewedTerms] = useState(false)
-  const [currentStep, setCurrentStep] = useState<1 | 2>(1) // ステップ1: 情報登録、ステップ2: 情報確認
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1) // ステップ1: 情報登録、ステップ2: 情報確認、ステップ3: 登録完了
   const [draftLoaded, setDraftLoaded] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
@@ -479,8 +479,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         console.error('[RegistrationForm] Failed to clear organizer registration draft after submit:', draftError)
       }
 
-      alert('登録が完了しました。運営側の承認をお待ちください。')
-      onRegistrationComplete()
+      setCurrentStep(3)
     } catch (error) {
       console.error('[RegistrationForm] Registration failed:', error)
       console.error('[RegistrationForm] Error details:', JSON.stringify(error, null, 2))
@@ -494,7 +493,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     }
   }
 
-  // 進捗インジケーター（Figmaデザインに基づく）
+  // 進捗インジケーター（3ステップ）
   const ProgressIndicator = () => (
     <div className="flex items-center justify-center" style={{ marginBottom: '48px', paddingTop: '24px' }}>
       <div className="relative" style={{ width: '250.5px', height: '16px' }}>
@@ -521,7 +520,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         <div 
           className="absolute"
           style={{
-            width: '218.5px',
+            width: '101.75px',
             height: '4px',
             left: '15.75px',
             top: '6px',
@@ -535,13 +534,44 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           style={{
             width: '16px',
             height: '16px',
-            left: '234.5px',
+            left: '117px',
             top: '0px',
             backgroundColor: currentStep >= 2 ? '#06C755' : 'transparent',
             border: currentStep >= 2 ? 'none' : '1px solid #06C755',
           }}
         >
-          {currentStep >= 2 && (
+          {currentStep > 2 && (
+            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          )}
+        </div>
+        
+        {/* 線2（ステップ2と3の間） */}
+        <div 
+          className="absolute"
+          style={{
+            width: '101.75px',
+            height: '4px',
+            left: '133px',
+            top: '6px',
+            backgroundColor: currentStep >= 3 ? '#06C755' : '#D9D9D9',
+          }}
+        />
+        
+        {/* ステップ3の円 */}
+        <div 
+          className="absolute rounded-full flex items-center justify-center"
+          style={{
+            width: '16px',
+            height: '16px',
+            left: '234.5px',
+            top: '0px',
+            backgroundColor: currentStep >= 3 ? '#06C755' : 'transparent',
+            border: currentStep >= 3 ? 'none' : '1px solid #06C755',
+          }}
+        >
+          {currentStep >= 3 && (
             <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
@@ -561,7 +591,18 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           >
             情報登録
           </span>
-          {/* 情報確認 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
+          {/* 情報確認 - 円の中心は125px（left: 117px + 円の半径8px） */}
+          <span 
+            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
+            style={{
+              left: '125px',
+              transform: 'translateX(-50%)',
+              fontFamily: '"Noto Sans JP", sans-serif'
+            }}
+          >
+            情報確認
+          </span>
+          {/* 登録完了 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
           <span 
             className="absolute text-[14px] text-gray-700 whitespace-nowrap"
             style={{
@@ -570,7 +611,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               fontFamily: '"Noto Sans JP", sans-serif'
             }}
           >
-            情報確認
+            登録完了
           </span>
         </div>
       </div>
@@ -1133,6 +1174,107 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     </div>
   )
 
+  // ステップ3: 登録完了
+  const renderStep3 = () => (
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: isDesktop ? '600px' : '393px',
+      minHeight: isDesktop ? '800px' : '852px',
+      margin: '0 auto',
+      background: '#FFFFFF',
+      ...(isDesktop && {
+        padding: '40px 0',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '12px'
+      })
+    }}>
+      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
+        <ProgressIndicator />
+        
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
+          <div style={{
+            width: '96px',
+            height: '96px',
+            background: '#2563eb',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '24px'
+          }}>
+            <svg style={{ width: '64px', height: '64px', color: '#FFFFFF' }} fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          </div>
+          
+          <h2 style={{
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontSize: '24px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#000000',
+            marginBottom: '16px'
+          }}>
+            登録完了
+          </h2>
+          
+          <p style={{
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontSize: '16px',
+            lineHeight: '150%',
+            color: '#666666',
+            marginBottom: '32px',
+            textAlign: 'center'
+          }}>
+            登録が完了しました。運営側の承認をお待ちください。
+          </p>
+          
+          <button
+            onClick={onRegistrationComplete}
+            style={{
+              width: '100%',
+              maxWidth: '330px',
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: '14px 24px',
+              gap: '10px',
+              height: '48px',
+              background: '#2563eb',
+              borderRadius: '8px',
+              border: 'none',
+              fontFamily: '"Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 600,
+              lineHeight: '1.5',
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease-in-out',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1d4ed8'
+              e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              e.currentTarget.style.transform = 'translateY(-1px)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#2563eb'
+              e.currentTarget.style.boxShadow = '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
+              e.currentTarget.style.transform = 'translateY(0)'
+            }}
+          >
+            マイページへ
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  if (currentStep === 1) return renderStep1()
   if (currentStep === 2) return renderStep2()
-  return renderStep1()
+  if (currentStep === 3) return renderStep3()
+  
+  return null
 }
