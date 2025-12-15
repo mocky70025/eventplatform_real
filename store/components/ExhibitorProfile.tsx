@@ -173,57 +173,77 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
   return (
     <div style={{ 
-      position: 'relative',
+      minHeight: '100vh',
       width: '100%',
-      maxWidth: isDesktop ? '600px' : '393px',
-      minHeight: isDesktop ? '800px' : '852px',
-      margin: '0 auto',
-      background: '#FFFFFF',
-      ...(isDesktop && {
-        padding: '40px 0',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px'
-      })
+      background: '#fff5f0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : 0
     }}>
-      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
-          <div style={{ width: '60px' }}></div>
-          <h1 style={{
-            fontFamily: '"Noto Sans JP", sans-serif',
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        background: '#fff5f0',
+        minHeight: isDesktop ? 'auto' : '852px'
+      }}>
+      {/* ヘッダー */}
+      <div style={{
+        background: '#5DABA8',
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px'
+      }}>
+        <button
+          onClick={onBack}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#FFFFFF',
             fontSize: '20px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#000000',
-            textAlign: 'center'
-          }}>登録情報</h1>
-          <button
-            onClick={() => setIsEditing(true)}
-            style={{
-              padding: '8px 16px',
-              background: '#06C755',
-              color: '#FFFFFF',
-              borderRadius: '8px',
-              border: 'none',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '14px',
-              fontWeight: 500,
-              lineHeight: '120%',
-              cursor: 'pointer'
-            }}
-          >
-            編集
-          </button>
-        </div>
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          ←
+        </button>
+        <h1 style={{
+          fontSize: '18px',
+          fontWeight: 600,
+          color: '#FFFFFF',
+          margin: 0,
+          flex: 1
+        }}>
+          プロフィール
+        </h1>
+      </div>
+
+      <div className="container mx-auto" style={{ padding: '16px', maxWidth: isDesktop ? '800px' : '393px' }}>
 
         {exhibitorData && (
-          <div style={{
-            background: '#FFFFFF',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px'
-          }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <>
+            {/* 情報確認セクション */}
+            <div style={{
+              background: '#FFFFFF',
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+              borderRadius: '8px',
+              padding: '24px',
+              marginBottom: '16px'
+            }}>
+              <h2 style={{
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#000000',
+                marginBottom: '24px'
+              }}>
+                情報を確認してください
+              </h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
                 <label style={{
                   fontFamily: '"Noto Sans JP", sans-serif',
@@ -357,197 +377,71 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
                 }}>{exhibitorData.genre_free_text || '-'}</p>
               </div>
 
-              {/* 書類画像の表示 */}
-              <div>
-                <label style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '16px',
-                  display: 'block'
-                }}>登録書類</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                  {getImageUrl(exhibitorData.business_license_image_url) && (
-                    <div>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666',
-                        marginBottom: '8px'
-                      }}>営業許可証</p>
-                      <img
-                        src={getImageUrl(exhibitorData.business_license_image_url)!}
-                        alt="営業許可証"
-                        onError={(e) => {
-                          console.error('[ExhibitorProfile] Failed to load business_license image:', getImageUrl(exhibitorData.business_license_image_url))
-                          e.currentTarget.style.display = 'none'
-                        }}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'contain',
-                          borderRadius: '8px',
-                          background: '#FFFFFF',
-                          border: '1px solid #E5E5E5'
-                        }}
-                      />
-                    </div>
-                  )}
-                  {getImageUrl(exhibitorData.vehicle_inspection_image_url) && (
-                    <div>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666',
-                        marginBottom: '8px'
-                      }}>車検証</p>
-                      <img
-                        src={getImageUrl(exhibitorData.vehicle_inspection_image_url)!}
-                        alt="車検証"
-                        onError={(e) => {
-                          console.error('[ExhibitorProfile] Failed to load vehicle_inspection image:', getImageUrl(exhibitorData.vehicle_inspection_image_url))
-                          e.currentTarget.style.display = 'none'
-                        }}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'contain',
-                          borderRadius: '8px',
-                          background: '#FFFFFF',
-                          border: '1px solid #E5E5E5'
-                        }}
-                      />
-                    </div>
-                  )}
-                  {getImageUrl(exhibitorData.automobile_inspection_image_url) && (
-                    <div>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666',
-                        marginBottom: '8px'
-                      }}>自動車検査証</p>
-                      <img
-                        src={getImageUrl(exhibitorData.automobile_inspection_image_url)!}
-                        alt="自動車検査証"
-                        onError={(e) => {
-                          console.error('[ExhibitorProfile] Failed to load automobile_inspection image:', getImageUrl(exhibitorData.automobile_inspection_image_url))
-                          e.currentTarget.style.display = 'none'
-                        }}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'contain',
-                          borderRadius: '8px',
-                          background: '#FFFFFF',
-                          border: '1px solid #E5E5E5'
-                        }}
-                      />
-                    </div>
-                  )}
-                  {getImageUrl(exhibitorData.pl_insurance_image_url) && (
-                    <div>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666',
-                        marginBottom: '8px'
-                      }}>PL保険</p>
-                      <img
-                        src={getImageUrl(exhibitorData.pl_insurance_image_url)!}
-                        alt="PL保険"
-                        onError={(e) => {
-                          console.error('[ExhibitorProfile] Failed to load pl_insurance image:', getImageUrl(exhibitorData.pl_insurance_image_url))
-                          e.currentTarget.style.display = 'none'
-                        }}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'contain',
-                          borderRadius: '8px',
-                          background: '#FFFFFF',
-                          border: '1px solid #E5E5E5'
-                        }}
-                      />
-                    </div>
-                  )}
-                  {getImageUrl(exhibitorData.fire_equipment_layout_image_url) && (
-                    <div>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666',
-                        marginBottom: '8px'
-                      }}>火器類配置図</p>
-                      <img
-                        src={getImageUrl(exhibitorData.fire_equipment_layout_image_url)!}
-                        alt="火器類配置図"
-                        onError={(e) => {
-                          console.error('[ExhibitorProfile] Failed to load fire_equipment_layout image:', getImageUrl(exhibitorData.fire_equipment_layout_image_url))
-                          e.currentTarget.style.display = 'none'
-                        }}
-                        style={{
-                          width: '100%',
-                          height: '200px',
-                          objectFit: 'contain',
-                          borderRadius: '8px',
-                          background: '#FFFFFF',
-                          border: '1px solid #E5E5E5'
-                        }}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div>
-                <label style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>登録日時</label>
-                <p style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  lineHeight: '150%',
-                  color: '#000000'
-                }}>
-                  {new Date(exhibitorData.created_at).toLocaleString('ja-JP')}
-                </p>
-              </div>
-
-              <div>
-                <label style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>最終更新日時</label>
-                <p style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  lineHeight: '150%',
-                  color: '#000000'
-                }}>
-                  {new Date(exhibitorData.updated_at).toLocaleString('ja-JP')}
-                </p>
               </div>
             </div>
-          </div>
+
+            {/* 書類セクション */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '24px' }}>
+              {/* 営業許可証 */}
+              <div style={{
+                background: '#FFFFFF',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+                borderRadius: '8px',
+                padding: '16px'
+              }}>
+                <h3 style={{
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: '#000000',
+                  marginBottom: '12px'
+                }}>営業許可証</h3>
+                <div style={{
+                  width: '100%',
+                  height: '160px',
+                  background: '#F5F5F5',
+                  borderRadius: '8px',
+                  marginBottom: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  {getImageUrl(exhibitorData.business_license_image_url) ? (
+                    <img
+                      src={getImageUrl(exhibitorData.business_license_image_url)!}
+                      alt="営業許可証"
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  ) : (
+                    <span style={{ color: '#999999', fontSize: '14px' }}>画像なし</span>
+                  )}
+                </div>
+                {getImageUrl(exhibitorData.business_license_image_url) && (
+                  <div style={{
+                    background: '#E6F7ED',
+                    borderRadius: '8px',
+                    padding: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="#06C755" strokeWidth="2"/>
+                      <path d="M9 12L11 14L15 10" stroke="#06C755" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: 600, color: '#06C755' }}>有効</div>
+                      <div style={{ fontSize: '12px', color: '#666666' }}>期限: 2025/12/31</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
         )}
 
         {/* ログアウトボタン */}
@@ -598,6 +492,7 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
             ログアウト
           </button>
         </div>
+      </div>
       </div>
     </div>
   )

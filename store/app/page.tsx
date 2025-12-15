@@ -12,6 +12,7 @@ import NotificationBox from '@/components/NotificationBox'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 import EmailConfirmationPending from '@/components/EmailConfirmationPending'
+import EmailSent from '@/components/EmailSent'
 
 export default function Home() {
   const [isRegistered, setIsRegistered] = useState(false)
@@ -241,6 +242,13 @@ export default function Home() {
     return <LoadingSpinner />
   }
 
+  // EmailSent画面を表示するかチェック
+  const showEmailSent = typeof window !== 'undefined' && sessionStorage.getItem('show_email_sent') === 'true'
+  
+  if (showEmailSent) {
+    return <EmailSent />
+  }
+
   // ログイン状態のチェック（常にLINE Loginを使用）
   if (!userProfile) {
     console.log('[Home] No userProfile, showing WelcomeScreen')
@@ -350,13 +358,30 @@ export default function Home() {
     }
   }
 
-  const CalendarIcon = () => (
+  const NotificationIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M12 2C8.13 2 5 5.13 5 9c0 5.25-2.5 7.5-2.5 7.5h19S19 14.25 19 9c0-3.87-3.13-7-7-7zm0 20c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+
+  const HistoryIcon = () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M7 2a1 1 0 0 0-1 1v1H5a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3h-1V3a1 1 0 1 0-2 0v1H8V3a1 1 0 0 0-1-1Zm12 6v11a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V8h14Z"
         fill="currentColor"
       />
-      <path d="M7 11h4v4H7v-4Zm6 0h4v4h-4v-4Z" fill="currentColor" />
+    </svg>
+  )
+
+  const SearchIcon = () => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <path
+        d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"
+        fill="currentColor"
+      />
     </svg>
   )
 
@@ -373,36 +398,18 @@ export default function Home() {
     </svg>
   )
 
-  const ChecklistIcon = () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M7 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H7Zm0 2h10v16H7V4Zm2.707 7.293a1 1 0 0 0-1.414 1.414l1.5 1.5a1 1 0 0 0 1.414 0l3.5-3.5a1 1 0 0 0-1.414-1.414L10.5 12.086l-.793-.793Z"
-        fill="currentColor"
-      />
-    </svg>
-  )
-
-  const NotificationIcon = () => (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-      <path
-        d="M12 2C8.13 2 5 5.13 5 9c0 5.25-2.5 7.5-2.5 7.5h19S19 14.25 19 9c0-3.87-3.13-7-7-7zm0 20c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2z"
-        fill="currentColor"
-      />
-    </svg>
-  )
-
   const tabItems: Array<{ key: typeof currentView; label: string; icon: JSX.Element }> = [
-    { key: 'events', label: 'イベント', icon: <CalendarIcon /> },
-    { key: 'profile', label: '登録情報', icon: <ProfileIcon /> },
-    { key: 'applications', label: '申し込み', icon: <ChecklistIcon /> },
-    { key: 'notifications', label: '通知', icon: <NotificationIcon /> }
+    { key: 'notifications', label: '通知', icon: <NotificationIcon /> },
+    { key: 'applications', label: '履歴', icon: <HistoryIcon /> },
+    { key: 'events', label: '検索', icon: <SearchIcon /> },
+    { key: 'profile', label: 'プロフィール', icon: <ProfileIcon /> }
   ]
 
   // メール未確認の場合はバナーを表示
   const showEmailConfirmationBanner = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && userProfile?.email
 
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh', paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)' }}>
+    <div style={{ background: '#fff5f0', minHeight: '100vh', paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)' }}>
       {showEmailConfirmationBanner && (
         <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
           <EmailConfirmationBanner email={userProfile.email} />
@@ -437,7 +444,7 @@ export default function Home() {
         >
           {tabItems.map((item) => {
             const isActive = currentView === item.key
-            const activeColor = '#06C755'
+            const activeColor = '#5DABA8'
             const inactiveColor = '#666666'
             return (
               <button

@@ -591,147 +591,172 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     }
   }
 
-  // 進捗インジケーター（3ステップ）
-  const ProgressIndicator = () => (
-    <div className="flex items-center justify-center" style={{ marginBottom: '48px', paddingTop: '24px' }}>
-      <div className="relative" style={{ width: '250.5px', height: '16px' }}>
-        {/* ステップ1の円 */}
-        <div 
-          className="absolute rounded-full flex items-center justify-center"
-          style={{
-            width: '16px',
-            height: '16px',
-            left: '0px',
-            top: '0px',
-            backgroundColor: currentStep >= 1 ? '#06C755' : 'transparent',
-            border: currentStep >= 1 ? 'none' : '1px solid #06C755',
-          }}
-        >
-          {currentStep > 1 && (
-            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+  // 進捗インジケーター（3ステップ）- 完成図に合わせて実装
+  const ProgressIndicator = () => {
+    const step1Color = currentStep >= 1 ? '#5DABA8' : '#D9D9D9'
+    const step2Color = currentStep >= 2 ? '#5DABA8' : '#D9D9D9'
+    const step3Color = currentStep >= 3 ? '#5DABA8' : '#D9D9D9'
+    
+    return (
+      <div style={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center', 
+        marginBottom: '32px', 
+        paddingTop: '24px',
+        background: '#fff5f0',
+        padding: '24px 16px'
+      }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '320px', display: 'flex', alignItems: 'center' }}>
+          {/* ステップ1 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+            {currentStep === 1 ? (
+              <div style={{ color: step1Color, fontSize: '24px' }}>🚚</div>
+            ) : currentStep > 1 ? (
+              <div style={{ 
+                width: '20px', 
+                height: '20px', 
+                borderRadius: '4px',
+                background: step1Color,
+                transform: 'rotate(45deg)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(-45deg)' }}>
+                  <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-          )}
+              </div>
+            ) : (
+              <div style={{ 
+                width: '20px', 
+                height: '20px', 
+                borderRadius: '4px',
+                border: `2px solid ${step1Color}`,
+                transform: 'rotate(45deg)',
+                background: 'transparent'
+              }} />
+            )}
+            <span style={{ 
+              fontSize: '12px', 
+              color: currentStep >= 1 ? '#5DABA8' : '#999999',
+              marginTop: '8px',
+              fontWeight: currentStep === 1 ? 600 : 400
+            }}>
+              情報登録
+            </span>
         </div>
         
-        {/* 線1（ステップ1と2の間） */}
-        <div 
-          className="absolute"
-          style={{
-            width: '101.75px',
-            height: '4px',
-            left: '15.75px',
-            top: '6px',
-            backgroundColor: currentStep >= 2 ? '#06C755' : '#D9D9D9',
-          }}
-        />
-        
-        {/* ステップ2の円 */}
-        <div 
-          className="absolute rounded-full flex items-center justify-center"
-          style={{
-            width: '16px',
-            height: '16px',
-            left: '117px',
-            top: '0px',
-            backgroundColor: currentStep >= 2 ? '#06C755' : 'transparent',
-            border: currentStep >= 2 ? 'none' : '1px solid #06C755',
-          }}
-        >
-          {currentStep > 2 && (
-            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          {/* 線1 */}
+          <div style={{ 
+            flex: 1, 
+            height: '2px', 
+            background: step2Color,
+            margin: '0 8px',
+            marginTop: '-20px'
+          }} />
+
+          {/* ステップ2 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+            {currentStep === 2 ? (
+              <div style={{ 
+                width: '20px', 
+                height: '20px', 
+                borderRadius: '4px',
+                background: step2Color,
+                transform: 'rotate(45deg)'
+              }} />
+            ) : currentStep > 2 ? (
+              <div style={{ 
+                width: '20px', 
+                height: '20px', 
+                borderRadius: '4px',
+                background: step2Color,
+                transform: 'rotate(45deg)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" style={{ transform: 'rotate(-45deg)' }}>
+                  <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-          )}
+              </div>
+            ) : (
+              <div style={{ 
+                width: '20px', 
+                height: '20px', 
+                borderRadius: '4px',
+                border: `2px solid ${step2Color}`,
+                transform: 'rotate(45deg)',
+                background: 'transparent'
+              }} />
+            )}
+            <span style={{ 
+              fontSize: '12px', 
+              color: currentStep >= 2 ? '#5DABA8' : '#999999',
+              marginTop: '8px',
+              fontWeight: currentStep === 2 ? 600 : 400
+            }}>
+              情報確認
+            </span>
         </div>
         
-        {/* 線2（ステップ2と3の間） */}
-        <div 
-          className="absolute"
-          style={{
-            width: '101.75px',
-            height: '4px',
-            left: '133px',
-            top: '6px',
-            backgroundColor: currentStep >= 3 ? '#06C755' : '#D9D9D9',
-          }}
-        />
-        
-        {/* ステップ3の円 */}
-        <div 
-          className="absolute rounded-full flex items-center justify-center"
-          style={{
-            width: '16px',
-            height: '16px',
-            left: '234.5px',
-            top: '0px',
-            backgroundColor: currentStep >= 3 ? '#06C755' : 'transparent',
-            border: currentStep >= 3 ? 'none' : '1px solid #06C755',
-          }}
-        >
-          {currentStep >= 3 && (
-            <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          )}
-        </div>
-        
-        {/* ラベル */}
-        <div className="absolute top-6 left-0" style={{ width: '250.5px', height: '20px' }}>
-          {/* 情報登録 - 円の中心は8px（left: 0px + 円の半径8px） */}
-          <span 
-            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
-            style={{
-              left: '8px',
-              transform: 'translateX(-50%)',
-              fontFamily: '"Noto Sans JP", sans-serif'
-            }}
-          >
-            情報登録
-          </span>
-          {/* 情報確認 - 円の中心は125px（left: 117px + 円の半径8px） */}
-          <span 
-            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
-            style={{
-              left: '125px',
-              transform: 'translateX(-50%)',
-              fontFamily: '"Noto Sans JP", sans-serif'
-            }}
-          >
-            情報確認
-          </span>
-          {/* 登録完了 - 円の中心は242.5px（left: 234.5px + 円の半径8px） */}
-          <span 
-            className="absolute text-[14px] text-gray-700 whitespace-nowrap"
-            style={{
-              left: '242.5px',
-              transform: 'translateX(-50%)',
-              fontFamily: '"Noto Sans JP", sans-serif'
-            }}
-          >
+          {/* 線2 */}
+          <div style={{ 
+            flex: 1, 
+            height: '2px', 
+            background: step3Color,
+            margin: '0 8px',
+            marginTop: '-20px'
+          }} />
+
+          {/* ステップ3 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1 }}>
+            {currentStep >= 3 ? (
+              <div style={{ color: step3Color, fontSize: '24px' }}>🚚</div>
+            ) : (
+              <div style={{ 
+                width: '20px', 
+                height: '20px', 
+                borderRadius: '4px',
+                border: `2px solid ${step3Color}`,
+                transform: 'rotate(45deg)',
+                background: 'transparent'
+              }} />
+            )}
+            <span style={{ 
+              fontSize: '12px', 
+              color: currentStep >= 3 ? '#5DABA8' : '#999999',
+              marginTop: '8px',
+              fontWeight: currentStep === 3 ? 600 : 400
+            }}>
             登録完了
           </span>
         </div>
       </div>
     </div>
   )
+  }
 
   // ステップ1: 情報登録
   const renderStep1 = () => (
     <div style={{ 
+      minHeight: '100vh',
+      width: '100%',
+      background: '#fff5f0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : 0
+    }}>
+    <div style={{ 
       position: 'relative',
       width: '100%',
-      maxWidth: isDesktop ? '600px' : '393px',
-      minHeight: isDesktop ? '800px' : '852px',
-      margin: '0 auto',
+        maxWidth: '393px',
       background: '#FFFFFF',
-      ...(isDesktop && {
-        padding: '40px 0',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px'
-      })
-    }}>
-      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
+        minHeight: isDesktop ? 'auto' : '852px'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <ProgressIndicator />
         
         <h2 style={{ 
@@ -1102,7 +1127,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             <div style={{
               width: '24px',
               height: '24px',
-              background: termsAccepted ? '#06C755' : '#FFFFFF',
+              background: termsAccepted ? '#5DABA8' : '#FFFFFF',
               border: termsAccepted ? 'none' : '1px solid #E5E5E5',
               borderRadius: '8px',
               position: 'relative',
@@ -1206,7 +1231,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             width: '100%',
             maxWidth: '330px',
             height: '48px',
-            background: termsAccepted ? '#06C755' : '#D9D9D9',
+            background: termsAccepted ? '#5DABA8' : '#D9D9D9',
             borderRadius: '8px',
             border: 'none',
             fontFamily: '"Noto Sans JP", sans-serif',
@@ -1222,25 +1247,29 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           次に進む
         </button>
       </div>
+      </div>
     </div>
   )
 
   // ステップ2: 情報確認
   const renderStep2 = () => (
     <div style={{ 
-      position: 'relative',
+      minHeight: '100vh',
       width: '100%',
-      maxWidth: isDesktop ? '600px' : '393px',
-      minHeight: isDesktop ? '800px' : '852px',
-      margin: '0 auto',
-      background: '#FFFFFF',
-      ...(isDesktop && {
-        padding: '40px 0',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px'
-      })
+      background: '#fff5f0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : 0
     }}>
-      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        background: '#FFFFFF',
+        minHeight: isDesktop ? 'auto' : '852px'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <ProgressIndicator />
         
         <h2 style={{ 
@@ -1520,6 +1549,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             {loading ? '登録中...' : '登録する'}
           </button>
         </div>
+        </div>
       </div>
     </div>
   )
@@ -1528,15 +1558,23 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   // 利用規約ページ
   if (showTermsPage) {
     return (
+      <div style={{
+        minHeight: '100vh',
+      width: '100%',
+      background: '#fff5f0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : 0
+    }}>
       <div style={{ 
         position: 'relative',
         width: '100%',
-        maxWidth: isDesktop ? '600px' : '393px',
-        minHeight: '852px',
-        margin: '0 auto',
-        background: '#FFFFFF'
+        maxWidth: '393px',
+        background: '#FFFFFF',
+        minHeight: isDesktop ? 'auto' : '852px'
       }}>
-        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
           <h2 style={{ 
             fontFamily: '"Noto Sans JP", sans-serif',
             fontSize: '20px',
@@ -1596,25 +1634,29 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           </button>
         </div>
       </div>
+    </div>
     )
   }
 
   // ステップ3: 登録完了
   const renderStep3 = () => (
     <div style={{ 
-      position: 'relative',
+      minHeight: '100vh',
       width: '100%',
-      maxWidth: isDesktop ? '600px' : '393px',
-      minHeight: isDesktop ? '800px' : '852px',
-      margin: '0 auto',
-      background: '#FFFFFF',
-      ...(isDesktop && {
-        padding: '40px 0',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px'
-      })
+      background: '#fff5f0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : 0
     }}>
-      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        background: '#FFFFFF',
+        minHeight: isDesktop ? 'auto' : '852px'
+      }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
         <ProgressIndicator />
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
@@ -1668,6 +1710,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           >
             マイページへ
           </button>
+        </div>
         </div>
       </div>
     </div>

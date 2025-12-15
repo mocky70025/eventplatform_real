@@ -400,10 +400,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         checkError = result.error
       } else {
         const result = await supabase
-          .from('organizers')
-          .select('id')
-          .eq('line_user_id', userProfile.userId)
-          .single()
+        .from('organizers')
+        .select('id')
+        .eq('line_user_id', userProfile.userId)
+        .single()
         existingUser = result.data
         checkError = result.error
       }
@@ -423,9 +423,9 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       console.log('[RegistrationForm] Normalized phone:', normalizedPhone)
 
       const insertData: any = {
-        ...formData,
-        phone_number: normalizedPhone,
-        is_approved: false,
+          ...formData,
+          phone_number: normalizedPhone,
+          is_approved: false,
       }
 
       // 認証タイプに応じてuser_idまたはline_user_idを設定
@@ -448,13 +448,13 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
         console.log('[RegistrationForm] Insert result:', { data: insertData_result, error })
 
-        if (error) {
+      if (error) {
           console.error('[RegistrationForm] Supabase error:', error)
           console.error('[RegistrationForm] Error code:', error.code)
           console.error('[RegistrationForm] Error message:', error.message)
           console.error('[RegistrationForm] Error details:', error.details)
           console.error('[RegistrationForm] Error hint:', error.hint)
-          throw error
+        throw error
         }
 
         console.log('[RegistrationForm] Insert successful:', insertData_result)
@@ -927,17 +927,17 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
 
             {/* 性別と年齢（同じ行） */}
             <div style={{ width: '100%', maxWidth: '330px', display: 'flex', flexDirection: 'row', gap: '16px' }}>
-              {/* 性別 */}
+            {/* 性別 */}
               <div style={{ flex: 1, height: '73px', position: 'relative' }} data-error-field="gender">
-                <label style={labelStyle}>性別</label>
+              <label style={labelStyle}>性別</label>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
                   <div style={{ ...formFieldStyle(errors.gender), width: '100%' }}>
                     <select
                       value={formData.gender || ''}
-                      onChange={(e) => {
-                        setFormData({ ...formData, gender: e.target.value as any })
-                        if (errors.gender) setErrors({ ...errors, gender: false })
-                      }}
+                        onChange={(e) => {
+                          setFormData({ ...formData, gender: e.target.value as any })
+                          if (errors.gender) setErrors({ ...errors, gender: false })
+                        }}
                       style={inputStyle(!!formData.gender)}
                     >
                       <option value="">選択してください</option>
@@ -946,35 +946,35 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                       <option value="それ以外">その他</option>
                     </select>
                   </div>
-                </div>
-                {errors.gender && (
-                  <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
-                )}
               </div>
-
-              {/* 年齢 */}
-              <div style={{ flex: 1, height: '73px', position: 'relative' }} data-error-field="age">
-                <label style={labelStyle}>年齢</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
-                    <input
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={formData.age || ''}
-                      onChange={(e) => {
-                        const ageValue = parseInt(e.target.value) || 0
-                        setFormData({ ...formData, age: ageValue })
-                        if (errors.age) setErrors({ ...errors, age: false })
-                      }}
-                      placeholder="25"
-                      style={inputStyle(formData.age > 0)}
-                    />
-                  </div>
-                </div>
-                {errors.age && (
+              {errors.gender && (
                   <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
-                )}
+              )}
+            </div>
+
+            {/* 年齢 */}
+              <div style={{ flex: 1, height: '73px', position: 'relative' }} data-error-field="age">
+              <label style={labelStyle}>年齢</label>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
+                <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
+                  <input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={formData.age || ''}
+                    onChange={(e) => {
+                      const ageValue = parseInt(e.target.value) || 0
+                      setFormData({ ...formData, age: ageValue })
+                      if (errors.age) setErrors({ ...errors, age: false })
+                    }}
+                    placeholder="25"
+                    style={inputStyle(formData.age > 0)}
+                  />
+                </div>
+              </div>
+              {errors.age && (
+                  <p style={{ fontSize: '12px', color: '#ef4444', marginTop: '4px', fontWeight: 500 }}>入力してください</p>
+              )}
               </div>
             </div>
 

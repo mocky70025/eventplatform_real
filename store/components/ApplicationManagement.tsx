@@ -26,6 +26,7 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [activeTab, setActiveTab] = useState<'all' | 'pending' | 'approved'>('all')
 
   // 画面サイズを検出
   useEffect(() => {
@@ -118,7 +119,7 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return { bg: '#FFF9E6', text: '#B8860B' }
+        return { bg: '#FFF4E6', text: '#FF8A5C' }
       case 'approved':
         return { bg: '#E6F7ED', text: '#06C755' }
       case 'rejected':
@@ -131,7 +132,7 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
   const getStatusText = (status: string) => {
     switch (status) {
       case 'pending':
-        return '審査中'
+        return '承認待ち'
       case 'approved':
         return '承認済み'
       case 'rejected':
@@ -140,21 +141,30 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
         return '不明'
     }
   }
+  
+  const filteredApplications = applications.filter(app => {
+    if (activeTab === 'all') return true
+    if (activeTab === 'pending') return app.application_status === 'pending'
+    if (activeTab === 'approved') return app.application_status === 'approved'
+    return true
+  })
 
   if (loading) {
     return (
       <div style={{ 
-        position: 'relative',
+        minHeight: '100vh',
         width: '100%',
-        maxWidth: isDesktop ? '800px' : '393px',
-        minHeight: '852px',
-        margin: '0 auto',
-        background: '#FFFFFF',
+        background: '#fff5f0',
         display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        padding: isDesktop ? '40px 20px' : 0
       }}>
-        <div style={{ textAlign: 'center' }}>
+        <div style={{ 
+          textAlign: 'center',
+          maxWidth: '393px',
+          width: '100%'
+        }}>
           <div style={{
             width: '48px',
             height: '48px',
@@ -177,26 +187,117 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
 
   return (
     <div style={{ 
-      position: 'relative',
+      minHeight: '100vh',
       width: '100%',
-      maxWidth: '393px',
-      minHeight: '852px',
-      margin: '0 auto',
-      background: '#FFFFFF'
+      background: '#fff5f0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : 0
     }}>
-      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '800px' : '393px' }}>
-        <div style={{ marginBottom: '24px', paddingTop: '24px' }}>
-          <h1 style={{
-            fontFamily: '"Noto Sans JP", sans-serif',
+      <div style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '393px',
+        background: '#fff5f0',
+        minHeight: isDesktop ? 'auto' : '852px'
+      }}>
+      {/* ヘッダー */}
+      <div style={{
+        background: '#5DABA8',
+        padding: '12px 16px',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px'
+      }}>
+        <button
+          onClick={onBack}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#FFFFFF',
             fontSize: '20px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#000000',
-            textAlign: 'center'
-          }}>申し込み管理</h1>
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          ←
+        </button>
+        <h1 style={{
+          fontSize: '18px',
+          fontWeight: 600,
+          color: '#FFFFFF',
+          margin: 0,
+          flex: 1
+        }}>
+          申し込み管理
+        </h1>
+      </div>
+
+      <div className="container mx-auto" style={{ padding: '16px', maxWidth: isDesktop ? '800px' : '393px' }}>
+        {/* タブ */}
+        <div style={{
+          display: 'flex',
+          gap: '8px',
+          marginBottom: '24px'
+        }}>
+          <button
+            onClick={() => setActiveTab('all')}
+            style={{
+              flex: 1,
+              padding: '10px 16px',
+              background: activeTab === 'all' ? '#5DABA8' : 'transparent',
+              color: activeTab === 'all' ? '#FFFFFF' : '#666666',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            すべて
+          </button>
+          <button
+            onClick={() => setActiveTab('pending')}
+            style={{
+              flex: 1,
+              padding: '10px 16px',
+              background: activeTab === 'pending' ? '#5DABA8' : 'transparent',
+              color: activeTab === 'pending' ? '#FFFFFF' : '#666666',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            承認待ち
+          </button>
+          <button
+            onClick={() => setActiveTab('approved')}
+            style={{
+              flex: 1,
+              padding: '10px 16px',
+              background: activeTab === 'approved' ? '#5DABA8' : 'transparent',
+              color: activeTab === 'approved' ? '#FFFFFF' : '#666666',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+          >
+            承認済み
+          </button>
         </div>
 
-        {applications.length === 0 ? (
+        {filteredApplications.length === 0 ? (
           <div style={{
             background: '#FFFFFF',
             boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
@@ -221,58 +322,91 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {applications.map((application) => {
+            {filteredApplications.map((application) => {
               const statusColor = getStatusColor(application.application_status)
               return (
                 <div
                   key={application.id}
                   style={{
                     background: '#FFFFFF',
-                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-                    borderRadius: '12px',
-                    padding: '24px'
+                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+                    borderRadius: '8px',
+                    padding: '16px',
+                    position: 'relative'
                   }}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '18px',
-                        fontWeight: 700,
-                        lineHeight: '120%',
-                        color: '#000000',
-                        marginBottom: '8px'
-                      }}>
-                        {application.event.event_name}
-                      </h3>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666',
-                        marginBottom: '4px'
-                      }}>
-                        {formatDate(application.event.event_start_date)} 〜 {formatDate(application.event.event_end_date)}
-                      </p>
-                      <p style={{
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        fontSize: '14px',
-                        lineHeight: '120%',
-                        color: '#666666'
-                      }}>{application.event.venue_name}</p>
-                    </div>
-                    <span style={{
-                      padding: '4px 12px',
-                      borderRadius: '12px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      fontSize: '12px',
-                      fontWeight: 500,
+                  {/* ステータスバッジ */}
+                  <span style={{
+                    position: 'absolute',
+                    top: '12px',
+                    left: '12px',
+                    padding: '4px 12px',
+                    borderRadius: '16px',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    lineHeight: '120%',
+                    background: statusColor.bg,
+                    color: statusColor.text
+                  }}>
+                    {getStatusText(application.application_status)}
+                  </span>
+                  
+                  <div style={{ marginTop: '8px' }}>
+                    <h3 style={{
+                      fontSize: '16px',
+                      fontWeight: 700,
                       lineHeight: '120%',
-                      background: statusColor.bg,
-                      color: statusColor.text
+                      color: '#000000',
+                      marginBottom: '12px'
                     }}>
-                      {getStatusText(application.application_status)}
-                    </span>
+                      {application.event.event_name}
+                    </h3>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M9 11L11 13L15 9" stroke="#666666" strokeWidth="2" strokeLinecap="round"/>
+                          <rect x="3" y="5" width="18" height="14" rx="2" stroke="#666666" strokeWidth="2"/>
+                        </svg>
+                        <span style={{
+                          fontSize: '14px',
+                          color: '#666666'
+                        }}>
+                          申込日: {new Date(application.applied_at).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <circle cx="12" cy="12" r="10" stroke="#666666" strokeWidth="2"/>
+                          <path d="M12 6V12L16 14" stroke="#666666" strokeWidth="2" strokeLinecap="round"/>
+                        </svg>
+                        <span style={{
+                          fontSize: '14px',
+                          color: '#666666'
+                        }}>
+                          {application.event.venue_name}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingTop: '12px',
+                      borderTop: '1px solid #E9ECEF'
+                    }}>
+                      <span style={{
+                        fontSize: '14px',
+                        color: '#5DABA8',
+                        fontWeight: 500
+                      }}>
+                        詳細を見る
+                      </span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18L15 12L9 6" stroke="#5DABA8" strokeWidth="2" strokeLinecap="round"/>
+                      </svg>
+                    </div>
                   </div>
 
                   {application.event.main_image_url && (
@@ -371,6 +505,7 @@ export default function ApplicationManagement({ userProfile, onBack }: Applicati
             })}
           </div>
         )}
+      </div>
       </div>
     </div>
   )

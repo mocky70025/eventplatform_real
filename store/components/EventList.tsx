@@ -643,407 +643,489 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
   if (selectedEvent) {
     return (
       <div style={{ 
-        position: 'relative',
+        minHeight: '100vh',
         width: '100%',
-        maxWidth: isDesktop ? '800px' : '393px',
-        minHeight: '852px',
-        margin: '0 auto',
-        background: '#FFFFFF'
+        background: '#fff5f0',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        padding: isDesktop ? '40px 20px' : 0
       }}>
-        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '800px' : '393px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
-            <button
-              onClick={() => setSelectedEvent(null)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '16px',
-                lineHeight: '150%',
-                color: '#06C755',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-            >
-              ← 戻る
-            </button>
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '393px',
+          minHeight: isDesktop ? 'auto' : '852px',
+          background: '#fff5f0'
+        }}>
+        {/* ヘッダー */}
+        <div style={{
+          background: '#F7F7F7',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <button
+            onClick={() => setSelectedEvent(null)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#666666',
+              fontSize: '20px',
+              cursor: 'pointer',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            ←
+          </button>
+          <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+            <div style={{ fontSize: '24px' }}>🎪</div>
+          </div>
+          <div style={{ width: '32px' }}></div>
+        </div>
+
+        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '16px', maxWidth: isDesktop ? '800px' : '393px' }}>
+          {/* カテゴリとタイトル */}
+          <div style={{ marginBottom: '16px' }}>
+            <span style={{
+              fontSize: '12px',
+              color: '#FF8A5C',
+              fontWeight: 500
+            }}>
+              祭り・イベント
+            </span>
             <h1 style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
               fontSize: '20px',
               fontWeight: 700,
-              lineHeight: '120%',
-              color: '#000000'
-            }}>イベント詳細</h1>
-            <div style={{ width: '60px' }}></div>
+              color: '#000000',
+              marginTop: '4px'
+            }}>
+              {selectedEvent.event_name}
+            </h1>
           </div>
 
+          {/* イベント詳細カード */}
           <div style={{
             background: '#FFFFFF',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px'
+            borderRadius: '8px',
+            padding: '16px',
+            marginBottom: '24px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
-            {selectedEvent.main_image_url && (
-              <div style={{ marginBottom: '24px' }}>
-                <img
-                  src={selectedEvent.main_image_url}
-                  alt={selectedEvent.main_image_caption || selectedEvent.event_name}
-                  style={{
-                    width: '100%',
-                    height: '200px',
-                    objectFit: 'contain',
-                    borderRadius: '8px',
-                    background: '#FFFFFF'
-                  }}
-                />
-                {selectedEvent.main_image_caption && (
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    lineHeight: '120%',
-                    color: '#666666',
-                    marginTop: '8px'
-                  }}>{selectedEvent.main_image_caption}</p>
-                )}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="#666666" strokeWidth="2"/>
+                  <path d="M3 10H21" stroke="#666666" strokeWidth="2"/>
+                  <path d="M8 4V8" stroke="#666666" strokeWidth="2" strokeLinecap="round"/>
+                  <path d="M16 4V8" stroke="#666666" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+                <span style={{ fontSize: '14px', color: '#000000' }}>
+                  {formatDate(selectedEvent.event_start_date)} - {formatDate(selectedEvent.event_end_date)}
+                </span>
               </div>
-            )}
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              <div>
-                <h2 style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px'
-                }}>{selectedEvent.event_name}</h2>
-                <p style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  lineHeight: '150%',
-                  color: '#666666'
-                }}>{selectedEvent.event_name_furigana}</p>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div>
-                  <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#000000',
-                    marginBottom: '8px',
-                    display: 'block'
-                  }}>ジャンル</label>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    lineHeight: '150%',
-                    color: '#000000'
-                  }}>{selectedEvent.genre}</p>
+              {selectedEvent.event_time && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="#666666" strokeWidth="2"/>
+                    <path d="M12 6V12L16 14" stroke="#666666" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  <span style={{ fontSize: '14px', color: '#000000' }}>{selectedEvent.event_time}</span>
                 </div>
-
+              )}
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style={{ marginTop: '2px' }}>
+                  <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="#666666" strokeWidth="2"/>
+                  <circle cx="12" cy="10" r="3" stroke="#666666" strokeWidth="2"/>
+                </svg>
                 <div>
-                  <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#000000',
-                    marginBottom: '8px',
-                    display: 'block'
-                  }}>開催期間</label>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    lineHeight: '150%',
-                    color: '#000000'
-                  }}>
-                    {formatDate(selectedEvent.event_start_date)} 〜 {formatDate(selectedEvent.event_end_date)}
-                  </p>
-                </div>
-
-                <div>
-                  <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#000000',
-                    marginBottom: '8px',
-                    display: 'block'
-                  }}>開催時間</label>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    lineHeight: '150%',
-                    color: '#000000'
-                  }}>{selectedEvent.event_time || '未定'}</p>
-                </div>
-
-                <div>
-                  <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#000000',
-                    marginBottom: '8px',
-                    display: 'block'
-                  }}>会場</label>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    lineHeight: '150%',
-                    color: '#000000'
-                  }}>{selectedEvent.venue_name}</p>
-                  {selectedEvent.venue_city && (
-                    <p style={{
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      fontSize: '14px',
-                      lineHeight: '120%',
-                      color: '#666666',
-                      marginTop: '4px'
-                    }}>{selectedEvent.venue_city}</p>
+                  <div style={{ fontSize: '14px', color: '#000000' }}>{selectedEvent.venue_name}</div>
+                  {selectedEvent.venue_address && (
+                    <div style={{ fontSize: '12px', color: '#666666', marginTop: '4px' }}>
+                      {selectedEvent.venue_address}
+                    </div>
                   )}
                 </div>
               </div>
-
-              <div>
-                <label style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>リード文</label>
-                <p style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  lineHeight: '150%',
-                  color: '#000000'
-                }}>{selectedEvent.lead_text}</p>
-              </div>
-
-              <div>
-                <label style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  lineHeight: '120%',
-                  color: '#000000',
-                  marginBottom: '8px',
-                  display: 'block'
-                }}>イベント説明</label>
-                <p style={{
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  lineHeight: '150%',
-                  color: '#000000'
-                }}>{selectedEvent.event_description}</p>
-              </div>
-
-              {selectedEvent.homepage_url && (
-                <div>
-                  <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#000000',
-                    marginBottom: '8px',
-                    display: 'block'
-                  }}>公式サイト</label>
-                  <a
-                    href={selectedEvent.homepage_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      fontSize: '16px',
-                      lineHeight: '150%',
-                      color: '#06C755',
-                      textDecoration: 'underline'
-                    }}
-                  >
-                    {selectedEvent.homepage_url}
-                  </a>
-                </div>
-              )}
-            </div>
-
-            <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
-              <button
-                onClick={() => handleApply(selectedEvent.id)}
-                style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  padding: '16px 24px',
-                  gap: '10px',
-                  width: '100%',
-                  maxWidth: '330px',
-                  height: '48px',
-                  background: '#06C755',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  lineHeight: '19px',
-                  color: '#FFFFFF',
-                  cursor: 'pointer'
-                }}
-              >
-                出店申し込み
-              </button>
             </div>
           </div>
+
+          {/* イベント概要 */}
+          <div style={{ marginBottom: '24px' }}>
+            <h2 style={{
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#000000',
+              marginBottom: '12px'
+            }}>
+              イベント概要
+            </h2>
+            <p style={{
+              fontSize: '14px',
+              color: '#000000',
+              lineHeight: '1.6'
+            }}>
+              {selectedEvent.event_description || selectedEvent.lead_text}
+            </p>
+          </div>
+
+          {/* 詳細情報 */}
+          {selectedEvent.application_end_date && (
+            <div style={{ marginBottom: '24px' }}>
+              <h2 style={{
+                fontSize: '16px',
+                fontWeight: 600,
+                color: '#000000',
+                marginBottom: '12px'
+              }}>
+                詳細情報
+              </h2>
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '8px',
+                padding: '16px',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '12px 0',
+                  borderBottom: '1px solid #E9ECEF'
+                }}>
+                  <span style={{ fontSize: '14px', color: '#000000' }}>申込期間</span>
+                  <span style={{ fontSize: '14px', color: '#000000' }}>
+                    {formatDate(selectedEvent.created_at)} - {formatDate(selectedEvent.application_end_date)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* お問い合わせ */}
+          {selectedEvent.homepage_url && (
+            <div style={{ marginBottom: '24px' }}>
+              <h2 style={{
+                fontSize: '16px',
+                fontWeight: 600,
+                color: '#000000',
+                marginBottom: '12px'
+              }}>
+                お問い合わせ
+              </h2>
+              <div style={{
+                background: '#FFFFFF',
+                borderRadius: '8px',
+                padding: '16px',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+              }}>
+                <a
+                  href={selectedEvent.homepage_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: '14px',
+                    color: '#5DABA8',
+                    textDecoration: 'underline'
+                  }}
+                >
+                  {selectedEvent.homepage_url}
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* 申し込みボタン */}
+          <button
+            onClick={() => handleApply(selectedEvent.id)}
+            style={{
+              width: '100%',
+              padding: '16px',
+              background: '#5DABA8',
+              color: '#FFFFFF',
+              borderRadius: '8px',
+              border: 'none',
+              fontSize: '16px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              marginBottom: '24px'
+            }}
+          >
+            このイベントに申し込む
+          </button>
+        </div>
         </div>
       </div>
     )
   }
 
   if (showSearchPage) {
-    const backButtonStyle = {
-      background: 'transparent',
-      border: 'none',
-      fontFamily: '"Noto Sans JP", sans-serif',
-      fontSize: '16px',
-      lineHeight: '150%',
-      color: '#06C755',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      gap: '4px'
-    }
-
     return (
       <div style={{ 
-        position: 'relative',
+        minHeight: '100vh',
         width: '100%',
-        maxWidth: isDesktop ? '800px' : '393px',
-        minHeight: '852px',
-        margin: '0 auto',
-        background: '#FFFFFF'
+        background: '#fff5f0',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        padding: isDesktop ? '40px 20px' : 0
       }}>
-        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '800px' : '393px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
-            <button
-              type="button"
-              onClick={handleCloseSearchPage}
-              style={backButtonStyle}
-            >
-              ← 戻る
-            </button>
-            <h1 style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
+        <div style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '393px',
+          minHeight: isDesktop ? 'auto' : '852px',
+          background: '#fff5f0'
+        }}>
+        {/* ヘッダー */}
+        <div style={{
+          background: '#5DABA8',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
+        }}>
+          <button
+            type="button"
+            onClick={handleCloseSearchPage}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#FFFFFF',
               fontSize: '20px',
-              fontWeight: 700,
-              lineHeight: '120%',
-              color: '#000000'
-            }}>検索</h1>
-            <div style={{ width: '60px' }}></div>
-          </div>
+              cursor: 'pointer',
+              padding: '4px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            ←
+          </button>
+          <h1 style={{
+            fontSize: '18px',
+            fontWeight: 600,
+            color: '#FFFFFF',
+            margin: 0,
+            flex: 1
+          }}>
+            イベント検索
+          </h1>
+        </div>
 
+        <div className="container mx-auto" style={{ padding: '16px', maxWidth: isDesktop ? '800px' : '393px' }}>
           <form onSubmit={handleSearchSubmit}>
-            <div style={searchCardStyle}>
-              <div>
-                <span style={searchLabelStyle}>キーワード（任意）</span>
-                <div style={searchFieldContainerStyle}>
-                  <span style={searchIconStyle} aria-hidden="true">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
-                    </svg>
-                  </span>
-                  <input
-                    type="search"
-                    value={formKeyword}
-                    onChange={(e) => setFormKeyword(e.target.value)}
-                    placeholder="イベント名や説明文で検索"
-                    style={searchInputStyle}
-                    aria-label="キーワードで検索"
-                  />
-                  {formKeyword && (
-                    <button
-                      type="button"
-                      onClick={() => setFormKeyword('')}
-                      style={clearButtonStyle}
-                      aria-label="キーワードをクリア"
-                    >
-                      ×
-                    </button>
-                  )}
-                </div>
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '8px',
+              padding: '24px',
+              marginBottom: '24px',
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+            }}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>キーワード</label>
+                <input
+                  type="text"
+                  value={formKeyword}
+                  onChange={(e) => setFormKeyword(e.target.value)}
+                  placeholder="イベント名、会場名など"
+                  style={{
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '14px',
+                    color: formKeyword ? '#000000' : '#999999',
+                    background: '#FFFFFF',
+                    border: '1px solid #E5E5E5',
+                    borderRadius: '8px',
+                    boxSizing: 'border-box'
+                  }}
+                />
               </div>
 
-              <div>
-                <span style={searchLabelStyle}>開催期間（任意）</span>
-                <div style={rangeContainerStyle}>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>開催期間(開始)</label>
+                <div style={{ position: 'relative' }}>
                   <input
                     type="date"
                     value={formPeriodStart}
                     onChange={(e) => setFormPeriodStart(e.target.value)}
-                    style={dateInputStyle}
+                    style={{
+                      width: '100%',
+                      padding: '12px 40px 12px 16px',
+                      fontSize: '14px',
+                      color: formPeriodStart ? '#000000' : '#999999',
+                      background: '#FFFFFF',
+                      border: '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      boxSizing: 'border-box'
+                    }}
+                    placeholder="年/月/日"
                   />
-                  <span style={rangeSeparatorStyle}>〜</span>
+                  <div style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#5DABA8',
+                    fontSize: '20px',
+                    pointerEvents: 'none'
+                  }}>+</div>
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>開催期間(終了)</label>
+                <div style={{ position: 'relative' }}>
                   <input
                     type="date"
                     value={formPeriodEnd}
                     onChange={(e) => setFormPeriodEnd(e.target.value)}
-                    style={dateInputStyle}
+                    style={{
+                      width: '100%',
+                      padding: '12px 40px 12px 16px',
+                      fontSize: '14px',
+                      color: formPeriodEnd ? '#000000' : '#999999',
+                      background: '#FFFFFF',
+                      border: '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      boxSizing: 'border-box'
+                    }}
+                    placeholder="年/月/日"
                   />
+                  <div style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#5DABA8',
+                    fontSize: '20px',
+                    pointerEvents: 'none'
+                  }}>+</div>
                 </div>
               </div>
 
-              <div>
-                <span style={searchLabelStyle}>都道府県（任意）</span>
-                <select
-                  value={formPrefecture}
-                  onChange={(e) => handlePrefectureChange(e.target.value)}
-                  style={selectStyle}
-                >
-                  <option value="">選択してください</option>
-                  {prefectures.map((pref) => (
-                    <option key={pref} value={pref}>{pref}</option>
-                  ))}
-                </select>
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>都道府県</label>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    value={formPrefecture}
+                    onChange={(e) => handlePrefectureChange(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 40px 12px 16px',
+                      fontSize: '14px',
+                      color: formPrefecture ? '#000000' : '#999999',
+                      background: '#FFFFFF',
+                      border: '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      boxSizing: 'border-box',
+                      appearance: 'none'
+                    }}
+                  >
+                    <option value="">選択してください</option>
+                    {prefectures.map((pref) => (
+                      <option key={pref} value={pref}>{pref}</option>
+                    ))}
+                  </select>
+                  <div style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: '#999999',
+                    pointerEvents: 'none'
+                  }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                    </svg>
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <span style={searchLabelStyle}>市区町村（任意）</span>
+              <div style={{ marginBottom: '24px' }}>
+                <label style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: '#000000',
+                  marginBottom: '8px',
+                  display: 'block'
+                }}>市区町村</label>
                 <input
                   type="text"
                   value={formCity}
                   onChange={(e) => setFormCity(e.target.value)}
-                  placeholder="市区町村名を入力"
+                  placeholder="例:静岡市"
                   style={{
-                    ...selectStyle,
-                    color: formCity ? '#000000' : '#6B6B6B',
-                    background: formPrefecture ? '#FFFFFF' : '#F5F5F5'
+                    width: '100%',
+                    padding: '12px 16px',
+                    fontSize: '14px',
+                    color: formCity ? '#000000' : '#999999',
+                    background: '#FFFFFF',
+                    border: '1px solid #E5E5E5',
+                    borderRadius: '8px',
+                    boxSizing: 'border-box'
                   }}
-                  disabled={!formPrefecture}
                 />
               </div>
             </div>
 
-            <div style={actionRowStyle}>
-              <button type="button" onClick={handleClearSearch} style={secondaryButtonStyle}>
-                条件をクリア
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <button type="submit" style={{
+                width: '100%',
+                padding: '16px',
+                background: '#5DABA8',
+                color: '#FFFFFF',
+                borderRadius: '8px',
+                border: 'none',
+                fontSize: '16px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}>
+                検索する
               </button>
-              <button type="submit" style={primaryButtonStyle}>
-                この条件で検索
+              <button type="button" onClick={handleClearSearch} style={{
+                width: '100%',
+                padding: '16px',
+                background: '#FFFFFF',
+                color: '#666666',
+                borderRadius: '8px',
+                border: '1px solid #E9ECEF',
+                fontSize: '16px',
+                fontWeight: 600,
+                cursor: 'pointer'
+              }}>
+                条件をクリア
               </button>
             </div>
           </form>
+        </div>
         </div>
       </div>
     )
@@ -1057,34 +1139,27 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         maxWidth: isDesktop ? '800px' : '393px',
         minHeight: '852px',
         margin: '0 auto',
-        background: '#FFFFFF'
+        background: '#fff5f0'
       }}>
-        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '800px' : '393px' }}>
-        <div style={searchEntryWrapperStyle}>
-          <button
-            type="button"
-            onClick={handleOpenSearchPage}
-            style={searchEntryButtonStyle}
-          >
-            <span style={searchEntryIconStyle} aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M11 4a7 7 0 0 1 5.472 11.41l3.559 3.558a1 1 0 0 1-1.414 1.414l-3.558-3.559A7 7 0 1 1 11 4zm0 2a5 5 0 1 0 0 10 5 5 0 0 0 0-10z" fill="currentColor"/>
-              </svg>
-            </span>
-            <span style={searchEntryLabelStyle}>検索</span>
-          </button>
+        {/* ヘッダー */}
+        <div style={{
+          background: '#5DABA8',
+          padding: '12px 16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <h1 style={{
+            fontSize: '18px',
+            fontWeight: 600,
+            color: '#FFFFFF',
+            margin: 0
+          }}>
+            デミセル
+          </h1>
         </div>
 
-        <div style={{ marginBottom: '24px' }}>
-          <h1 style={{
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontSize: '20px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#000000',
-            textAlign: 'center'
-          }}>イベント一覧</h1>
-        </div>
+        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '16px', maxWidth: isDesktop ? '800px' : '393px' }}>
 
         {events.length === 0 ? (
           <div style={{
