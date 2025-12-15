@@ -6,7 +6,7 @@
 
 ### 共通事項
 
-- [ ] デザインシステムの色を使用（Primary: #FF8A5C, Background: #E6F5F4）
+- [ ] デザインシステムの色を使用（Primary: #FF8A5C, Background: #E8F5F5）
 - [ ] PC版対応（中央に393px幅のUIを配置、周囲は背景色で埋める）
 - [ ] レスポンシブデザイン（`isDesktop` state を使用）
 - [ ] エラーハンドリングの実装
@@ -384,7 +384,7 @@ RESEND_FROM_EMAIL=noreply@your-domain.com
 ### カラーパレット
 - **Primary**: #FF8A5C（オレンジ）
 - **Secondary**: #FF8A5C（オレンジ）
-- **Background**: #E6F5F4（薄い青緑）
+- **Background**: #E8F5F5（薄い青緑）
 - **Text Primary**: #2C3E50
 - **Text Secondary**: #6C757D
 - **Border**: #E9ECEF
@@ -411,7 +411,7 @@ RESEND_FROM_EMAIL=noreply@your-domain.com
 
 ### PC版対応
 - 画面幅が1024px以上の場合は、中央に393px幅のUIを配置
-- 周囲の空白部分は背景色（#E6F5F4）で埋める
+- 周囲の空白部分は背景色（#E8F5F5）で埋める
 - `isDesktop` state を使用して判定
 
 ### 実装パターン
@@ -431,7 +431,7 @@ useEffect(() => {
 <div style={{
   minHeight: '100vh',
   width: '100%',
-  background: '#E6F5F4',
+  background: '#E8F5F5',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'flex-start',
@@ -440,7 +440,7 @@ useEffect(() => {
   <div style={{
     width: '100%',
     maxWidth: '393px',
-    background: '#E6F5F4',
+    background: '#E8F5F5',
     minHeight: isDesktop ? 'auto' : '100vh'
   }}>
     {/* コンテンツ */}
@@ -455,7 +455,7 @@ useEffect(() => {
 1. **出店者アプリとの違い**
    - LINEログインはなし（Googleとメール/パスワードのみ）
    - 登録フォームに書類アップロードはなし
-   - カラーパレットが異なる（Primary: #FF8A5C, Background: #E6F5F4）
+   - カラーパレットが異なる（Primary: #FF8A5C, Background: #E8F5F5）
 
 2. **デザイン一貫性**
    - 出店者アプリと同じデザインパターンを使用
