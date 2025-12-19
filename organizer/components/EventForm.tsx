@@ -11,16 +11,25 @@ interface EventFormProps {
   initialEvent?: Partial<Event> // 編集時に事前入力
 }
 
+interface EventSchedule {
+  id: string // 一意のID（UUID）
+  date: string // YYYY-MM-DD
+  start_time: string // HH:mm
+  end_time: string // HH:mm
+}
+
 interface EventFormState {
   event_name: string
   event_name_furigana: string
   genre: string
   is_shizuoka_vocational_assoc_related: boolean
   opt_out_newspaper_publication: boolean
-  event_start_date: string
-  event_end_date: string
+  schedules: EventSchedule[] // 複数の日程
   event_display_period: string
   event_period_notes: string
+  // 後方互換性のためのフィールド（保存時に自動生成）
+  event_start_date: string
+  event_end_date: string
   event_time: string
   application_start_date: string
   application_end_date: string
@@ -70,10 +79,11 @@ const EVENT_FORM_EMPTY_STATE: EventFormState = {
   genre: '',
   is_shizuoka_vocational_assoc_related: false,
   opt_out_newspaper_publication: false,
-  event_start_date: '',
-  event_end_date: '',
+  schedules: [{ id: crypto.randomUUID(), date: '', start_time: '', end_time: '' }], // 初期状態で1つの日程を表示
   event_display_period: '',
   event_period_notes: '',
+  event_start_date: '',
+  event_end_date: '',
   event_time: '',
   application_start_date: '',
   application_end_date: '',
@@ -127,6 +137,53 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   const isDraftEnabled = !initialEvent
   const draftUserKey = organizer?.user_id || organizer.id
 
+  // 既存イベントからschedulesを復元する関数
+  const restoreSchedulesFromEvent = (event: any): EventSchedule[] => {
+    // 既にschedulesデータがある場合はそれを使用
+    if (event?.schedules && Array.isArray(event.schedules) && event.schedules.length > 0) {
+      return event.schedules.map((s: any) => ({
+        id: s.id || crypto.randomUUID(),
+        date: s.date || '',
+        start_time: s.start_time || '',
+        end_time: s.end_time || ''
+      }))
+    }
+    
+    // 既存のevent_start_date, event_end_date, event_timeから復元
+    if (event?.event_start_date && event?.event_end_date) {
+      const startDate = String(event.event_start_date).split('T')[0]
+      const endDate = String(event.event_end_date).split('T')[0]
+      const timeStr = event.event_time || ''
+      
+      // 時間文字列をパース（例: "14:00〜17:00"）
+      let startTime = ''
+      let endTime = ''
+      if (timeStr.includes('〜')) {
+        const times = timeStr.split('〜')
+        startTime = times[0]?.trim() || ''
+        endTime = times[1]?.trim() || ''
+      }
+      
+      // 日付の範囲を生成
+      const schedules: EventSchedule[] = []
+      const start = new Date(startDate)
+      const end = new Date(endDate)
+      
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        schedules.push({
+          id: crypto.randomUUID(),
+          date: d.toISOString().split('T')[0],
+          start_time: startTime,
+          end_time: endTime
+        })
+      }
+      
+      return schedules
+    }
+    
+    return []
+  }
+
   const initialFormState = useMemo<EventFormState>(() => ({
     ...EVENT_FORM_EMPTY_STATE,
     event_name: initialEvent?.event_name || '',
@@ -134,6 +191,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     genre: initialEvent?.genre || '',
     is_shizuoka_vocational_assoc_related: (initialEvent as any)?.is_shizuoka_vocational_assoc_related || false,
     opt_out_newspaper_publication: (initialEvent as any)?.opt_out_newspaper_publication || false,
+    schedules: initialEvent ? restoreSchedulesFromEvent(initialEvent) : [],
     event_start_date: (initialEvent?.event_start_date as any) ? String(initialEvent?.event_start_date).split('T')[0] : '',
     event_end_date: (initialEvent?.event_end_date as any) ? String(initialEvent?.event_end_date).split('T')[0] : '',
     event_display_period: initialEvent?.event_display_period || '',
@@ -180,6 +238,8 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   const [formData, setFormData] = useState<EventFormState>(initialFormState)
   const [imageUrls, setImageUrls] = useState<EventImageState>(initialImageState)
   const [draftLoaded, setDraftLoaded] = useState(() => !isDraftEnabled)
+  const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1) // ステップ1: 全部の情報入力、ステップ2: 確認、ステップ3: 登録完了
+  const [submittedEvent, setSubmittedEvent] = useState<Event | null>(null) // 登録完了画面で表示するイベント情報
 
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastPayloadRef = useRef<string>('')
@@ -355,6 +415,77 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     scheduleDraftUpsert(payload)
   }, [formData, imageUrls, isDraftEnabled, draftLoaded, scheduleDraftUpsert, scheduleDraftDeletion])
 
+  // 日付を日本語形式にフォーマット（例: 2025-03-11 → "3月11日"）
+  const formatDateToJapanese = (dateString: string): string => {
+    if (!dateString) return ''
+    const date = new Date(dateString + 'T00:00:00') // タイムゾーン対応
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    return `${month}月${day}日`
+  }
+
+  // 日付範囲を日本語形式にフォーマット（例: 2025-03-11, 2025-03-13 → "3月11日〜13日"）
+  const formatDateRangeToJapanese = (startDate: string, endDate: string): string => {
+    if (!startDate || !endDate) return ''
+    
+    const start = new Date(startDate + 'T00:00:00')
+    const end = new Date(endDate + 'T00:00:00')
+    
+    const startYear = start.getFullYear()
+    const startMonth = start.getMonth() + 1
+    const startDay = start.getDate()
+    
+    const endYear = end.getFullYear()
+    const endMonth = end.getMonth() + 1
+    const endDay = end.getDate()
+    
+    // 同じ年の場合
+    if (startYear === endYear) {
+      // 同じ月の場合
+      if (startMonth === endMonth) {
+        return `${startMonth}月${startDay}日〜${endDay}日`
+      } else {
+        // 違う月の場合
+        return `${startMonth}月${startDay}日〜${endMonth}月${endDay}日`
+      }
+    } else {
+      // 違う年の場合
+      return `${startYear}年${startMonth}月${startDay}日〜${endYear}年${endMonth}月${endDay}日`
+    }
+  }
+
+  // schedulesから表示期間を自動生成
+  const generateDisplayPeriodFromSchedules = (schedules: EventSchedule[]): string => {
+    if (!schedules || schedules.length === 0) return ''
+    
+    const datesWithData = schedules.filter(s => s.date).map(s => s.date)
+    if (datesWithData.length === 0) return ''
+    
+    const sortedDates = [...datesWithData].sort()
+    const firstDate = sortedDates[0]
+    const lastDate = sortedDates[sortedDates.length - 1]
+    
+    if (firstDate === lastDate) {
+      return formatDateToJapanese(firstDate)
+    }
+    
+    return formatDateRangeToJapanese(firstDate, lastDate)
+  }
+
+  // schedulesが変更されたときに表示期間を自動更新
+  useEffect(() => {
+    if (formData.schedules && formData.schedules.length > 0) {
+      const autoDisplayPeriod = generateDisplayPeriodFromSchedules(formData.schedules)
+      if (autoDisplayPeriod) {
+        setFormData(prev => {
+          // 既に同じ値が設定されている場合は更新しない
+          if (prev.event_display_period === autoDisplayPeriod) return prev
+          return { ...prev, event_display_period: autoDisplayPeriod }
+        })
+      }
+    }
+  }, [JSON.stringify(formData.schedules.map(s => ({ date: s.date })))])
+
   const prefectures = [
     '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
     '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
@@ -368,7 +499,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
   const cardStyle = {
     background: '#FFFFFF',
-    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px'
@@ -456,7 +587,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     width: '100%',
     maxWidth: '157px',
     height: '48px',
-    background: '#06C755',
+    background: '#FF8A5C',
     borderRadius: '8px',
     border: 'none',
     fontFamily: 'Inter, sans-serif',
@@ -515,12 +646,25 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
   // 必須項目のバリデーション（最初の未入力へスクロール＆フォーカス）
   const validateRequired = (): { ok: boolean; message?: string } => {
+    // 日程のバリデーション
+    if (!formData.schedules || formData.schedules.length === 0) {
+      return { ok: false, message: 'イベント日程を1つ以上入力してください。' }
+    }
+    
+    for (let i = 0; i < formData.schedules.length; i++) {
+      const schedule = formData.schedules[i]
+      if (!schedule.date || !schedule.start_time || !schedule.end_time) {
+        return { 
+          ok: false, 
+          message: `日程${i + 1}: 日付、開始時間、終了時間はすべて必須です。` 
+        }
+      }
+    }
+    
     const requiredList: Array<{ key: keyof typeof formData; label: string }> = [
       { key: 'event_name', label: 'イベント名称' },
       { key: 'event_name_furigana', label: 'イベント名称フリガナ' },
       { key: 'genre', label: 'ジャンル' },
-      { key: 'event_start_date', label: '開催開始日' },
-      { key: 'event_end_date', label: '開催終了日' },
       { key: 'event_display_period', label: '開催期間(表示用)' },
       { key: 'lead_text', label: 'リード文' },
       { key: 'event_description', label: 'イベント紹介文' },
@@ -573,8 +717,18 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  // ステップ1からステップ2へ（確認画面へ）
+  const handleNextToConfirmation = () => {
+    const result = validateRequired()
+    if (!result.ok) {
+      alert(result.message)
+      return
+    }
+    setCurrentStep(2)
+  }
+
+  // ステップ2からステップ3へ（実際にイベントを作成）
+  const handleSubmit = async () => {
     setLoading(true)
 
     // 更新モードかどうかを明確に判定（initialEventが渡されている or eventIdが存在）
@@ -583,19 +737,40 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     const targetEventId = initialEvent?.id || eventId
 
     try {
-      // 必須フィールドのバリデーション（未入力項目へスクロール＆フォーカス）
-      const result = validateRequired()
-      if (!result.ok) {
-        alert(result.message)
-        return
+
+      // schedulesからevent_start_date、event_end_date、event_timeを自動生成
+      const sortedSchedules = [...formData.schedules].sort((a, b) => 
+        a.date.localeCompare(b.date)
+      )
+      const firstSchedule = sortedSchedules[0]
+      const lastSchedule = sortedSchedules[sortedSchedules.length - 1]
+      
+      // event_start_dateとevent_end_dateを設定
+      const autoEventStartDate = firstSchedule?.date || ''
+      const autoEventEndDate = lastSchedule?.date || ''
+      
+      // event_timeを生成（最初の日程の時間を使用、またはすべての日程の時間を結合）
+      let autoEventTime = ''
+      if (firstSchedule && firstSchedule.start_time && firstSchedule.end_time) {
+        if (sortedSchedules.length === 1) {
+          autoEventTime = `${firstSchedule.start_time}〜${firstSchedule.end_time}`
+        } else {
+          // 複数日程の場合、最初の日程の時間を使用
+          autoEventTime = `${firstSchedule.start_time}〜${firstSchedule.end_time}`
+        }
       }
 
       // 送信データの最終チェック
       const submitData: any = {
         ...formData,
         organizer_id: organizer.id,
+        event_start_date: autoEventStartDate,
+        event_end_date: autoEventEndDate,
+        event_time: autoEventTime,
         venue_latitude: formData.venue_latitude ? parseFloat(formData.venue_latitude) : null,
         venue_longitude: formData.venue_longitude ? parseFloat(formData.venue_longitude) : null,
+        // schedulesをJSON形式で保存（将来的に専用テーブルに移行可能）
+        schedules: JSON.stringify(formData.schedules),
       }
 
       // 作成時のみ、空文字をnullに変換（更新時は既存値を保持したいので変換しない）
@@ -675,7 +850,9 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
         }
       }
 
-      onEventCreated(finalEvent)
+      // ステップ3（登録完了画面）へ遷移
+      setSubmittedEvent(finalEvent)
+      setCurrentStep(3)
     } catch (error) {
       console.error('Event creation failed:', error)
       console.error('Error details:', JSON.stringify(error, null, 2))
@@ -703,8 +880,239 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     }
   }
 
+  // プログレスインジケーター
+  const ProgressIndicator = () => (
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: '8px',
+      marginBottom: '24px',
+      padding: '0 16px'
+    }}>
+      {[1, 2, 3].map((step) => (
+        <div key={step} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            background: currentStep >= step ? '#FF8A5C' : '#E9ECEF',
+            color: currentStep >= step ? '#FFFFFF' : '#6C757D',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '14px',
+            fontWeight: 700,
+            transition: 'all 0.3s ease'
+          }}>
+            {step}
+          </div>
+          {step < 3 && (
+            <div style={{
+              width: '40px',
+              height: '2px',
+              background: currentStep > step ? '#FF8A5C' : '#E9ECEF',
+              transition: 'all 0.3s ease'
+            }} />
+          )}
+        </div>
+      ))}
+    </div>
+  )
+
+  // ステップ3: 登録完了画面
+  if (currentStep === 3 && submittedEvent) {
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
+      <div style={{ background: '#E8F5F5', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <ProgressIndicator />
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '48px 24px',
+            textAlign: 'center',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              background: '#FF8A5C',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 24px'
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#FFFFFF"/>
+              </svg>
+            </div>
+            <h2 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '24px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#2C3E50',
+              marginBottom: '16px'
+            }}>
+              イベント登録が完了しました
+            </h2>
+            <p style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '16px',
+              lineHeight: '150%',
+              color: '#6C757D',
+              marginBottom: '32px'
+            }}>
+              イベント「{submittedEvent.event_name}」の登録が完了しました。
+            </p>
+            <button
+              type="button"
+              onClick={() => {
+                onEventCreated(submittedEvent)
+                onCancel()
+              }}
+              style={{
+                width: '100%',
+                height: '48px',
+                background: '#FF8A5C',
+                borderRadius: '12px',
+                border: 'none',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                fontWeight: 700,
+                color: '#FFFFFF',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#FF7A4C'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#FF8A5C'
+              }}
+            >
+              イベント管理へ
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ステップ2: 確認画面
+  if (currentStep === 2) {
+    return (
+      <div style={{ background: '#E8F5F5', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '24px', marginBottom: '24px' }}>
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              style={{
+                background: 'transparent',
+                border: 'none',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '16px',
+                lineHeight: '150%',
+                color: '#FF8A5C',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              ← 戻る
+            </button>
+            <h1 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '20px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#000000'
+            }}>
+              情報の確認
+            </h1>
+            <div style={{ width: '60px' }}></div>
+          </div>
+
+          <ProgressIndicator />
+
+          <div style={{
+            background: '#FFFFFF',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+          }}>
+            <h2 style={{
+              fontFamily: 'Inter, sans-serif',
+              fontSize: '18px',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#2C3E50',
+              marginBottom: '16px'
+            }}>
+              入力内容の確認
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>イベント名</div>
+                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.event_name}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>ジャンル</div>
+                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.genre}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>開催期間</div>
+                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.event_display_period}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>会場名</div>
+                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.venue_name}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>連絡先</div>
+                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.contact_name} ({formData.contact_phone})</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+            <button
+              type="button"
+              onClick={() => setCurrentStep(1)}
+              style={{
+                ...buttonSecondaryStyle,
+                flex: 1
+              }}
+            >
+              修正する
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{
+                ...buttonPrimaryStyle,
+                background: loading ? '#D9D9D9' : '#FF8A5C',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                flex: 1
+              }}
+            >
+              {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベント更新' : 'イベント作成')}
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // ステップ1: 全部の情報入力
+  return (
+    <div style={{ background: '#E8F5F5', minHeight: '100vh' }}>
       <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '24px', marginBottom: '24px' }}>
           <button
@@ -716,7 +1124,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
               fontFamily: 'Inter, sans-serif',
               fontSize: '16px',
               lineHeight: '150%',
-              color: '#06C755',
+              color: '#FF8A5C',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -737,7 +1145,9 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
           <div style={{ width: '60px' }}></div>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <ProgressIndicator />
+
+        <form onSubmit={(e) => { e.preventDefault(); handleNextToConfirmation(); }}>
           {/* 基本情報 */}
           <div style={cardStyle}>
             <h2 style={sectionTitleStyle}>基本情報</h2>
@@ -797,95 +1207,185 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   </select>
                 </div>
               </div>
-
-              <div style={{ width: '100%', maxWidth: '330px' }}>
-                <div style={{ fontFamily: 'Inter, sans-serif', fontSize: '14px', fontWeight: 500, lineHeight: '120%', color: '#000000', marginBottom: '12px' }}>チェック項目（任意）</div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>
-                    <span style={{
-                      width: '24px',
-                      height: '24px',
-                      background: formData.is_shizuoka_vocational_assoc_related ? '#06C755' : '#FFFFFF',
-                      border: formData.is_shizuoka_vocational_assoc_related ? 'none' : '1px solid #E5E5E5',
-                      borderRadius: '8px',
-                      position: 'relative',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <input
-                        type="checkbox"
-                        checked={formData.is_shizuoka_vocational_assoc_related}
-                        onChange={(e) => setFormData({ ...formData, is_shizuoka_vocational_assoc_related: e.target.checked })}
-                        style={{ position: 'absolute', width: '24px', height: '24px', opacity: 0, cursor: 'pointer' }}
-                      />
-                      {formData.is_shizuoka_vocational_assoc_related && (
-                        <svg style={{ width: '16px', height: '13px', color: '#FFFFFF' }} fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </span>
-                    静岡県職業教育振興会関係者
-                  </label>
-
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: '16px', lineHeight: '150%', color: '#000000' }}>
-                    <span style={{
-                      width: '24px',
-                      height: '24px',
-                      background: formData.opt_out_newspaper_publication ? '#06C755' : '#FFFFFF',
-                      border: formData.opt_out_newspaper_publication ? 'none' : '1px solid #E5E5E5',
-                      borderRadius: '8px',
-                      position: 'relative',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0
-                    }}>
-                      <input
-                        type="checkbox"
-                        checked={formData.opt_out_newspaper_publication}
-                        onChange={(e) => setFormData({ ...formData, opt_out_newspaper_publication: e.target.checked })}
-                        style={{ position: 'absolute', width: '24px', height: '24px', opacity: 0, cursor: 'pointer' }}
-                      />
-                      {formData.opt_out_newspaper_publication && (
-                        <svg style={{ width: '16px', height: '13px', color: '#FFFFFF' }} fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )}
-                    </span>
-                    新聞掲載を希望しない
-                  </label>
                 </div>
               </div>
-            </div>
-          </div>
 
           {/* 開催期間 */}
           <div style={cardStyle}>
             <h2 style={sectionTitleStyle}>開催期間</h2>
             <div style={fieldsContainerStyle}>
-              <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>イベント開催期間</label>
-                <div style={rangeContainerStyle}>
+              {/* イベント日程 */}
+              <div style={{ width: '100%', maxWidth: '330px' }}>
+                <label style={labelStyle}>イベント日程</label>
+                
+                {/* 日程リスト */}
+                {formData.schedules.map((schedule, index) => (
+                  <div key={schedule.id} style={{ marginBottom: '16px' }}>
+                    <div style={{
+                      background: '#FFFFFF',
+                      border: '1px solid #E5E5E5',
+                      borderRadius: '8px',
+                      padding: '16px',
+                      position: 'relative'
+                    }}>
+                      {/* 削除ボタン */}
+                      {formData.schedules.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newSchedules = formData.schedules.filter(s => s.id !== schedule.id)
+                            setFormData({ ...formData, schedules: newSchedules })
+                          }}
+                          style={{
+                            position: 'absolute',
+                            top: '8px',
+                            right: '8px',
+                            background: 'transparent',
+                            border: 'none',
+                            fontSize: '20px',
+                            color: '#999999',
+                            cursor: 'pointer',
+                            width: '32px',
+                            height: '32px',
+                      display: 'flex',
+                      alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                      
+                      {/* 日付入力 */}
+                      <div style={{ marginBottom: '12px' }}>
+                      <input
+                          type="date"
+                          required
+                          value={schedule.date}
+                          onChange={(e) => {
+                            const newSchedules = [...formData.schedules]
+                            newSchedules[index].date = e.target.value
+                            setFormData({ ...formData, schedules: newSchedules })
+                          }}
+                          style={{
+                            ...inputStyle(!!schedule.date),
+                            padding: '12px 16px',
+                            width: '100%',
+                            background: '#FFFFFF',
+                            border: '1px solid #E5E5E5',
+                            borderRadius: '8px',
+                            boxSizing: 'border-box'
+                          }}
+                          placeholder="YYYY/MM/DD"
+                        />
+          </div>
+
+                      {/* 開始時間と終了時間 */}
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <div style={{ flex: 1 }}>
+                          <label style={{
+                            ...labelStyle,
+                            fontSize: '12px',
+                            marginBottom: '4px',
+                            color: '#666666'
+                          }}>
+                            開始時間 <span style={{ color: '#FF3B30' }}>*</span>
+                          </label>
                   <input
-                    id="field-event_start_date"
-                    type="date"
+                            type="time"
                     required
-                    value={formData.event_start_date}
-                    onChange={(e) => setFormData({ ...formData, event_start_date: e.target.value })}
-                    style={{ ...inputStyle(!!formData.event_start_date), flex: 1 }}
-                  />
-                  <span style={rangeSeparatorStyle}>〜</span>
+                            value={schedule.start_time}
+                            onChange={(e) => {
+                              const newSchedules = [...formData.schedules]
+                              newSchedules[index].start_time = e.target.value
+                              setFormData({ ...formData, schedules: newSchedules })
+                            }}
+                            style={{
+                              ...inputStyle(!!schedule.start_time),
+                              padding: '12px 16px',
+                              width: '100%',
+                              background: '#FFFFFF',
+                              border: '1px solid #E5E5E5',
+                              borderRadius: '8px',
+                              boxSizing: 'border-box'
+                            }}
+                          />
+                        </div>
+                        <span style={{
+                          ...rangeSeparatorStyle,
+                          marginTop: '20px',
+                          fontSize: '14px'
+                        }}>
+                          〜
+                        </span>
+                        <div style={{ flex: 1 }}>
+                          <label style={{
+                            ...labelStyle,
+                            fontSize: '12px',
+                            marginBottom: '4px',
+                            color: '#666666'
+                          }}>
+                            終了時間 <span style={{ color: '#FF3B30' }}>*</span>
+                          </label>
                   <input
-                    id="field-event_end_date"
-                    type="date"
+                            type="time"
                     required
-                    value={formData.event_end_date}
-                    onChange={(e) => setFormData({ ...formData, event_end_date: e.target.value })}
-                    style={{ ...inputStyle(!!formData.event_end_date), flex: 1 }}
+                            value={schedule.end_time}
+                            onChange={(e) => {
+                              const newSchedules = [...formData.schedules]
+                              newSchedules[index].end_time = e.target.value
+                              setFormData({ ...formData, schedules: newSchedules })
+                            }}
+                            style={{
+                              ...inputStyle(!!schedule.end_time),
+                              padding: '12px 16px',
+                              width: '100%',
+                              background: '#FFFFFF',
+                              border: '1px solid #E5E5E5',
+                              borderRadius: '8px',
+                              boxSizing: 'border-box'
+                            }}
                   />
                 </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                {/* 日程追加ボタン */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newSchedule: EventSchedule = {
+                      id: crypto.randomUUID(),
+                      date: '',
+                      start_time: '',
+                      end_time: ''
+                    }
+                    setFormData({
+                      ...formData,
+                      schedules: [...formData.schedules, newSchedule]
+                    })
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px 16px',
+                    width: '100%',
+                    background: '#F7F7F7',
+                    border: '1px solid #E5E5E5',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 500,
+                    color: '#000000'
+                  }}
+                >
+                  <span style={{ fontSize: '20px', fontWeight: 700 }}>+</span>
+                  <span>日程を追加</span>
+                </button>
               </div>
 
               <div style={fieldWrapperStyle}>
@@ -899,7 +1399,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_display_period}
                     onChange={(e) => setFormData({ ...formData, event_display_period: e.target.value })}
                     style={inputStyle(!!formData.event_display_period)}
-                    placeholder="2025年9月20日(土) のように入力"
+                    placeholder="自動生成されます（手動編集も可能）"
                   />
                 </div>
               </div>
@@ -915,97 +1415,73 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                   />
                 </div>
               </div>
-
-              <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>開催時間（任意）</label>
-                <div style={formFieldStyle(false)}>
-                  <input
-                    type="text"
-                    value={formData.event_time}
-                    onChange={(e) => setFormData({ ...formData, event_time: e.target.value })}
-                    style={inputStyle(!!formData.event_time)}
-                    placeholder="14:00〜17:00 など"
-                  />
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* 申し込み期間 */}
+          {/* 出店者募集期間 */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>申し込み期間（任意）</h2>
+            <h2 style={sectionTitleStyle}>出店者募集期間（任意）</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>申し込み期間（任意）</label>
+                <label style={labelStyle}>出店者募集期間（任意）</label>
                 <div style={rangeContainerStyle}>
                   <input
                     type="date"
                     value={formData.application_start_date}
-                    onChange={(e) => setFormData({ ...formData, application_start_date: e.target.value })}
+                    onChange={(e) => {
+                      const newStartDate = e.target.value
+                      const newDisplayPeriod = newStartDate && formData.application_end_date
+                        ? formatDateRangeToJapanese(newStartDate, formData.application_end_date)
+                        : formData.application_display_period
+                      setFormData({ 
+                        ...formData, 
+                        application_start_date: newStartDate,
+                        application_display_period: newDisplayPeriod
+                      })
+                    }}
                     style={{ ...inputStyle(!!formData.application_start_date), flex: 1 }}
                   />
                   <span style={rangeSeparatorStyle}>〜</span>
                   <input
                     type="date"
                     value={formData.application_end_date}
-                    onChange={(e) => setFormData({ ...formData, application_end_date: e.target.value })}
+                    onChange={(e) => {
+                      const newEndDate = e.target.value
+                      const newDisplayPeriod = formData.application_start_date && newEndDate
+                        ? formatDateRangeToJapanese(formData.application_start_date, newEndDate)
+                        : formData.application_display_period
+                      setFormData({ 
+                        ...formData, 
+                        application_end_date: newEndDate,
+                        application_display_period: newDisplayPeriod
+                      })
+                    }}
                     style={{ ...inputStyle(!!formData.application_end_date), flex: 1 }}
                   />
                 </div>
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>申し込み期間(表示用)（任意）</label>
+                <label style={labelStyle}>出店者募集期間(表示用)（任意）</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     type="text"
                     value={formData.application_display_period}
                     onChange={(e) => setFormData({ ...formData, application_display_period: e.target.value })}
                     style={inputStyle(!!formData.application_display_period)}
-                    placeholder="2025年8月1日〜8月31日 など"
+                    placeholder="自動生成されます（手動編集も可能）"
                   />
                 </div>
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>申し込みに関する補足（任意）</label>
+                <label style={labelStyle}>出店者募集に関する補足（任意）</label>
                 <div style={formFieldStyle(false, { minHeight: 96 })}>
                   <textarea
                     value={formData.application_notes}
                     onChange={(e) => setFormData({ ...formData, application_notes: e.target.value })}
                     style={{ ...textareaStyle(!!formData.application_notes), minHeight: '72px' }}
                     placeholder="補足事項があれば入力してください"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* チケット情報 */}
-          <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>チケット情報（任意）</h2>
-            <div style={fieldsContainerStyle}>
-              <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>チケット発売開始日（任意）</label>
-                <div style={formFieldStyle(false)}>
-                  <input
-                    type="date"
-                    value={formData.ticket_release_start_date}
-                    onChange={(e) => setFormData({ ...formData, ticket_release_start_date: e.target.value })}
-                    style={inputStyle(!!formData.ticket_release_start_date)}
-                  />
-                </div>
-              </div>
-
-              <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>チケット販売場所（任意）</label>
-                <div style={formFieldStyle(false)}>
-                  <input
-                    type="text"
-                    value={formData.ticket_sales_location}
-                    onChange={(e) => setFormData({ ...formData, ticket_sales_location: e.target.value })}
-                    style={inputStyle(!!formData.ticket_sales_location)}
-                    placeholder="チケット販売場所"
                   />
                 </div>
               </div>
@@ -1171,7 +1647,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                       fontWeight: 700,
                       lineHeight: '17px',
                       color: '#FFFFFF',
-                      background: addressLoading || formData.venue_postal_code.length !== 7 ? '#D9D9D9' : '#06C755',
+                      background: addressLoading || formData.venue_postal_code.length !== 7 ? '#D9D9D9' : '#FF8A5C',
                       border: 'none',
                       borderRadius: '8px',
                       padding: '12px 16px',
@@ -1380,21 +1856,20 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginTop: '24px', marginBottom: '24px' }}>
             <button
               type="button"
-              onClick={handleClearForm}
+              onClick={onCancel}
               style={buttonSecondaryStyle}
             >
               キャンセル
             </button>
             <button
               type="submit"
-              disabled={loading}
               style={{
                 ...buttonPrimaryStyle,
-                background: loading ? '#D9D9D9' : '#06C755',
-                cursor: loading ? 'not-allowed' : 'pointer'
+                background: '#FF8A5C',
+                cursor: 'pointer'
               }}
             >
-              {loading ? (eventId ? '更新中...' : '作成中...') : (eventId ? 'イベント更新' : 'イベント掲載')}
+              次へ
             </button>
           </div>
         </form>

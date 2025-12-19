@@ -121,12 +121,9 @@
 **ファイル**: `organizer/components/EventForm.tsx`
 
 #### 必要な機能
-- [ ] ステップ1: 基本情報（イベント名、ふりがな、ジャンル、チェックボックス）
-- [ ] ステップ2: 開催期間・申し込み期間
-- [ ] ステップ3: イベント詳細（リードテキスト、説明、会場情報）
-- [ ] ステップ4: 連絡先・その他情報
-- [ ] ステップ5: 画像アップロード
-- [ ] ステップ6: 確認
+- [ ] ステップ1: 全部の情報入力（基本情報、開催期間、イベント詳細、連絡先、その他情報、画像アップロードを含む）
+- [ ] ステップ2: 情報の確認
+- [ ] ステップ3: 登録完了画面
 - [ ] プログレスインジケーター
 - [ ] バリデーション
 - [ ] 下書き保存機能
@@ -144,11 +141,9 @@
 - `event_end_date` (date) - 開催終了日
 - `event_display_period` (string) - 表示期間
 - `event_time` (string) - 開催時間
-- `application_start_date` (date) - 申し込み開始日
-- `application_end_date` (date) - 申し込み終了日
-- `application_display_period` (string) - 申し込み表示期間
-- `ticket_sale_start_date` (date) - チケット発売開始日
-- `ticket_sale_location` (string) - チケット販売場所
+- `application_start_date` (date) - 出店者募集開始日
+- `application_end_date` (date) - 出店者募集終了日
+- `application_display_period` (string) - 出店者募集期間(表示用)
 - `lead_text` (string) - リードテキスト
 - `event_description` (text) - イベント説明
 - `venue_name` (string) - 会場名

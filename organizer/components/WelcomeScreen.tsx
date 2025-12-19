@@ -28,6 +28,7 @@ export default function WelcomeScreen() {
   const [authMode, setAuthMode] = useState<AuthMode>('initial')
   const [loginMethod, setLoginMethod] = useState<LoginMethod | null>(null)
   const [registerMethod, setRegisterMethod] = useState<RegisterMethod | null>(null)
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [registerEmail, setRegisterEmail] = useState('')
@@ -99,6 +100,44 @@ export default function WelcomeScreen() {
     } catch (error) {
       console.error('[WelcomeScreen] Error in handleGoogleLogin:', error)
       setError('GoogleログインのURL生成に失敗しました。もう一度お試しください。')
+      setLoading(false)
+    }
+  }
+
+  const handleGoogleRegister = async () => {
+    try {
+      console.log('[WelcomeScreen] Google Register button clicked')
+      setLoading(true)
+      setError('')
+
+      // 現在のURLからリダイレクトURIを生成（主催者アプリのURLを使用）
+      const appUrl = (process.env.NEXT_PUBLIC_ORGANIZER_URL || window.location.origin).replace(/\/$/, '')
+      const redirectUrl = `${appUrl}/auth/callback`
+      
+      console.log('[WelcomeScreen] Google Register - appUrl:', appUrl)
+      console.log('[WelcomeScreen] Google Register - redirectUrl:', redirectUrl)
+
+      // セッションストレージにアプリタイプを保存（リダイレクト後に判定するため）
+      sessionStorage.setItem('app_type', 'organizer')
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl,
+        },
+      })
+
+      if (error) {
+        console.error('[WelcomeScreen] Google Register error:', error)
+        setError('Google新規登録に失敗しました。もう一度お試しください。')
+        setLoading(false)
+      } else if (data.url) {
+        // リダイレクトURLに遷移
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('[WelcomeScreen] Error in handleGoogleRegister:', error)
+      setError('Google新規登録のURL生成に失敗しました。もう一度お試しください。')
       setLoading(false)
     }
   }
@@ -217,17 +256,15 @@ export default function WelcomeScreen() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: isDesktop ? '48px 24px' : '24px 16px',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      background: '#E8F5F5'
     }}>
       <div style={{
         width: '100%',
         maxWidth: isDesktop ? '480px' : '100%',
-        background: 'rgba(255, 255, 255, 0.98)',
+        background: '#FFFFFF',
         borderRadius: isDesktop ? '24px' : '20px',
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        padding: isDesktop ? '48px' : '32px 24px',
-        backdropFilter: 'blur(10px)',
-        border: '1px solid rgba(255, 255, 255, 0.2)'
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+        padding: isDesktop ? '48px' : '32px 24px'
       }}>
         {/* ヘッダー */}
         <div style={{
@@ -238,12 +275,12 @@ export default function WelcomeScreen() {
             width: isDesktop ? '120px' : '100px',
             height: isDesktop ? '120px' : '100px',
             margin: '0 auto 24px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: '#FF8A5C',
             borderRadius: '20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 10px 15px -3px rgba(102, 126, 234, 0.3)'
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
             <div style={{
               fontSize: isDesktop ? '48px' : '40px',
@@ -309,7 +346,74 @@ export default function WelcomeScreen() {
         {/* 初期画面：ログイン or 新規登録を選択 */}
         {authMode === 'initial' && !loginMethod && !registerMethod && (
           <div>
+            {/* タブ切り替え */}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '32px',
+              marginBottom: '32px',
+              borderBottom: '1px solid #E9ECEF'
+            }}>
+              <button
+                type="button"
+                onClick={() => setActiveTab('login')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '12px 0',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  color: activeTab === 'login' ? '#FF8A5C' : '#6C757D',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  transition: 'color 0.2s ease'
+                }}
+              >
+                ログイン
+                {activeTab === 'login' && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: '#FF8A5C'
+                  }} />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('register')}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  padding: '12px 0',
+                  fontFamily: 'Inter, sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 700,
+                  color: activeTab === 'register' ? '#FF8A5C' : '#6C757D',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  transition: 'color 0.2s ease'
+                }}
+              >
+                新規登録
+                {activeTab === 'register' && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: '#FF8A5C'
+                  }} />
+                )}
+              </button>
+            </div>
+
             {/* ログインセクション */}
+            {activeTab === 'login' && (
             <div style={{
               marginBottom: '32px'
             }}>
@@ -318,20 +422,8 @@ export default function WelcomeScreen() {
                 fontWeight: 700,
                 color: '#111827',
                 marginBottom: '20px',
-                textAlign: 'center',
-                position: 'relative',
-                paddingBottom: '12px'
+                textAlign: 'center'
               }}>
-                <span style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  width: '48px',
-                  height: '3px',
-                  background: 'linear-gradient(90deg, #667eea, #764ba2)',
-                  borderRadius: '2px'
-                }} />
                 ログイン
               </h2>
 
@@ -448,37 +540,80 @@ export default function WelcomeScreen() {
               }} />
             </div>
 
-            {/* 新規登録ボタン */}
-            <button
-              onClick={handleNavigateToRegister}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '16px 24px',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '15px',
-                fontWeight: 600,
-                color: '#ffffff',
-                cursor: 'pointer',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0 4px 6px -1px rgba(102, 126, 234, 0.3), 0 2px 4px -1px rgba(102, 126, 234, 0.2)',
-                letterSpacing: '0.01em'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(102, 126, 234, 0.4), 0 4px 6px -2px rgba(102, 126, 234, 0.3)'
-                e.currentTarget.style.transform = 'translateY(-2px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(102, 126, 234, 0.3), 0 2px 4px -1px rgba(102, 126, 234, 0.2)'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
-            >
-              新規登録
-            </button>
+            </div>
+            )}
+
+            {/* 新規登録セクション */}
+            {activeTab === 'register' && (
+            <div>
+              <h2 style={{
+                fontSize: '18px',
+                fontWeight: 700,
+                color: '#111827',
+                marginBottom: '20px',
+                textAlign: 'center'
+              }}>
+                新規登録
+              </h2>
+              {/* Google新規登録ボタン */}
+              <button
+                onClick={handleGoogleRegister}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  padding: '16px 24px',
+                  background: '#ffffff',
+                  borderRadius: '12px',
+                  border: '2px solid #e5e7eb',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  color: '#111827',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                  marginBottom: '12px'
+                }}
+              >
+                <GoogleIcon />
+                <span>Googleで新規登録</span>
+              </button>
+
+              {/* メールアドレス新規登録ボタン */}
+              <button
+                onClick={() => {
+                  setAuthMode('register')
+                  setRegisterMethod('email')
+                }}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '12px',
+                  padding: '16px 24px',
+                  background: '#ffffff',
+                  borderRadius: '12px',
+                  border: '2px solid #e5e7eb',
+                  fontSize: '15px',
+                  fontWeight: 600,
+                  color: '#111827',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+                }}
+              >
+                <MailIcon color="#111827" />
+                <span>メールアドレスで新規登録</span>
+              </button>
+            </div>
+            )}
           </div>
         )}
 
