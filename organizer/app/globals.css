@@ -97,8 +97,7 @@ body {
     'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Meiryo', 'Yu Gothic', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
-  background-attachment: fixed;
+  background: #E8F5F5;
   color: var(--color-text-primary);
   line-height: 1.6;
   margin: 0;

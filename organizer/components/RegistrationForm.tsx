@@ -627,7 +627,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         maxWidth: isDesktop ? '600px' : '393px',
         minHeight: '852px',
         margin: '0 auto',
-        background: '#FFFFFF'
+        background: '#E8F5F5'
       }}>
         <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
           <h2 style={{ 
@@ -699,7 +699,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       maxWidth: isDesktop ? '600px' : '393px',
       minHeight: isDesktop ? '800px' : '852px',
       margin: '0 auto',
-      background: '#FFFFFF',
+      background: '#E8F5F5',
       ...(isDesktop && {
         padding: '40px 0',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -849,7 +849,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       maxWidth: isDesktop ? '600px' : '393px',
       minHeight: isDesktop ? '800px' : '852px',
       margin: '0 auto',
-      background: '#FFFFFF',
+      background: '#E8F5F5',
       ...(isDesktop && {
         padding: '40px 0',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
@@ -1182,7 +1182,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       maxWidth: isDesktop ? '600px' : '393px',
       minHeight: isDesktop ? '800px' : '852px',
       margin: '0 auto',
-      background: '#FFFFFF',
+      background: '#E8F5F5',
       ...(isDesktop && {
         padding: '40px 0',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',

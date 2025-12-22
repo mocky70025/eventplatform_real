@@ -431,7 +431,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
             maxWidth: isDesktop ? '1000px' : '393px',
       minHeight: '852px',
       margin: '0 auto',
-      background: '#FFFFFF',
+      background: '#E8F5F5',
       paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)'
     }}>
       {renderCurrentView()}
