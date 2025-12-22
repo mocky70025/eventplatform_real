@@ -417,16 +417,6 @@ export default function WelcomeScreen() {
             <div style={{
               marginBottom: '32px'
             }}>
-              <h2 style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#111827',
-                marginBottom: '20px',
-                textAlign: 'center'
-              }}>
-                ログイン
-              </h2>
-
               {/* Googleログインボタン */}
               <button
                 onClick={handleGoogleLogin}
@@ -520,15 +510,6 @@ export default function WelcomeScreen() {
             {/* 新規登録セクション */}
             {activeTab === 'register' && (
             <div>
-              <h2 style={{
-                fontSize: '18px',
-                fontWeight: 700,
-                color: '#111827',
-                marginBottom: '20px',
-                textAlign: 'center'
-              }}>
-                新規登録
-              </h2>
               {/* Google新規登録ボタン */}
               <button
                 onClick={handleGoogleRegister}
@@ -594,40 +575,50 @@ export default function WelcomeScreen() {
 
       {/* メールアドレスでログイン */}
       {authMode === 'login' && loginMethod === 'email' && (
-        <form onSubmit={handleEmailLogin}>
-          {/* ログインセクション */}
-          <div style={{
-            position: 'absolute',
-            width: '256px',
-            height: '0px',
-            left: '69px',
-            top: '427.5px',
-            border: '1px solid #E9ECEF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '72px',
-            height: '16px',
-            left: '161px',
-            top: '420px',
-            background: '#FFFFFF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '72px',
-            height: '24px',
-            left: '161px',
-            top: '416px',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontStyle: 'normal',
+        <form onSubmit={handleEmailLogin} style={{ width: '100%' }}>
+          <h2 style={{
+            fontSize: '18px',
             fontWeight: 700,
-            fontSize: '16px',
-            lineHeight: '24px',
-            textAlign: 'center',
-            color: '#000000'
+            color: '#111827',
+            marginBottom: '20px',
+            textAlign: 'center'
           }}>
             ログイン
-          </div>
+          </h2>
+
+          {/* エラーメッセージ */}
+          {error && (
+            <div style={{
+              marginBottom: '24px',
+              padding: '14px 18px',
+              background: '#fef2f2',
+              border: '2px solid #fecaca',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              <div style={{
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                background: '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 700 }}>!</span>
+              </div>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#991b1b',
+                fontWeight: 500,
+                lineHeight: 1.5
+              }}>{error}</p>
+            </div>
+          )}
 
           {/* メールアドレス入力フィールド */}
           <input
@@ -636,26 +627,16 @@ export default function WelcomeScreen() {
             onChange={(e) => setEmail(e.target.value)}
             required
             style={{
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
+              width: '100%',
               padding: '12px 16px',
-              gap: '10px',
-              position: 'absolute',
-              width: '288px',
-              height: '48px',
-              left: '53px',
-              top: '456px',
               background: '#FFFFFF',
               border: '1px solid #E5E5E5',
               borderRadius: '8px',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontStyle: 'normal',
-              fontWeight: 400,
               fontSize: '16px',
               lineHeight: '24px',
-              color: email ? '#000000' : '#999999'
+              color: email ? '#000000' : '#999999',
+              marginBottom: '12px',
+              boxSizing: 'border-box'
             }}
             placeholder="メールアドレス"
           />
@@ -667,26 +648,16 @@ export default function WelcomeScreen() {
             onChange={(e) => setPassword(e.target.value)}
             required
             style={{
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
+              width: '100%',
               padding: '12px 16px',
-              gap: '10px',
-              position: 'absolute',
-              width: '288px',
-              height: '48px',
-              left: '53px',
-              top: '520px',
               background: '#FFFFFF',
               border: '1px solid #E5E5E5',
               borderRadius: '8px',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontStyle: 'normal',
-              fontWeight: 400,
               fontSize: '16px',
               lineHeight: '24px',
-              color: password ? '#000000' : '#999999'
+              color: password ? '#000000' : '#999999',
+              marginBottom: '24px',
+              boxSizing: 'border-box'
             }}
             placeholder="パスワード"
           />
@@ -696,366 +667,172 @@ export default function WelcomeScreen() {
             type="submit"
             disabled={loading}
             style={{
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
+              width: '100%',
               padding: '16px 24px',
-              gap: '10px',
-              position: 'absolute',
-              width: '288px',
-              height: '48px',
-              left: '53px',
-              top: '584px',
               background: loading ? '#CCCCCC' : '#FF8A5C',
-              border: '1px solid #E5E5E5',
-              borderRadius: '8px',
-              fontFamily: '"Noto Sans JP", sans-serif',
+              border: 'none',
+              borderRadius: '12px',
               fontSize: '16px',
               fontWeight: 700,
               lineHeight: '24px',
               textAlign: 'center',
               color: '#FFFFFF',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginBottom: '24px'
             }}
           >
             {loading ? 'ログイン中...' : 'ログイン'}
           </button>
 
-          {/* またはセパレーター */}
-          <div style={{
-            position: 'absolute',
-            width: '256px',
-            height: '0px',
-            left: '69px',
-            top: '655.5px',
-            border: '1px solid #E9ECEF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '64px',
-            height: '16px',
-            left: '165px',
-            top: '648px',
-            background: '#FFFFFF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '64px',
-            height: '24px',
-            left: '165px',
-            top: '644px',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 700,
-            fontSize: '16px',
-            lineHeight: '24px',
-            textAlign: 'center',
-            color: '#000000'
-          }}>
-            または
-          </div>
-
           {/* 別の方法でログインボタン */}
           <button
             type="button"
             onClick={() => {
-              setAuthMode('login')
+              setAuthMode('initial')
+              setActiveTab('login')
               setLoginMethod(null)
               setError('')
               setEmail('')
               setPassword('')
             }}
             style={{
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
+              width: '100%',
               padding: '16px 24px',
-              gap: '10px',
-              position: 'absolute',
-              width: '287px',
-              height: '47px',
-              left: '53.5px',
-              top: '684px',
               background: '#FFFFFF',
-              border: '1px solid #E5E5E5',
-              borderRadius: '7.5px',
-              fontFamily: '"Noto Sans JP", sans-serif',
+              border: '2px solid #E5E5E5',
+              borderRadius: '12px',
               fontSize: '16px',
               fontWeight: 700,
               lineHeight: '24px',
               textAlign: 'center',
-              color: '#000000',
-            cursor: 'pointer'
-          }}
-        >
+              color: '#111827',
+              cursor: 'pointer'
+            }}
+          >
             別の方法でログイン
-        </button>
-
-          {/* エラーメッセージ */}
-          {error && (
-            <div style={{
-              position: 'absolute',
-              top: '750px',
-              left: '53px',
-              width: '288px',
-              padding: '12px',
-              background: '#FFEBEE',
-              borderRadius: '8px'
-            }}>
-              <p style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '14px',
-                color: '#C62828',
-                margin: 0
-              }}>
-                {error}
-              </p>
-            </div>
-          )}
+          </button>
         </form>
       )}
 
 
       {/* メールアドレスで新規登録 */}
       {authMode === 'register' && registerMethod === 'email' && (
-        <>
-          {/* タイトル */}
-          <div style={{
-            position: 'absolute',
-            width: '343px',
-            height: '96px',
-            left: '25px',
-            top: '32px',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontStyle: 'normal',
+        <form onSubmit={handleEmailRegister} style={{ width: '100%' }}>
+          <h2 style={{
+            fontSize: '18px',
             fontWeight: 700,
-            fontSize: '24px',
-            lineHeight: '48px',
-            textAlign: 'center',
-            color: '#000000'
-          }}>
-            イベントに呼びたい<br />キッチンカー・屋台を探すなら
-          </div>
-
-          {/* ロゴプレースホルダー */}
-          <div style={{
-            position: 'absolute',
-            width: '256px',
-            height: '256px',
-            left: '69px',
-            top: '144px',
-            background: '#D9D9D9'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '192px',
-            height: '48px',
-            left: '101px',
-            top: '248px',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 700,
-            fontSize: '32px',
-            lineHeight: '48px',
-            textAlign: 'center',
-            color: '#000000'
-          }}>
-            将来のロゴ
-          </div>
-
-          {/* 新規登録セパレーター */}
-          <div style={{
-            position: 'absolute',
-            width: '256px',
-            height: '0px',
-            left: '69px',
-            top: '427.5px',
-            border: '1px solid #E9ECEF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '72px',
-            height: '16px',
-            left: '161px',
-            top: '420px',
-            background: '#FFFFFF'
-          }} />
-              <div style={{
-            position: 'absolute',
-            width: '72px',
-                height: '24px',
-            left: '161px',
-            top: '416px',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 700,
-            fontSize: '16px',
-            lineHeight: '24px',
-            textAlign: 'center',
-            color: '#000000'
+            color: '#111827',
+            marginBottom: '20px',
+            textAlign: 'center'
           }}>
             新規登録
-          </div>
+          </h2>
 
           {/* エラーメッセージ */}
           {error && (
             <div style={{
-              position: 'absolute',
-              width: '288px',
-              left: '53px',
-              top: '440px',
-              padding: '8px',
-              background: '#FFEBEE',
-              borderRadius: '8px',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '14px',
-              color: '#C62828',
-              textAlign: 'center'
+              marginBottom: '24px',
+              padding: '14px 18px',
+              background: '#fef2f2',
+              border: '2px solid #fecaca',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
             }}>
-              {error}
+              <div style={{
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                background: '#ef4444',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}>
+                <span style={{ color: '#ffffff', fontSize: '12px', fontWeight: 700 }}>!</span>
+              </div>
+              <p style={{
+                margin: 0,
+                fontSize: '14px',
+                color: '#991b1b',
+                fontWeight: 500,
+                lineHeight: 1.5
+              }}>{error}</p>
             </div>
           )}
 
           {/* メールアドレス入力フィールド */}
-          <form onSubmit={handleEmailRegister}>
-            <input
-              type="email"
-              value={registerEmail}
-              onChange={(e) => setRegisterEmail(e.target.value)}
-              required
-              style={{
-                boxSizing: 'border-box',
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: '12px 16px',
-                gap: '10px',
-                position: 'absolute',
-                width: '288px',
-                height: '48px',
-                left: '53px',
-                top: '456px',
-                background: '#FFFFFF',
-                border: '1px solid #E5E5E5',
-                borderRadius: '8px',
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: registerEmail ? '#000000' : '#999999'
-              }}
-              placeholder="メールアドレス"
-            />
+          <input
+            type="email"
+            value={registerEmail}
+            onChange={(e) => setRegisterEmail(e.target.value)}
+            required
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              background: '#FFFFFF',
+              border: '1px solid #E5E5E5',
+              borderRadius: '8px',
+              fontSize: '16px',
+              lineHeight: '24px',
+              color: registerEmail ? '#000000' : '#999999',
+              marginBottom: '12px',
+              boxSizing: 'border-box'
+            }}
+            placeholder="メールアドレス"
+          />
 
-            {/* パスワード入力フィールド */}
-            <input
-              type="password"
-              value={registerPassword}
-              onChange={(e) => setRegisterPassword(e.target.value)}
-              required
-              minLength={6}
-              style={{
-                boxSizing: 'border-box',
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                padding: '12px 16px',
-                gap: '10px',
-                position: 'absolute',
-                width: '288px',
-                height: '48px',
-                left: '53px',
-                top: '520px',
-                background: '#FFFFFF',
-                border: '1px solid #E5E5E5',
-                borderRadius: '8px',
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontStyle: 'normal',
-                fontWeight: 400,
-                fontSize: '16px',
-                lineHeight: '24px',
-                color: registerPassword ? '#000000' : '#999999'
-              }}
-              placeholder="パスワード"
-            />
+          {/* パスワード入力フィールド */}
+          <input
+            type="password"
+            value={registerPassword}
+            onChange={(e) => setRegisterPassword(e.target.value)}
+            required
+            minLength={6}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              background: '#FFFFFF',
+              border: '1px solid #E5E5E5',
+              borderRadius: '8px',
+              fontSize: '16px',
+              lineHeight: '24px',
+              color: registerPassword ? '#000000' : '#999999',
+              marginBottom: '24px',
+              boxSizing: 'border-box'
+            }}
+            placeholder="パスワード（6文字以上）"
+          />
 
-            {/* 新規登録ボタン */}
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                boxSizing: 'border-box',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '16px 24px',
-                gap: '10px',
-                position: 'absolute',
-                width: '288px',
-                height: '48px',
-                left: '53px',
-                top: '584px',
-                background: loading ? '#CCCCCC' : '#FF8A5C',
-                border: '1px solid #E5E5E5',
-                borderRadius: '8px',
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontStyle: 'normal',
-                fontWeight: 700,
-                fontSize: '16px',
-                lineHeight: '24px',
-                textAlign: 'center',
-                color: '#FFFFFF',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.6 : 1
-              }}
-            >
-              {loading ? '登録中...' : '新規登録'}
-            </button>
-          </form>
-
-          {/* またはセパレーター */}
-          <div style={{
-            position: 'absolute',
-            width: '256px',
-            height: '0px',
-            left: '69px',
-            top: '655.5px',
-            border: '1px solid #E9ECEF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '64px',
-            height: '16px',
-            left: '165px',
-            top: '648px',
-            background: '#FFFFFF'
-          }} />
-          <div style={{
-            position: 'absolute',
-            width: '64px',
-            height: '24px',
-            left: '165px',
-            top: '644px',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontStyle: 'normal',
-            fontWeight: 700,
-            fontSize: '16px',
-            lineHeight: '24px',
-            textAlign: 'center',
-                color: '#000000'
-          }}>
-            または
-          </div>
+          {/* 新規登録ボタン */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width: '100%',
+              padding: '16px 24px',
+              background: loading ? '#CCCCCC' : '#FF8A5C',
+              border: 'none',
+              borderRadius: '12px',
+              fontSize: '16px',
+              fontWeight: 700,
+              lineHeight: '24px',
+              textAlign: 'center',
+              color: '#FFFFFF',
+              cursor: loading ? 'not-allowed' : 'pointer',
+              marginBottom: '24px'
+            }}
+          >
+            {loading ? '登録中...' : '新規登録'}
+          </button>
 
           {/* 別の方法で新規登録ボタン */}
           <button
+            type="button"
             onClick={() => {
+              setAuthMode('initial')
+              setActiveTab('register')
               setRegisterMethod(null)
               setError('')
               setRegisterEmail('')
@@ -1063,35 +840,23 @@ export default function WelcomeScreen() {
               setRegisterPasswordConfirm('')
             }}
             style={{
-              boxSizing: 'border-box',
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
+              width: '100%',
               padding: '16px 24px',
-              gap: '10px',
-              position: 'absolute',
-              width: '287px',
-              height: '47px',
-              left: '53.5px',
-              top: '684px',
               background: '#FFFFFF',
-              border: '1px solid #E5E5E5',
-              borderRadius: '7.5px',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontStyle: 'normal',
-              fontWeight: 700,
+              border: '2px solid #E5E5E5',
+              borderRadius: '12px',
               fontSize: '16px',
+              fontWeight: 700,
               lineHeight: '24px',
               textAlign: 'center',
-              color: '#000000',
+              color: '#111827',
               cursor: 'pointer'
             }}
           >
             別の方法で新規登録
           </button>
-        </>
-        )}
+        </form>
+      )}
       </div>
     </div>
   )
