@@ -865,28 +865,48 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         })
       }}>
       <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
-        <ProgressIndicator />
-        
-        <h2 style={{ 
-          fontFamily: '"Noto Sans JP", sans-serif',
-          fontSize: '20px',
-          fontWeight: 700,
-          lineHeight: '120%',
-          color: '#000000',
+        {/* ヘッダーカード */}
+        <div style={{
+          position: 'relative',
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          padding: '32px 24px',
           marginBottom: '24px',
-          marginTop: '16px',
-          textAlign: 'center'
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          overflow: 'hidden'
         }}>
-          情報登録をしてください
-        </h2>
+          {/* デコレーション - 星 */}
+          <svg style={{ position: 'absolute', top: '61px', left: '212px', width: '11px', height: '11px' }} viewBox="0 0 11 11" fill="none">
+            <path d="M5.504 0.2835C5.811 0.1078 6.189 0.1078 6.496 0.2835L11.481 3.1318C12.152 3.5157 12.152 4.4843 11.481 4.8682L6.496 7.7165C6.189 7.8922 5.811 7.8922 5.504 7.7165L0.519 4.8682C-0.152 4.4843 -0.152 3.5157 0.519 3.1318L5.504 0.2835Z" fill="#E9ECEF" transform="scale(0.5)"/>
+          </svg>
+          <svg style={{ position: 'absolute', top: '61px', right: '58px', width: '11px', height: '11px' }} viewBox="0 0 11 11" fill="none">
+            <path d="M5.504 0.2835C5.811 0.1078 6.189 0.1078 6.496 0.2835L11.481 3.1318C12.152 3.5157 12.152 4.4843 11.481 4.8682L6.496 7.7165C6.189 7.8922 5.811 7.8922 5.504 7.7165L0.519 4.8682C-0.152 4.4843 -0.152 3.5157 0.519 3.1318L5.504 0.2835Z" fill="#E9ECEF" transform="scale(0.5)"/>
+          </svg>
+          {/* デコレーション - 線 */}
+          <div style={{ position: 'absolute', top: '77px', left: '120px', width: '64px', height: '2px', background: '#E9ECEF' }}></div>
+          <div style={{ position: 'absolute', top: '77px', right: '58px', width: '64px', height: '2px', background: '#E9ECEF' }}></div>
+          
+          <h2 style={{ 
+            fontFamily: '"Noto Sans JP", sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            lineHeight: '120%',
+            color: '#2C3E50',
+            textAlign: 'center',
+            margin: 0
+          }}>
+            主催者登録
+          </h2>
+        </div>
+
+        <ProgressIndicator />
         
         <div style={{
           background: '#FFFFFF',
-          boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-          borderRadius: '12px',
+          borderRadius: '16px',
           padding: '24px',
           marginBottom: '24px',
-          border: '1px solid #f3f4f6'
+          boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.05)'
         }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
             {/* 会社名 */}
