@@ -267,8 +267,6 @@ export default function WelcomeScreen() {
       <div style={{
         width: '100%',
         maxWidth: '393px',
-        marginTop: '190px',
-        marginBottom: '0',
         background: 'white',
         borderRadius: '16px',
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
@@ -438,10 +436,10 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#06C755',
                   borderRadius: '12px',
@@ -468,8 +466,10 @@ export default function WelcomeScreen() {
                   }
                 }}
               >
-                <LineIcon />
-                <span>LINEでログイン</span>
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <LineIcon />
+                </div>
+                <span>LINE</span>
               </button>
 
               {/* Googleログインボタン */}
@@ -478,10 +478,10 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#ffffff',
                   borderRadius: '12px',
@@ -510,8 +510,10 @@ export default function WelcomeScreen() {
                   }
                 }}
               >
-                <GoogleIcon />
-                <span>Googleでログイン</span>
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <GoogleIcon />
+                </div>
+                <span>Google</span>
               </button>
 
               {/* メールアドレスログインボタン */}
@@ -523,10 +525,10 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#ffffff',
                   borderRadius: '12px',
@@ -554,8 +556,10 @@ export default function WelcomeScreen() {
                   }
                 }}
               >
-                <MailIcon color="#111827" />
-                <span>メールアドレスでログイン</span>
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <MailIcon color="#111827" />
+                </div>
+                <span>メールアドレス</span>
               </button>
             </div>
             )}
@@ -571,10 +575,10 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#06C755',
                   borderRadius: '12px',
@@ -589,8 +593,10 @@ export default function WelcomeScreen() {
                   marginBottom: '12px'
                 }}
               >
-                <LineIcon />
-                <span>LINEで新規登録</span>
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <LineIcon />
+                </div>
+                <span>LINE</span>
               </button>
 
               {/* Google新規登録ボタン */}
@@ -599,10 +605,10 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#ffffff',
                   borderRadius: '12px',
@@ -617,8 +623,10 @@ export default function WelcomeScreen() {
                   marginBottom: '12px'
                 }}
               >
-                <GoogleIcon />
-                <span>Googleで新規登録</span>
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <GoogleIcon />
+                </div>
+                <span>Google</span>
               </button>
 
               {/* メールアドレス新規登録ボタン */}
@@ -630,10 +638,10 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#ffffff',
                   borderRadius: '12px',
@@ -647,8 +655,10 @@ export default function WelcomeScreen() {
                   boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
                 }}
               >
-                <MailIcon color="#111827" />
-                <span>メールアドレスで新規登録</span>
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <MailIcon color="#111827" />
+                </div>
+                <span>メールアドレス</span>
               </button>
             </div>
             )}

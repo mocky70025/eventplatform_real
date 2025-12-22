@@ -844,18 +844,26 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   // ステップ1: 情報登録
   const renderStep1 = () => (
     <div style={{ 
-      position: 'relative',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
       width: '100%',
-      maxWidth: isDesktop ? '600px' : '393px',
-      minHeight: isDesktop ? '800px' : '852px',
-      margin: '0 auto',
       background: '#E8F5F5',
-      ...(isDesktop && {
-        padding: '40px 0',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px'
-      })
+      padding: isDesktop ? '40px 20px' : 0
     }}>
+      <div style={{ 
+        position: 'relative',
+        width: '100%',
+        maxWidth: isDesktop ? '600px' : '393px',
+        minHeight: isDesktop ? '800px' : '852px',
+        background: '#E8F5F5',
+        ...(isDesktop && {
+          padding: '40px 0',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+          borderRadius: '12px'
+        })
+      }}>
       <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
         <ProgressIndicator />
         
@@ -1276,6 +1284,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             ホームへ戻る
           </button>
         </div>
+      </div>
       </div>
     </div>
   )

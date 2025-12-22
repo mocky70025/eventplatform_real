@@ -264,19 +264,17 @@ export default function WelcomeScreen() {
       <div style={{
         width: '100%',
         maxWidth: '393px',
-        marginTop: '224px',
-        marginBottom: '0',
         background: 'white',
         borderRadius: '16px',
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
         padding: '0',
         position: 'relative',
-        minHeight: '404px'
+        minHeight: '472px'
       }}>
         {/* ヘッダー */}
         <div style={{
           textAlign: 'center',
-          marginTop: '36px',
+          marginTop: '40px',
           marginBottom: '32px',
           padding: '0 20px'
         }}>
@@ -293,21 +291,20 @@ export default function WelcomeScreen() {
           }}>
           </div>
           <h1 style={{
-            fontSize: isDesktop ? '24px' : '20px',
-            fontWeight: 700,
-            lineHeight: 1.4,
+            fontSize: isDesktop ? '28px' : '24px',
+            fontWeight: 800,
+            lineHeight: 1.3,
             color: '#2C3E50',
-            margin: '0 0 4px',
-            fontFamily: 'Inter, sans-serif'
+            margin: '0 0 12px',
+            letterSpacing: '-0.02em'
           }}>
             デミセル
           </h1>
           <p style={{
-            fontSize: '14px',
+            fontSize: '15px',
             color: '#6C757D',
             margin: 0,
-            lineHeight: 1.5,
-            fontFamily: 'Inter, sans-serif'
+            lineHeight: 1.6
           }}>
             主催者向けプラットフォーム
           </p>
@@ -432,13 +429,13 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#ffffff',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: '1px solid #E9ECEF',
                   fontSize: '16px',
                   fontWeight: 700,
@@ -451,20 +448,11 @@ export default function WelcomeScreen() {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <GoogleIcon />
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <GoogleIcon />
+                </div>
                 <span>Google</span>
               </button>
-
-              {/* セパレーター */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '16px',
-                color: '#6C757D',
-                fontSize: '14px',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                または
-              </div>
 
               {/* メールアドレスログインボタン */}
               <button
@@ -477,13 +465,13 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#FF8A5C',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: 'none',
                   fontSize: '16px',
                   fontWeight: 700,
@@ -495,7 +483,9 @@ export default function WelcomeScreen() {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <MailIcon color="#ffffff" />
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <MailIcon color="#ffffff" />
+                </div>
                 <span>メールアドレス</span>
               </button>
             </div>
@@ -510,13 +500,13 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#ffffff',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: '1px solid #E9ECEF',
                   fontSize: '16px',
                   fontWeight: 700,
@@ -529,20 +519,11 @@ export default function WelcomeScreen() {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <GoogleIcon />
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <GoogleIcon />
+                </div>
                 <span>Google</span>
               </button>
-
-              {/* セパレーター */}
-              <div style={{
-                textAlign: 'center',
-                marginBottom: '16px',
-                color: '#6C757D',
-                fontSize: '14px',
-                fontFamily: 'Inter, sans-serif'
-              }}>
-                または
-              </div>
 
               {/* メールアドレス新規登録ボタン */}
               <button
@@ -553,13 +534,13 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  gap: '12px',
                   padding: '16px 24px',
                   background: '#FF8A5C',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: 'none',
                   fontSize: '16px',
                   fontWeight: 700,
@@ -571,7 +552,9 @@ export default function WelcomeScreen() {
                   fontFamily: 'Inter, sans-serif'
                 }}
               >
-                <MailIcon color="#ffffff" />
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <MailIcon color="#ffffff" />
+                </div>
                 <span>メールアドレス</span>
               </button>
             </div>
