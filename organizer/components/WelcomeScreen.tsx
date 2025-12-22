@@ -263,27 +263,33 @@ export default function WelcomeScreen() {
         maxWidth: isDesktop ? '480px' : '352px',
         background: '#FFFFFF',
         borderRadius: '16px',
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-        padding: isDesktop ? '48px' : '40px 24px',
+        boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
+        padding: '0',
+        position: 'relative',
+        minHeight: '472px',
         margin: '0 auto'
       }}>
         {/* ヘッダー */}
         <div style={{
           textAlign: 'center',
-          marginBottom: '32px'
+          marginTop: '40px',
+          marginBottom: '32px',
+          padding: '0 20px'
         }}>
           <div style={{
             width: '64px',
             height: '64px',
             margin: '0 auto 12px',
             background: '#FF8A5C',
+            borderRadius: '8px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
           </div>
           <h1 style={{
-            fontSize: '20px',
+            fontSize: isDesktop ? '24px' : '20px',
             fontWeight: 700,
             lineHeight: 1.4,
             color: '#2C3E50',
@@ -342,72 +348,80 @@ export default function WelcomeScreen() {
           <div>
             {/* タブ切り替え */}
             <div style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: '40px',
-              marginBottom: '24px'
+              padding: '0 20px',
+              marginBottom: '32px'
             }}>
-              <button
-                type="button"
-                onClick={() => setActiveTab('login')}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  padding: 0,
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  color: activeTab === 'login' ? '#FF8A5C' : '#000000',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  transition: 'color 0.2s ease'
-                }}
-              >
-                ログイン
-                {activeTab === 'login' && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '-4px',
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: '#FF8A5C'
-                  }} />
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab('register')}
-                style={{
-                  background: 'transparent',
-                  border: 'none',
-                  padding: 0,
-                  fontFamily: 'Inter, sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  color: activeTab === 'register' ? '#FF8A5C' : '#000000',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  transition: 'color 0.2s ease'
-                }}
-              >
-                新規登録
-                {activeTab === 'register' && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: '-4px',
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: '#FF8A5C'
-                  }} />
-                )}
-              </button>
+              <div style={{
+                display: 'flex',
+                borderBottom: '1px solid #E9ECEF',
+                position: 'relative'
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('login')}
+                  style={{
+                    flex: 1,
+                    padding: '16px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    fontWeight: activeTab === 'login' ? 600 : 400,
+                    color: activeTab === 'login' ? '#FF8A5C' : '#6C757D',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'all 200ms ease'
+                  }}
+                >
+                  ログイン
+                  {activeTab === 'login' && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '2px',
+                      background: '#FF8A5C',
+                      borderRadius: '1px 1px 0 0'
+                    }} />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('register')}
+                  style={{
+                    flex: 1,
+                    padding: '16px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: 'Inter, sans-serif',
+                    fontSize: '16px',
+                    fontWeight: activeTab === 'register' ? 600 : 400,
+                    color: activeTab === 'register' ? '#FF8A5C' : '#6C757D',
+                    cursor: 'pointer',
+                    position: 'relative',
+                    transition: 'all 200ms ease'
+                  }}
+                >
+                  新規登録
+                  {activeTab === 'register' && (
+                    <div style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      height: '2px',
+                      background: '#FF8A5C',
+                      borderRadius: '1px 1px 0 0'
+                    }} />
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* ログインセクション */}
             {activeTab === 'login' && (
-            <div>
+            <div style={{ padding: '0 20px' }}>
               {/* Googleログインボタン */}
               <button
                 onClick={handleGoogleLogin}
@@ -485,7 +499,7 @@ export default function WelcomeScreen() {
 
             {/* 新規登録セクション */}
             {activeTab === 'register' && (
-            <div>
+            <div style={{ padding: '0 20px' }}>
               {/* Google新規登録ボタン */}
               <button
                 onClick={handleGoogleRegister}
