@@ -260,11 +260,12 @@ export default function WelcomeScreen() {
     }}>
       <div style={{
         width: '100%',
-        maxWidth: isDesktop ? '480px' : '100%',
+        maxWidth: isDesktop ? '480px' : '352px',
         background: '#FFFFFF',
-        borderRadius: isDesktop ? '24px' : '20px',
+        borderRadius: '16px',
         boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-        padding: isDesktop ? '48px' : '32px 24px'
+        padding: isDesktop ? '48px' : '40px 24px',
+        margin: '0 auto'
       }}>
         {/* ヘッダー */}
         <div style={{
