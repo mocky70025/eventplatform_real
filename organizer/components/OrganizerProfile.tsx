@@ -167,7 +167,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
         color: '#FFFFFF',
         padding: '16px',
         textAlign: 'center',
-        fontFamily: '"Noto Sans JP", sans-serif',
+        fontFamily: '"Inter", "Noto Sans JP", sans-serif',
         fontSize: '18px',
         fontWeight: 700,
         lineHeight: '120%',
@@ -180,7 +180,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
         justifyContent: 'center',
         height: '64px'
       }}>
-          <button
+        <button
           onClick={() => {
             if (onBack) {
               onBack()
@@ -198,14 +198,16 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
             padding: '4px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center'
+            justifyContent: 'center',
+            fontFamily: '"Inter", sans-serif',
+            fontSize: '24px',
+            fontWeight: 700,
+            lineHeight: '1'
           }}
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M15 19L9 12L15 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
+          &lt;
         </button>
-        主催者プロフィール確認
+        プロフィール
       </div>
 
       <div style={{ paddingTop: '64px', paddingBottom: '24px' }}>
@@ -233,59 +235,42 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
           ) : (
             <div style={{
               background: '#FFFFFF',
-              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
               borderRadius: '16px',
-              padding: '24px',
-              marginTop: '24px'
+              padding: '20px',
+              marginTop: '24px',
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
             }}>
               <h2 style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                 fontSize: '20px',
+                fontStyle: 'italic',
                 fontWeight: 700,
                 lineHeight: '120%',
                 color: '#2C3E50',
                 marginBottom: '24px',
-                textAlign: 'center'
+                paddingLeft: '4px'
               }}>
-                主催者プロフィール確認
+                情報を確認してください
               </h2>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {/* お名前 */}
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                  <label style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
-                    marginBottom: '8px',
-                    marginTop: 0
-                  }}>会社名</p>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    lineHeight: '150%',
+                    fontStyle: 'italic',
+                    fontWeight: 700,
+                    lineHeight: '1.4',
                     color: '#2C3E50',
-                    margin: 0
-                  }}>{organizerData.company_name}</p>
-                </div>
-
-                <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
                     marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>お名前</p>
+                    display: 'block'
+                  }}>
+                    お名前
+                  </label>
                   <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
                     fontWeight: 400,
                     lineHeight: '150%',
                     color: '#2C3E50',
@@ -293,21 +278,23 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   }}>{organizerData.name}</p>
                 </div>
 
+                {/* 性別 */}
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                  <label style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
+                    fontStyle: 'italic',
+                    fontWeight: 700,
+                    lineHeight: '1.4',
+                    color: '#2C3E50',
                     marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>性別</p>
+                    display: 'block'
+                  }}>
+                    性別
+                  </label>
                   <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
                     fontWeight: 400,
                     lineHeight: '150%',
                     color: '#2C3E50',
@@ -315,43 +302,47 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   }}>{organizerData.gender === '男' ? '男性' : organizerData.gender === '女' ? '女性' : 'その他'}</p>
                 </div>
 
+                {/* 年齢 */}
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                  <label style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
+                    fontStyle: 'italic',
+                    fontWeight: 700,
+                    lineHeight: '1.4',
+                    color: '#2C3E50',
                     marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>年齢</p>
+                    display: 'block'
+                  }}>
+                    年齢
+                  </label>
                   <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
                     fontWeight: 400,
                     lineHeight: '150%',
                     color: '#2C3E50',
                     margin: 0
-                  }}>{organizerData.age}歳</p>
+                  }}>{organizerData.age}</p>
                 </div>
 
+                {/* 電話番号 */}
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                  <label style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
+                    fontStyle: 'italic',
+                    fontWeight: 700,
+                    lineHeight: '1.4',
+                    color: '#2C3E50',
                     marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>電話番号</p>
+                    display: 'block'
+                  }}>
+                    電話番号
+                  </label>
                   <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
                     fontWeight: 400,
                     lineHeight: '150%',
                     color: '#2C3E50',
@@ -359,21 +350,23 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   }}>{organizerData.phone_number}</p>
                 </div>
 
+                {/* メールアドレス */}
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                  <label style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
+                    fontStyle: 'italic',
+                    fontWeight: 700,
+                    lineHeight: '1.4',
+                    color: '#2C3E50',
                     marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>メールアドレス</p>
+                    display: 'block'
+                  }}>
+                    メールアドレス
+                  </label>
                   <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
                     fontWeight: 400,
                     lineHeight: '150%',
                     color: '#2C3E50',
@@ -381,97 +374,57 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   }}>{organizerData.email}</p>
                 </div>
 
+                {/* 会社名 */}
                 <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                  <label style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
+                    fontStyle: 'italic',
+                    fontWeight: 700,
+                    lineHeight: '1.4',
+                    color: '#2C3E50',
                     marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>承認状態</p>
+                    display: 'block'
+                  }}>
+                    会社名
+                  </label>
                   <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    lineHeight: '150%',
-                    color: organizerData.is_approved ? '#FF8A5C' : '#B8860B',
-                    margin: 0
-                  }}>{organizerData.is_approved ? '承認済み' : '承認待ち'}</p>
-                </div>
-
-                <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
-                    marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>登録日時</p>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
                     fontWeight: 400,
                     lineHeight: '150%',
                     color: '#2C3E50',
                     margin: 0
-                  }}>
-                    {new Date(organizerData.created_at).toLocaleString('ja-JP')}
-                  </p>
-                </div>
-
-                <div>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    lineHeight: '120%',
-                    color: '#6C757D',
-                    marginBottom: '8px',
-                    marginTop: 0,
-                    marginLeft: 0,
-                    marginRight: 0
-                  }}>最終更新日時</p>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '16px',
-                    fontWeight: 400,
-                    lineHeight: '150%',
-                    color: '#2C3E50',
-                    margin: 0
-                  }}>
-                    {new Date(organizerData.updated_at).toLocaleString('ja-JP')}
-                  </p>
+                  }}>{organizerData.company_name}</p>
                 </div>
               </div>
 
-              {/* プロフィール編集ボタン */}
+              {/* 編集するボタン */}
               <button
                 onClick={() => setIsEditing(true)}
                 style={{
                   width: '100%',
-                  padding: '12px 24px',
+                  maxWidth: '289px',
+                  height: '52px',
+                  padding: '0',
                   background: '#FF8A5C',
                   color: '#FFFFFF',
-                  borderRadius: '8px',
+                  borderRadius: '12px',
                   border: 'none',
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  fontStyle: 'italic',
                   fontWeight: 700,
-                  lineHeight: '120%',
+                  lineHeight: '52px',
                   cursor: 'pointer',
-                  marginTop: '32px',
+                  marginTop: '24px',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  display: 'block',
                   boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
                 }}
               >
-                プロフィール編集
+                編集する
               </button>
             </div>
           )}

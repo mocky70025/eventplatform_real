@@ -201,16 +201,19 @@ export default function WelcomeScreen() {
       return
     }
 
+    if (!registerPassword || registerPassword.length < 6) {
+      setError('パスワードは6文字以上で入力してください')
+      setLoading(false)
+      return
+    }
+
     try {
       const appUrl = (process.env.NEXT_PUBLIC_APP_URL || window.location.origin).replace(/\/$/, '')
       const redirectUrl = `${appUrl}/auth/verify-email`
       
-      // パスワードを自動生成（ランダムな文字列）
-      const randomPassword = Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12).toUpperCase() + '!@#'
-      
       const { data, error } = await supabase.auth.signUp({
         email: registerEmail,
-        password: randomPassword,
+        password: registerPassword,
         options: {
           emailRedirectTo: redirectUrl
         }
@@ -256,7 +259,7 @@ export default function WelcomeScreen() {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      background: '#FFF5F0',
+      background: 'linear-gradient(-44.94deg, rgba(255, 245, 240, 1) 0%, rgba(232, 245, 245, 1) 99.95%)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -266,7 +269,7 @@ export default function WelcomeScreen() {
       {/* 白いカード */}
       <div style={{
         width: '100%',
-        maxWidth: '393px',
+        maxWidth: '352px',
         background: 'white',
         borderRadius: '16px',
         boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
@@ -294,16 +297,18 @@ export default function WelcomeScreen() {
           }}>
           </div>
           <h1 style={{
-            fontSize: isDesktop ? '28px' : '24px',
-            fontWeight: 800,
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '24px',
+            fontWeight: 700,
+            fontStyle: 'italic',
             lineHeight: 1.3,
             color: '#2C3E50',
-            margin: '0 0 12px',
-            letterSpacing: '-0.02em'
+            margin: '0 0 12px'
           }}>
             デミセル
           </h1>
           <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
             fontSize: '15px',
             color: '#6C757D',
             margin: 0,
@@ -319,72 +324,78 @@ export default function WelcomeScreen() {
             padding: '0 20px',
             marginBottom: '32px'
           }}>
-            <div style={{
-              display: 'flex',
-              borderBottom: '1px solid #E9ECEF',
+        <div style={{
+          display: 'flex',
+          borderBottom: '1px solid #E9ECEF',
               position: 'relative'
-            }}>
+        }}>
               {/* ログインタブ */}
-              <button
-                onClick={() => setActiveTab('login')}
-                style={{
-                  flex: 1,
-                  padding: '16px 0',
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '16px',
-                  fontWeight: activeTab === 'login' ? 600 : 400,
-                  color: activeTab === 'login' ? '#5DABA8' : '#6C757D',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  transition: 'all 200ms ease'
-                }}
-              >
-                ログイン
+          <button
+            onClick={() => setActiveTab('login')}
+            style={{
+              flex: 1,
+              padding: '16px 0',
+              background: 'transparent',
+              border: 'none',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: activeTab === 'login' ? 700 : 400,
+              fontStyle: activeTab === 'login' ? 'italic' : 'normal',
+              color: activeTab === 'login' ? '#5DABA8' : '#6C757D',
+              cursor: 'pointer',
+              position: 'relative',
+              transition: 'all 200ms ease'
+            }}
+          >
+            ログイン
                 {activeTab === 'login' && (
                   <div style={{
                     position: 'absolute',
                     bottom: 0,
-                    left: 0,
-                    right: 0,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '40px',
                     height: '2px',
                     background: '#5DABA8',
                     borderRadius: '1px 1px 0 0'
                   }} />
                 )}
-              </button>
+          </button>
 
               {/* 新規登録タブ */}
-              <button
-                onClick={() => setActiveTab('register')}
-                style={{
-                  flex: 1,
-                  padding: '16px 0',
-                  background: 'transparent',
-                  border: 'none',
-                  fontSize: '16px',
-                  fontWeight: activeTab === 'register' ? 600 : 400,
-                  color: activeTab === 'register' ? '#5DABA8' : '#6C757D',
-                  cursor: 'pointer',
-                  position: 'relative',
-                  transition: 'all 200ms ease'
-                }}
-              >
-                新規登録
+          <button
+            onClick={() => setActiveTab('register')}
+            style={{
+              flex: 1,
+              padding: '16px 0',
+              background: 'transparent',
+              border: 'none',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: activeTab === 'register' ? 700 : 400,
+              fontStyle: activeTab === 'register' ? 'italic' : 'normal',
+              color: activeTab === 'register' ? '#5DABA8' : '#6C757D',
+              cursor: 'pointer',
+              position: 'relative',
+              transition: 'all 200ms ease'
+            }}
+          >
+            新規登録
                 {activeTab === 'register' && (
                   <div style={{
                     position: 'absolute',
                     bottom: 0,
-                    left: 0,
-                    right: 0,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '40px',
                     height: '2px',
                     background: '#5DABA8',
                     borderRadius: '1px 1px 0 0'
                   }} />
                 )}
               </button>
-            </div>
           </div>
+        </div>
         )}
 
         {/* エラーメッセージ */}
@@ -444,30 +455,19 @@ export default function WelcomeScreen() {
                   background: '#06C755',
                   borderRadius: '12px',
                   border: 'none',
-                  fontSize: '15px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '16px',
                   fontWeight: 600,
-                  color: '#ffffff',
+                  color: '#FFFFFF',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 4px 6px -1px rgba(6, 199, 85, 0.3), 0 2px 4px -1px rgba(6, 199, 85, 0.2)',
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
                   marginBottom: '12px'
-                }}
-                onMouseEnter={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(6, 199, 85, 0.4), 0 4px 6px -2px rgba(6, 199, 85, 0.3)'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(6, 199, 85, 0.3), 0 2px 4px -1px rgba(6, 199, 85, 0.2)'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                  <LineIcon />
+                <LineIcon />
                 </div>
                 <span>LINE</span>
               </button>
@@ -483,35 +483,22 @@ export default function WelcomeScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#ffffff',
+                  background: '#FFFFFF',
                   borderRadius: '12px',
-                  border: '2px solid #E9ECEF',
-                  fontSize: '15px',
+                  border: '1px solid #E9ECEF',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '16px',
                   fontWeight: 600,
-                  color: '#111827',
+                  color: '#2C3E50',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
                   marginBottom: '12px'
-                }}
-                onMouseEnter={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                    e.currentTarget.style.borderColor = '#d1d5db'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-                    e.currentTarget.style.borderColor = '#e5e7eb'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                  <GoogleIcon />
+                <GoogleIcon />
                 </div>
                 <span>Google</span>
               </button>
@@ -525,40 +512,24 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
-                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#ffffff',
+                  background: '#5DABA8',
                   borderRadius: '12px',
-                  border: '2px solid #E9ECEF',
+                  border: 'none',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontSize: '15px',
-                  fontWeight: 600,
-                  color: '#111827',
+                  fontWeight: 700,
+                  fontStyle: 'italic',
+                  color: '#FFFFFF',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-                }}
-                onMouseEnter={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
-                    e.currentTarget.style.borderColor = '#d1d5db'
-                    e.currentTarget.style.transform = 'translateY(-2px)'
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!loading) {
-                    e.currentTarget.style.boxShadow = '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
-                    e.currentTarget.style.borderColor = '#e5e7eb'
-                    e.currentTarget.style.transform = 'translateY(0)'
-                  }
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
                 }}
               >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <MailIcon color="#111827" />
-                </div>
                 <span>メールアドレス</span>
               </button>
             </div>
@@ -583,18 +554,19 @@ export default function WelcomeScreen() {
                   background: '#06C755',
                   borderRadius: '12px',
                   border: 'none',
-                  fontSize: '15px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '16px',
                   fontWeight: 600,
-                  color: '#ffffff',
+                  color: '#FFFFFF',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 4px 6px -1px rgba(6, 199, 85, 0.3), 0 2px 4px -1px rgba(6, 199, 85, 0.2)',
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
                   marginBottom: '12px'
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                  <LineIcon />
+                <LineIcon />
                 </div>
                 <span>LINE</span>
               </button>
@@ -610,21 +582,22 @@ export default function WelcomeScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#ffffff',
+                  background: '#FFFFFF',
                   borderRadius: '12px',
-                  border: '2px solid #E9ECEF',
-                  fontSize: '15px',
+                  border: '1px solid #E9ECEF',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '16px',
                   fontWeight: 600,
-                  color: '#111827',
+                  color: '#2C3E50',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
                   marginBottom: '12px'
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                  <GoogleIcon />
+                <GoogleIcon />
                 </div>
                 <span>Google</span>
               </button>
@@ -638,26 +611,24 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
-                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#ffffff',
+                  background: '#5DABA8',
                   borderRadius: '12px',
-                  border: '2px solid #E9ECEF',
+                  border: 'none',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontSize: '15px',
-                  fontWeight: 600,
-                  color: '#111827',
+                  fontWeight: 700,
+                  fontStyle: 'italic',
+                  color: '#FFFFFF',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
                   transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)'
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
                 }}
               >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <MailIcon color="#111827" />
-                </div>
                 <span>メールアドレス</span>
               </button>
             </div>
@@ -824,130 +795,275 @@ export default function WelcomeScreen() {
 
         {/* メールアドレスでログイン */}
         {authMode === 'login' && loginMethod === 'email' && (
-          <form onSubmit={handleEmailLogin} style={{ padding: '0 20px', paddingBottom: '32px' }}>
-            <h2 style={{
-              fontSize: '18px',
-              fontWeight: 700,
-              color: '#2C3E50',
-              marginBottom: '32px',
-              textAlign: 'center',
-              position: 'relative',
-              paddingTop: '8px'
+          <>
+            {/* タブナビゲーション */}
+            <div style={{
+              padding: '0 20px',
+              marginBottom: '32px'
             }}>
-              メールアドレスでログイン
-            </h2>
-
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="メールアドレス"
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                fontSize: '15px',
-                lineHeight: 1.5,
-                color: email ? '#2C3E50' : '#6C757D',
-                background: '#ffffff',
-                border: '1px solid #E9ECEF',
-                borderRadius: '12px',
-                marginBottom: '16px',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#5DABA8'
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = '#E9ECEF'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            />
-
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="パスワード"
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                fontSize: '15px',
-                lineHeight: 1.5,
-                color: password ? '#2C3E50' : '#6C757D',
-                background: '#ffffff',
-                border: '1px solid #E9ECEF',
-                borderRadius: '12px',
-                marginBottom: '32px',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#5DABA8'
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = '#E9ECEF'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            />
-
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
+              <div style={{
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '16px 24px',
-                background: loading ? '#9ca3af' : '#5DABA8',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '15px',
-                fontWeight: 600,
-                color: '#ffffff',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: loading ? 'none' : '0px 2px 8px rgba(0, 0, 0, 0.08)',
-                marginBottom: '16px'
-              }}
-            >
-              {loading ? 'ログイン中...' : '次へ'}
-            </button>
+                borderBottom: '1px solid #E9ECEF',
+                position: 'relative'
+              }}>
+                {/* ログインタブ */}
+                <button
+                  onClick={() => {}}
+                  style={{
+                    flex: 1,
+                    padding: '16px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    color: '#5DABA8',
+                    cursor: 'default',
+                    position: 'relative'
+                  }}
+                >
+                  ログイン
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '40px',
+                    height: '2px',
+                    background: '#5DABA8',
+                    borderRadius: '1px 1px 0 0'
+                  }} />
+                </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                setAuthMode('login')
-                setLoginMethod(null)
-                setError('')
-                setEmail('')
-                setPassword('')
-              }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '16px 24px',
-                background: '#ffffff',
-                borderRadius: '12px',
-                border: '1px solid #E9ECEF',
-                fontSize: '15px',
-                fontWeight: 600,
+                {/* 新規登録タブ */}
+                <button
+                  onClick={() => {
+                    setAuthMode('initial')
+                    setLoginMethod(null)
+                    setActiveTab('register')
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '16px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 400,
+                    color: '#6C757D',
+                    cursor: 'pointer',
+                    position: 'relative'
+                  }}
+                >
+                  新規登録
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleEmailLogin} style={{ padding: '0 20px', paddingBottom: '32px' }}>
+              {/* LINEボタン */}
+              <button
+                type="button"
+                onClick={handleLineLogin}
+                disabled={loading}
+                style={{
+                  width: '100%',
+                  position: 'relative',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '16px 24px',
+                  background: '#06C755',
+                  borderRadius: '12px',
+                  border: 'none',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  color: '#FFFFFF',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.6 : 1,
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
+                  marginBottom: '24px'
+                }}
+              >
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <LineIcon />
+                </div>
+                <span>LINE</span>
+              </button>
+
+              {/* メールアドレスラベル */}
+              <label style={{
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '14px',
+                fontWeight: 700,
+                fontStyle: 'italic',
                 color: '#2C3E50',
-                cursor: 'pointer',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
-              }}
-            >
-              戻る
-            </button>
-          </form>
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                メールアドレス
+              </label>
+
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="example@email.com"
+                style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '44px',
+                  padding: '0 16px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  lineHeight: 1.5,
+                  color: email ? '#2C3E50' : '#6C757D',
+                  background: '#ffffff',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#5DABA8'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E9ECEF'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              />
+
+              {/* パスワードラベル */}
+              <label style={{
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '14px',
+                fontWeight: 700,
+                fontStyle: 'italic',
+                color: '#2C3E50',
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                パスワード
+                <a
+                  href="/auth/reset-password"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    window.location.href = '/auth/reset-password'
+                  }}
+                  style={{
+                    color: '#89CFF0',
+                    cursor: 'pointer',
+                    marginLeft: '4px',
+                    textDecoration: 'none'
+                  }}
+                >
+                  （忘れた場合はここをクリック）
+                </a>
+              </label>
+
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="6文字以上"
+                style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '44px',
+                  padding: '0 16px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  lineHeight: 1.5,
+                  color: password ? '#2C3E50' : '#6C757D',
+                  background: '#ffffff',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: '8px',
+                  marginBottom: '32px',
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#5DABA8'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E9ECEF'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              />
+
+              {/* ボタン（横並び） */}
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                width: '100%'
+              }}>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  style={{
+                    flex: 1,
+                    height: '52px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0,
+                    background: loading ? '#9ca3af' : '#5DABA8',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    fontStyle: 'italic',
+                    color: '#FFFFFF',
+                    cursor: loading ? 'not-allowed' : 'pointer',
+                    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: loading ? 'none' : '0px 8px 32px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  {loading ? 'ログイン中...' : 'ログイン'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('initial')
+                    setLoginMethod(null)
+                    setError('')
+                    setEmail('')
+                    setPassword('')
+                  }}
+                  style={{
+                    flex: 1,
+                    height: '52px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0,
+                    background: '#ffffff',
+                    borderRadius: '12px',
+                    border: '1px solid #E9ECEF',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    fontStyle: 'italic',
+                    color: '#6C757D',
+                    cursor: 'pointer',
+                    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  別の方法
+                </button>
+              </div>
+            </form>
+          </>
         )}
 
         {/* 新規登録方法選択 */}
@@ -1109,101 +1225,230 @@ export default function WelcomeScreen() {
 
         {/* メールアドレスで新規登録 */}
         {authMode === 'register' && registerMethod === 'email' && (
-          <form onSubmit={handleEmailRegister} style={{ padding: '0 20px', paddingBottom: '32px' }}>
-            <h2 style={{
-              fontSize: '18px',
-              fontWeight: 700,
-              color: '#2C3E50',
-              marginBottom: '32px',
-              textAlign: 'center',
-              position: 'relative',
-              paddingTop: '8px'
+          <>
+            {/* タブナビゲーション */}
+            <div style={{
+              padding: '0 20px',
+              marginBottom: '32px'
             }}>
-              メールアドレスで新規登録
-            </h2>
-
-            <input
-              type="email"
-              value={registerEmail}
-              onChange={(e) => setRegisterEmail(e.target.value)}
-              required
-              placeholder="メールアドレス"
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                fontSize: '15px',
-                lineHeight: 1.5,
-                color: registerEmail ? '#2C3E50' : '#6C757D',
-                background: '#ffffff',
-                border: '1px solid #E9ECEF',
-                borderRadius: '12px',
-                marginBottom: '32px',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxSizing: 'border-box'
-              }}
-              onFocus={(e) => {
-                e.currentTarget.style.borderColor = '#5DABA8'
-                e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
-              }}
-              onBlur={(e) => {
-                e.currentTarget.style.borderColor = '#E9ECEF'
-                e.currentTarget.style.boxShadow = 'none'
-              }}
-            />
-
-            <button
-              type="submit"
-              disabled={loading || !registerEmail}
-              style={{
-                width: '100%',
+              <div style={{
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '16px 24px',
-                background: loading || !registerEmail ? '#9ca3af' : '#5DABA8',
-                border: 'none',
-                borderRadius: '12px',
-                fontSize: '15px',
-                fontWeight: 600,
-                color: '#ffffff',
-                cursor: loading || !registerEmail ? 'not-allowed' : 'pointer',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: loading || !registerEmail ? 'none' : '0px 2px 8px rgba(0, 0, 0, 0.08)',
-                marginBottom: '16px'
-              }}
-            >
-              {loading ? '送信中...' : '次へ'}
-            </button>
+                borderBottom: '1px solid #E9ECEF',
+                position: 'relative'
+              }}>
+                {/* ログインタブ */}
+                <button
+                  onClick={() => {
+                    setAuthMode('initial')
+                    setRegisterMethod(null)
+                    setActiveTab('login')
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: '16px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 400,
+                    color: '#6C757D',
+                    cursor: 'pointer',
+                    position: 'relative'
+                  }}
+                >
+                  ログイン
+                </button>
 
-            <button
-              type="button"
-              onClick={() => {
-                setRegisterMethod(null)
-                setError('')
-                setRegisterEmail('')
-                setRegisterPassword('')
-                setRegisterPasswordConfirm('')
-              }}
-              style={{
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '16px 24px',
-                background: '#ffffff',
-                borderRadius: '12px',
-                border: '1px solid #E9ECEF',
-                fontSize: '15px',
-                fontWeight: 600,
+                {/* 新規登録タブ */}
+                <button
+                  onClick={() => {}}
+                  style={{
+                    flex: 1,
+                    padding: '16px 0',
+                    background: 'transparent',
+                    border: 'none',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 600,
+                    color: '#5DABA8',
+                    cursor: 'default',
+                    position: 'relative'
+                  }}
+                >
+                  新規登録
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '40px',
+                    height: '2px',
+                    background: '#5DABA8',
+                    borderRadius: '1px 1px 0 0'
+                  }} />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleEmailRegister} style={{ padding: '0 20px', paddingBottom: '32px' }}>
+              {/* メールアドレスラベル */}
+              <label style={{
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '14px',
+                fontWeight: 700,
+                fontStyle: 'italic',
                 color: '#2C3E50',
-                cursor: 'pointer',
-                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
-              }}
-            >
-              戻る
-            </button>
-          </form>
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                メールアドレス
+              </label>
+
+              <input
+                type="email"
+                value={registerEmail}
+                onChange={(e) => setRegisterEmail(e.target.value)}
+                required
+                placeholder="example@email.com"
+                style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '44px',
+                  padding: '0 16px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  lineHeight: 1.5,
+                  color: registerEmail ? '#2C3E50' : '#6C757D',
+                  background: '#ffffff',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: '8px',
+                  marginBottom: '20px',
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#5DABA8'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E9ECEF'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              />
+
+              {/* パスワードラベル */}
+              <label style={{
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '14px',
+                fontWeight: 700,
+                fontStyle: 'italic',
+                color: '#2C3E50',
+                display: 'block',
+                marginBottom: '8px'
+              }}>
+                パスワード
+              </label>
+
+              <input
+                type="password"
+                value={registerPassword}
+                onChange={(e) => setRegisterPassword(e.target.value)}
+                required
+                minLength={6}
+                placeholder="6文字以上"
+                style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '44px',
+                  padding: '0 16px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  lineHeight: 1.5,
+                  color: registerPassword ? '#2C3E50' : '#6C757D',
+                  background: '#ffffff',
+                  border: '1px solid #E9ECEF',
+                  borderRadius: '8px',
+                  marginBottom: '32px',
+                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  boxSizing: 'border-box'
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.borderColor = '#5DABA8'
+                  e.currentTarget.style.boxShadow = '0 0 0 3px rgba(93, 171, 168, 0.1)'
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.borderColor = '#E9ECEF'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              />
+
+              {/* ボタン（横並び） */}
+              <div style={{
+                display: 'flex',
+                gap: '12px',
+                width: '100%'
+              }}>
+                <button
+                  type="submit"
+                  disabled={loading || !registerEmail || !registerPassword || registerPassword.length < 6}
+                  style={{
+                    flex: 1,
+                    height: '52px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0,
+                    background: loading || !registerEmail || !registerPassword || registerPassword.length < 6 ? '#9ca3af' : '#5DABA8',
+                    border: 'none',
+                    borderRadius: '12px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    fontStyle: 'italic',
+                    color: '#FFFFFF',
+                    cursor: loading || !registerEmail || !registerPassword || registerPassword.length < 6 ? 'not-allowed' : 'pointer',
+                    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: loading || !registerEmail || !registerPassword || registerPassword.length < 6 ? 'none' : '0px 8px 32px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  {loading ? '送信中...' : '新規登録'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAuthMode('initial')
+                    setRegisterMethod(null)
+                    setError('')
+                    setRegisterEmail('')
+                    setRegisterPassword('')
+                    setRegisterPasswordConfirm('')
+                  }}
+                  style={{
+                    flex: 1,
+                    height: '52px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: 0,
+                    background: '#ffffff',
+                    borderRadius: '12px',
+                    border: '1px solid #E9ECEF',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    fontStyle: 'italic',
+                    color: '#6C757D',
+                    cursor: 'pointer',
+                    transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                    boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  別の方法
+                </button>
+              </div>
+            </form>
+          </>
         )}
       </div>
     </div>

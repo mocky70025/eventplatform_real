@@ -321,30 +321,32 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     display: 'flex',
     flexDirection: 'row' as const,
     alignItems: 'center',
-    padding: '12px 16px',
+    padding: '0 16px',
     gap: '10px',
     width: '100%',
-    height: '48px',
+    maxWidth: '289px',
+    height: '44px',
     background: '#FFFFFF',
-    border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
+    border: hasError ? '1px solid #FF3B30' : '1px solid #E9ECEF',
     borderRadius: '8px'
   })
 
   const labelStyle = {
-    fontFamily: '"Noto Sans JP", sans-serif',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
     fontSize: '14px',
-    fontWeight: 500,
+    fontWeight: 700,
+    fontStyle: 'italic' as const,
     lineHeight: '120%',
-    color: '#000000',
-    marginBottom: '10px',
+    color: '#2C3E50',
+    marginBottom: '8px',
     display: 'block' as const
   }
 
   const inputStyle = (hasValue: boolean) => ({
-    fontFamily: '"Noto Sans JP", sans-serif',
-    fontSize: '16px',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+    fontSize: '15px',
     lineHeight: '150%',
-    color: hasValue ? '#000000' : '#6B6B6B',
+    color: hasValue ? '#2C3E50' : '#6C757D',
     border: 'none',
     outline: 'none',
     width: '100%',
@@ -374,24 +376,30 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   }
 
   const handleNext = () => {
-    if (!validateForm()) {
-      // エラーがある場合、最初のエラーフィールドにスクロール
-      const firstErrorKey = Object.keys(errors).find(key => errors[key])
-      if (firstErrorKey) {
-        const errorElement = document.querySelector(`[data-error-field="${firstErrorKey}"]`)
-        if (errorElement) {
-          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-          // フォーカス可能な要素があればフォーカス
-          const inputElement = errorElement.querySelector('input, select, textarea')
-          if (inputElement) {
-            (inputElement as HTMLElement).focus()
+    if (currentStep === 1) {
+      // ステップ1からステップ2へ
+      if (!validateForm()) {
+        // エラーがある場合、最初のエラーフィールドにスクロール
+        const firstErrorKey = Object.keys(errors).find(key => errors[key])
+        if (firstErrorKey) {
+          const errorElement = document.querySelector(`[data-error-field="${firstErrorKey}"]`)
+          if (errorElement) {
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            // フォーカス可能な要素があればフォーカス
+            const inputElement = errorElement.querySelector('input, select, textarea')
+            if (inputElement) {
+              (inputElement as HTMLElement).focus()
+            }
           }
         }
+        return
       }
-      return
+      setCurrentStep(2)
+    } else if (currentStep === 2) {
+      // ステップ2からステップ3へ
+      setCurrentStep(3)
     }
-    setCurrentStep(2)
-    // Step 2に進んだときにページトップにスクロール
+    // 次のステップに進んだときにページトップにスクロール
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }, 100)
@@ -742,186 +750,256 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   const renderStep1 = () => (
     <div style={{ 
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       minHeight: '100vh',
       width: '100%',
-      background: '#E8F5F5',
-      padding: isDesktop ? '40px 20px' : 0
+      background: '#FFF5F0',
+      padding: isDesktop ? '40px 20px' : '20px'
     }}>
-      <div style={{ 
-        position: 'relative',
-        width: '100%',
-        maxWidth: isDesktop ? '600px' : '393px',
-        minHeight: isDesktop ? '800px' : '852px',
-        background: '#E8F5F5',
-        ...(isDesktop && {
-          padding: '40px 0',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px'
-        })
-      }}>
-      <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
-        {/* ヘッダーカード - SVGデコレーションを直接埋め込み、テキストはReactで制御 */}
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: isDesktop ? '600px' : '393px',
+      minHeight: isDesktop ? '800px' : '852px'
+    }}>
+      <div style={{ padding: '0 20px' }}>
+        {/* プログレスバーヘッダー */}
         <div style={{
-          position: 'relative',
           width: '100%',
-          height: isDesktop ? '93px' : '93px',
-          marginBottom: '24px',
-          maxWidth: isDesktop ? '600px' : '393px',
-          margin: '0 auto 24px auto'
-        }}>
-          <svg 
-            width="100%" 
-            height="100%" 
-            viewBox="0 0 417 125" 
-            preserveAspectRatio="xMidYMid meet"
-            style={{ position: 'absolute', top: 0, left: 0 }}
-          >
-            <defs>
-              <filter id="filter0_d_exhibitor" x="0" y="0" width="417" height="93" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
-                <feOffset/>
-                <feGaussianBlur stdDeviation="4"/>
-                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
-                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
-                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
-              </filter>
-            </defs>
-            {/* カード背景 */}
-            <g filter="url(#filter0_d_exhibitor)">
-              <rect x="32" y="32" width="353" height="93" rx="16" fill="white"/>
-            </g>
-            {/* デコレーション - 星（左） */}
-            <path d="M212.504 61.2835C212.811 61.1078 213.189 61.1078 213.496 61.2835L239.481 76.1318C240.152 76.5157 240.152 77.4843 239.481 77.8682L213.496 92.7165C213.189 92.8922 212.811 92.8922 212.504 92.7165L186.519 77.8682C185.848 77.4843 185.848 76.5157 186.519 76.1318L212.504 61.2835Z" fill="#E9ECEF"/>
-            {/* デコレーション - 星（右） */}
-            <path d="M333.504 61.2835C333.811 61.1078 334.189 61.1078 334.496 61.2835L360.481 76.1318C361.152 76.5157 361.152 77.4843 360.481 77.8682L334.496 92.7165C334.189 92.8922 333.811 92.8922 333.504 92.7165L307.519 77.8682C306.848 77.4843 306.848 76.5157 307.519 76.1318L333.504 61.2835Z" fill="#E9ECEF"/>
-            {/* デコレーション - 線（左） */}
-            <line x1="120" y1="77" x2="184" y2="77" stroke="#E9ECEF" strokeWidth="2"/>
-            {/* デコレーション - 線（右） */}
-            <line x1="242" y1="77" x2="306" y2="77" stroke="#E9ECEF" strokeWidth="2"/>
-          </svg>
-          {/* テキストはReactで制御（動的変更に対応） */}
-          <h2 style={{ 
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontSize: '20px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#2C3E50',
-            margin: 0,
-            whiteSpace: 'nowrap'
-          }}>
-            出店者情報登録フォーム
-          </h2>
-        </div>
-
-        <ProgressIndicator />
-        
-        <div style={{
+          maxWidth: '353px',
+          height: '93px',
           background: '#FFFFFF',
           borderRadius: '16px',
-          padding: '24px',
-          marginBottom: '24px',
-          boxShadow: '0px 1px 2px rgba(0, 0, 0, 0.05)'
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'relative'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
-            {/* 名前 */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="name">
-              <label style={labelStyle}>名前</label>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={{ ...formFieldStyle(errors.name), width: '100%' }}>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => {
-                      setFormData({ ...formData, name: e.target.value })
-                      if (errors.name) setErrors({ ...errors, name: false })
-                    }}
-                    placeholder="山田太郎"
-                    style={inputStyle(!!formData.name)}
-                  />
-                </div>
+          {/* ステップ1 - 情報登録（アクティブ） */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            {/* トラックアイコン */}
+            <div style={{ 
+              width: '46px', 
+              height: '33px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px'
+            }}>
+              <svg width="46" height="33" viewBox="0 0 46 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 0L46 33H0L23 0Z" fill="#5DABA8"/>
+              </svg>
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#2C3E50',
+              fontWeight: 400
+            }}>
+              情報登録
+            </span>
+          </div>
+
+          {/* 接続線1 */}
+          <div style={{ 
+            position: 'absolute',
+            left: '108px',
+            top: '50%',
+            width: '64px',
+            height: '1px',
+            background: '#E9ECEF',
+            transform: 'translateY(-50%)'
+          }} />
+
+          {/* ステップ2 - 情報確認 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            <div style={{ 
+              width: '56px', 
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px',
+              transform: 'rotate(45deg)'
+            }}>
+              <div style={{
+                width: '56px',
+                height: '32px',
+                border: '1px solid #E9ECEF',
+                background: '#FFFFFF'
+              }} />
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#6C757D',
+              fontWeight: 400
+            }}>
+              情報確認
+            </span>
+          </div>
+
+          {/* 接続線2 */}
+          <div style={{ 
+            position: 'absolute',
+            left: '230px',
+            top: '50%',
+            width: '64px',
+            height: '1px',
+            background: '#E9ECEF',
+            transform: 'translateY(-50%)'
+          }} />
+
+          {/* ステップ3 - 登録完了 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            <div style={{ 
+              width: '56px', 
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px',
+              transform: 'rotate(45deg)'
+            }}>
+              <div style={{
+                width: '56px',
+                height: '32px',
+                border: '1px solid #E9ECEF',
+                background: '#FFFFFF'
+              }} />
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#6C757D',
+              fontWeight: 400
+            }}>
+              登録完了
+            </span>
+          </div>
+        </div>
+
+        {/* メインフォームカード */}
+        <div style={{
+          width: '100%',
+          maxWidth: '353px',
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto',
+          padding: '20px'
+        }}>
+          {/* フォームタイトル */}
+          <h2 style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            fontStyle: 'italic',
+            color: '#2C3E50',
+            margin: '0 0 24px 0'
+          }}>
+            情報を入力してください
+          </h2>
+        
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* お名前 */}
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="name">
+              <label style={labelStyle}>お名前</label>
+              <div style={{ ...formFieldStyle(errors.name) }}>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => {
+                    setFormData({ ...formData, name: e.target.value })
+                    if (errors.name) setErrors({ ...errors, name: false })
+                  }}
+                  placeholder="例: 山田太郎"
+                  style={inputStyle(!!formData.name)}
+                />
               </div>
               {errors.name && (
                 <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
               )}
             </div>
 
-            {/* 性別と年齢（同じ行） */}
-            <div style={{ width: '100%', maxWidth: '330px', display: 'flex', flexDirection: 'row', gap: '16px' }}>
-              {/* 性別 */}
-              <div style={{ flex: 1, height: '73px', position: 'relative' }} data-error-field="gender">
-                <label style={labelStyle}>性別</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.gender), width: '100%' }}>
-                    <select
-                      value={formData.gender || ''}
-                      onChange={(e) => {
-                        setFormData({ ...formData, gender: e.target.value as any })
-                        if (errors.gender) setErrors({ ...errors, gender: false })
-                      }}
-                      style={inputStyle(!!formData.gender)}
-                    >
-                      <option value="">選択してください</option>
-                      <option value="男">男性</option>
-                      <option value="女">女性</option>
-                      <option value="それ以外">その他</option>
-                    </select>
-                  </div>
+            {/* 性別 */}
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="gender">
+              <label style={labelStyle}>性別</label>
+              <div style={{ ...formFieldStyle(errors.gender), position: 'relative' }}>
+                <select
+                  value={formData.gender || ''}
+                  onChange={(e) => {
+                    setFormData({ ...formData, gender: e.target.value as any })
+                    if (errors.gender) setErrors({ ...errors, gender: false })
+                  }}
+                  style={{
+                    ...inputStyle(!!formData.gender),
+                    appearance: 'none',
+                    width: '100%',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="">選択してください</option>
+                  <option value="男">男性</option>
+                  <option value="女">女性</option>
+                  <option value="それ以外">その他</option>
+                </select>
+                <div style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none'
+                }}>
+                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
+                    <path d="M4 5L0 0H8L4 5Z" fill="#6C757D"/>
+                  </svg>
                 </div>
-                {errors.gender && (
-                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
-                )}
               </div>
+              {errors.gender && (
+                <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+              )}
+            </div>
 
-              {/* 年齢 */}
-              <div style={{ flex: 1, height: '73px', position: 'relative' }} data-error-field="age">
-                <label style={labelStyle}>年齢</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
-                    <select
-                      value={formData.age || ''}
-                      onChange={(e) => {
-                        const age = parseInt(e.target.value) || 0
-                        setFormData({ ...formData, age })
-                        if (errors.age) setErrors({ ...errors, age: false })
-                      }}
-                      style={inputStyle(formData.age > 0)}
-                    >
-                      <option value="">選択してください</option>
-                      {Array.from({ length: 101 }, (_, i) => (
-                        <option key={i} value={i}>{i}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                {errors.age && (
-                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
-                )}
+            {/* 年齢 */}
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="age">
+              <label style={labelStyle}>年齢</label>
+              <div style={{ ...formFieldStyle(errors.age) }}>
+                <input
+                  type="number"
+                  value={formData.age || ''}
+                  onChange={(e) => {
+                    const age = parseInt(e.target.value) || 0
+                    setFormData({ ...formData, age })
+                    if (errors.age) setErrors({ ...errors, age: false })
+                  }}
+                  placeholder="例: 35"
+                  style={inputStyle(formData.age > 0)}
+                />
               </div>
+              {errors.age && (
+                <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+              )}
             </div>
 
             {/* 電話番号 */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="phone_number">
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="phone_number">
               <label style={labelStyle}>電話番号</label>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={{ ...formFieldStyle(errors.phone_number), width: '100%' }}>
-                  <input
-                    type="tel"
-                    value={formData.phone_number}
-                    onChange={(e) => {
-                      setFormData({ ...formData, phone_number: e.target.value })
-                      if (errors.phone_number) setErrors({ ...errors, phone_number: false })
-                    }}
-                    placeholder="01234567890"
-                    style={inputStyle(!!formData.phone_number)}
-                  />
-                </div>
+              <div style={{ ...formFieldStyle(errors.phone_number) }}>
+                <input
+                  type="tel"
+                  value={formData.phone_number}
+                  onChange={(e) => {
+                    setFormData({ ...formData, phone_number: e.target.value })
+                    if (errors.phone_number) setErrors({ ...errors, phone_number: false })
+                  }}
+                  placeholder="例: 090-1234-5678"
+                  style={inputStyle(!!formData.phone_number)}
+                />
               </div>
               {errors.phone_number && (
                 <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
@@ -929,21 +1007,19 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* メールアドレス */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="email">
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="email">
               <label style={labelStyle}>メールアドレス</label>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={{ ...formFieldStyle(errors.email), width: '100%' }}>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => {
-                      setFormData({ ...formData, email: e.target.value })
-                      if (errors.email) setErrors({ ...errors, email: false })
-                    }}
-                    placeholder="kitchencar@gmail.com"
-                    style={inputStyle(!!formData.email)}
-                  />
-                </div>
+              <div style={{ ...formFieldStyle(errors.email) }}>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value })
+                    if (errors.email) setErrors({ ...errors, email: false })
+                  }}
+                  placeholder="例: example@email.com"
+                  style={inputStyle(!!formData.email)}
+                />
               </div>
               {errors.email && (
                 <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
@@ -951,24 +1027,38 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* ジャンル */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="genre_category">
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="genre_category">
               <label style={labelStyle}>ジャンル</label>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={{ ...formFieldStyle(errors.genre_category), width: '100%' }}>
-                  <select
-                    value={formData.genre_category}
-                    onChange={(e) => {
-                      setFormData({ ...formData, genre_category: e.target.value })
-                      if (errors.genre_category) setErrors({ ...errors, genre_category: false })
-                    }}
-                    style={inputStyle(!!formData.genre_category)}
-                  >
-                    <option value="">選択してください</option>
-                    <option value="飲食">飲食</option>
-                    <option value="物販">物販</option>
-                    <option value="サービス">サービス</option>
-                    <option value="その他">その他</option>
-                  </select>
+              <div style={{ ...formFieldStyle(errors.genre_category), position: 'relative' }}>
+                <select
+                  value={formData.genre_category}
+                  onChange={(e) => {
+                    setFormData({ ...formData, genre_category: e.target.value })
+                    if (errors.genre_category) setErrors({ ...errors, genre_category: false })
+                  }}
+                  style={{
+                    ...inputStyle(!!formData.genre_category),
+                    appearance: 'none',
+                    width: '100%',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="">選択してください</option>
+                  <option value="飲食">飲食</option>
+                  <option value="物販">物販</option>
+                  <option value="サービス">サービス</option>
+                  <option value="その他">その他</option>
+                </select>
+                <div style={{
+                  position: 'absolute',
+                  right: '16px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  pointerEvents: 'none'
+                }}>
+                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none">
+                    <path d="M4 5L0 0H8L4 5Z" fill="#6C757D"/>
+                  </svg>
                 </div>
               </div>
               {errors.genre_category && (
@@ -976,22 +1066,30 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               )}
             </div>
 
-            {/* より詳しいジャンル */}
-            <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="genre_free_text">
-              <label style={labelStyle}>より詳しいジャンル</label>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                <div style={{ ...formFieldStyle(errors.genre_free_text), width: '100%' }}>
-                  <input
-                    type="text"
-                    value={formData.genre_free_text}
-                    onChange={(e) => {
-                      setFormData({ ...formData, genre_free_text: e.target.value })
-                      if (errors.genre_free_text) setErrors({ ...errors, genre_free_text: false })
-                    }}
-                    placeholder="カレーライス、飲み物"
-                    style={inputStyle(!!formData.genre_free_text)}
-                  />
-                </div>
+            {/* ジャンル（自由回答） */}
+            <div style={{ width: '100%', position: 'relative' }} data-error-field="genre_free_text">
+              <label style={labelStyle}>ジャンル（自由回答）</label>
+              <div style={{
+                ...formFieldStyle(errors.genre_free_text),
+                height: '80px',
+                padding: '12px 16px',
+                alignItems: 'flex-start'
+              }}>
+                <textarea
+                  value={formData.genre_free_text}
+                  onChange={(e) => {
+                    setFormData({ ...formData, genre_free_text: e.target.value })
+                    if (errors.genre_free_text) setErrors({ ...errors, genre_free_text: false })
+                  }}
+                  placeholder="例: 焼きそば、たこ焼きなど"
+                  style={{
+                    ...inputStyle(!!formData.genre_free_text),
+                    width: '100%',
+                    height: '100%',
+                    resize: 'none',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif'
+                  }}
+                />
               </div>
               {errors.genre_free_text && (
                 <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
@@ -999,9 +1097,10 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             </div>
 
             {/* 書類アップロード */}
-            <div>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>営業許可証</label>
               <ImageUpload
-                label="営業許可証"
+                label=""
                 documentType="business_license"
                 userId={userProfile.userId}
                 currentImageUrl={documentUrls.business_license}
@@ -1029,48 +1128,56 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
                 }}
                 hasError={errors.business_license}
               />
-              {licenseVerificationStatus.result && (
-                <div style={{
+              {!documentUrls.business_license && (
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '13px',
+                  color: '#6C757D',
+                  textAlign: 'center',
                   marginTop: '8px',
-                  padding: '8px 12px',
-                  background: licenseVerificationStatus.result === 'yes' ? '#E6F7E6' : '#FFE6E6',
-                  borderRadius: '6px',
-                  border: `1px solid ${licenseVerificationStatus.result === 'yes' ? '#06C755' : '#FF3B30'}`
+                  marginBottom: 0
                 }}>
-                  <p style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '12px',
-                    lineHeight: '120%',
-                    color: '#000000',
-                    margin: 0,
-                    fontWeight: 700
+                  AI確認機能付き
+                </p>
+              )}
+              {licenseVerificationStatus.result === 'yes' && licenseVerificationStatus.expirationDate && (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  marginTop: '16px',
+                  padding: '9px 16px',
+                  background: '#A8D5BA',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '4px'
+                }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
                   }}>
-                    期限: {licenseVerificationStatus.result === 'yes' ? '有効' : '期限切れ'}
-                    {licenseVerificationStatus.expirationDate && ` (${licenseVerificationStatus.expirationDate})`}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      color: '#FFFFFF',
+                      fontWeight: 400
+                    }}>
+                      有効
+                    </span>
+                  </div>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    color: '#FFFFFF',
+                    fontWeight: 400,
+                    margin: 0
+                  }}>
+                    期限: {licenseVerificationStatus.expirationDate}
                   </p>
-                  {licenseVerificationStatus.reason && (
-                    <p style={{
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      fontSize: '11px',
-                      lineHeight: '120%',
-                      color: '#666666',
-                      margin: '4px 0 0 0'
-                    }}>
-                      {licenseVerificationStatus.reason}
-                    </p>
-                  )}
-                  {licenseVerificationStatus.result === 'no' && (
-                    <p style={{
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      fontSize: '11px',
-                      lineHeight: '120%',
-                      color: '#FF3B30',
-                      margin: '4px 0 0 0',
-                      fontWeight: 700
-                    }}>
-                      ⚠️ 期限切れの営業許可証です。更新が必要です。
-                    </p>
-                  )}
                 </div>
               )}
               {licenseVerificationStatus.verifying && (
@@ -1086,87 +1193,122 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               )}
             </div>
             
-            <ImageUpload
-              label="車検証"
-              documentType="vehicle_inspection"
-              userId={userProfile.userId}
-              currentImageUrl={documentUrls.vehicle_inspection}
-              onUploadComplete={(url) => {
-                setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))
-                if (errors.vehicle_inspection) setErrors({ ...errors, vehicle_inspection: false })
-              }}
-              onUploadError={(error) => alert(error)}
-              onImageDelete={() => {
-                setDocumentUrls(prev => ({ ...prev, vehicle_inspection: '' }))
-              }}
-              hasError={errors.vehicle_inspection}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>車検証</label>
+              <ImageUpload
+                label=""
+                documentType="vehicle_inspection"
+                userId={userProfile.userId}
+                currentImageUrl={documentUrls.vehicle_inspection}
+                onUploadComplete={(url) => {
+                  setDocumentUrls(prev => ({ ...prev, vehicle_inspection: url }))
+                  if (errors.vehicle_inspection) setErrors({ ...errors, vehicle_inspection: false })
+                }}
+                onUploadError={(error) => alert(error)}
+                onImageDelete={() => {
+                  setDocumentUrls(prev => ({ ...prev, vehicle_inspection: '' }))
+                }}
+                hasError={errors.vehicle_inspection}
+              />
+            </div>
             
-            <ImageUpload
-              label="自動車検査証"
-              documentType="automobile_inspection"
-              userId={userProfile.userId}
-              currentImageUrl={documentUrls.automobile_inspection}
-              onUploadComplete={(url) => {
-                setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))
-                if (errors.automobile_inspection) setErrors({ ...errors, automobile_inspection: false })
-              }}
-              onUploadError={(error) => alert(error)}
-              onImageDelete={() => {
-                setDocumentUrls(prev => ({ ...prev, automobile_inspection: '' }))
-              }}
-              hasError={errors.automobile_inspection}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>自動車検査証</label>
+              <ImageUpload
+                label=""
+                documentType="automobile_inspection"
+                userId={userProfile.userId}
+                currentImageUrl={documentUrls.automobile_inspection}
+                onUploadComplete={(url) => {
+                  setDocumentUrls(prev => ({ ...prev, automobile_inspection: url }))
+                  if (errors.automobile_inspection) setErrors({ ...errors, automobile_inspection: false })
+                }}
+                onUploadError={(error) => alert(error)}
+                onImageDelete={() => {
+                  setDocumentUrls(prev => ({ ...prev, automobile_inspection: '' }))
+                }}
+                hasError={errors.automobile_inspection}
+              />
+            </div>
             
-            <ImageUpload
-              label="火器類配置図"
-              documentType="fire_equipment_layout"
-              userId={userProfile.userId}
-              currentImageUrl={documentUrls.fire_equipment_layout}
-              onUploadComplete={(url) => {
-                setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))
-                if (errors.fire_equipment_layout) setErrors({ ...errors, fire_equipment_layout: false })
-              }}
-              onUploadError={(error) => alert(error)}
-              onImageDelete={() => {
-                setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: '' }))
-              }}
-              hasError={errors.fire_equipment_layout}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>PL保険</label>
+              <ImageUpload
+                label=""
+                documentType="pl_insurance"
+                userId={userProfile.userId}
+                currentImageUrl={documentUrls.pl_insurance}
+                onUploadComplete={(url) => {
+                  setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))
+                  if (errors.pl_insurance) setErrors({ ...errors, pl_insurance: false })
+                }}
+                onUploadError={(error) => alert(error)}
+                onImageDelete={() => {
+                  setDocumentUrls(prev => ({ ...prev, pl_insurance: '' }))
+                }}
+                hasError={errors.pl_insurance}
+              />
+            </div>
             
-            <ImageUpload
-              label="PL保険登録証"
-              documentType="pl_insurance"
-              userId={userProfile.userId}
-              currentImageUrl={documentUrls.pl_insurance}
-              onUploadComplete={(url) => {
-                setDocumentUrls(prev => ({ ...prev, pl_insurance: url }))
-                if (errors.pl_insurance) setErrors({ ...errors, pl_insurance: false })
-              }}
-              onUploadError={(error) => alert(error)}
-              onImageDelete={() => {
-                setDocumentUrls(prev => ({ ...prev, pl_insurance: '' }))
-              }}
-              hasError={errors.pl_insurance}
-            />
+            <div style={{ marginBottom: '24px' }}>
+              <label style={labelStyle}>火器類配置図</label>
+              <ImageUpload
+                label=""
+                documentType="fire_equipment_layout"
+                userId={userProfile.userId}
+                currentImageUrl={documentUrls.fire_equipment_layout}
+                onUploadComplete={(url) => {
+                  setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: url }))
+                  if (errors.fire_equipment_layout) setErrors({ ...errors, fire_equipment_layout: false })
+                }}
+                onUploadError={(error) => alert(error)}
+                onImageDelete={() => {
+                  setDocumentUrls(prev => ({ ...prev, fire_equipment_layout: '' }))
+                }}
+                hasError={errors.fire_equipment_layout}
+              />
+            </div>
 
-            {/* 対応形式の説明（1回だけ表示） */}
-            <p style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '12px',
-              color: '#6B6B6B',
-              marginTop: '-8px',
-              width: '100%',
-              maxWidth: '330px',
-              textAlign: 'left'
-            }}>
-              対応形式: JPEG, PNG, GIF, WebP, HEIC（最大10MB）
-            </p>
+          </div>
+
+          {/* 次へ進むボタン */}
+          <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
+            <button
+              onClick={handleNext}
+              disabled={!termsAccepted || loading}
+              style={{
+                width: '100%',
+                maxWidth: '289px',
+                height: '52px',
+                padding: 0,
+                background: (!termsAccepted || loading) ? '#9ca3af' : '#5DABA8',
+                borderRadius: '12px',
+                border: 'none',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '15px',
+                fontWeight: 700,
+                fontStyle: 'italic',
+                color: '#FFFFFF',
+                cursor: (!termsAccepted || loading) ? 'not-allowed' : 'pointer',
+                transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+                boxShadow: (!termsAccepted || loading) ? 'none' : '0px 8px 32px rgba(0, 0, 0, 0.08)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              次へ進む
+              <svg width="5" height="10" viewBox="0 0 5 10" fill="none">
+                <path d="M0 0L5 5L0 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* 利用規約とボタン */}
-        <div style={{ marginBottom: '24px', width: '100%', maxWidth: '330px', marginLeft: 'auto', marginRight: 'auto' }}>
+        {/* 利用規約とボタン（非表示 - ボタンは上に移動） */}
+        <div style={{ display: 'none' }}>
           <label style={{
             display: 'flex',
             flexDirection: 'row',
@@ -1268,34 +1410,6 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           )}
         </div>
 
-        <button
-          onClick={handleNext}
-          disabled={!termsAccepted}
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '16px 24px',
-            gap: '10px',
-            width: '100%',
-            maxWidth: '330px',
-            height: '48px',
-            background: termsAccepted ? '#5DABA8' : '#D9D9D9',
-            borderRadius: '8px',
-            border: 'none',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontSize: '16px',
-            fontWeight: 700,
-            lineHeight: '19px',
-            color: '#FFFFFF',
-            cursor: termsAccepted ? 'pointer' : 'not-allowed',
-            marginLeft: 'auto',
-            marginRight: 'auto'
-          }}
-        >
-          次へ
-        </button>
       </div>
       </div>
     </div>
@@ -1306,299 +1420,509 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     <div style={{ 
       minHeight: '100vh',
       width: '100%',
-      background: '#E8F5F5',
+      background: '#FFF5F0',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'flex-start',
-      padding: isDesktop ? '40px 20px' : 0
+      padding: isDesktop ? '40px 20px' : '20px'
     }}>
     <div style={{ 
       position: 'relative',
       width: '100%',
-        maxWidth: '393px',
-      background: '#E8F5F5',
-        minHeight: isDesktop ? 'auto' : '852px'
+      maxWidth: '393px'
     }}>
-        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '393px' }}>
-        <ProgressIndicator />
-        
-        <h2 style={{ 
-          fontFamily: '"Noto Sans JP", sans-serif',
-          fontSize: '20px',
-          fontWeight: 700,
-          lineHeight: '120%',
-          color: '#000000',
-          marginBottom: '24px',
-          textAlign: 'center'
-        }}>
-          情報確認をしてください
-        </h2>
-        
+      <div style={{ padding: '0 20px' }}>
+        {/* プログレスバーヘッダー */}
         <div style={{
+          width: '100%',
+          maxWidth: '353px',
+          height: '93px',
           background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px',
-          padding: '24px',
-          marginBottom: '24px'
+          borderRadius: '16px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'relative'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {/* ステップ1 - 情報登録 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            <div style={{ 
+              width: '56px', 
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px',
+              transform: 'rotate(45deg)'
+            }}>
+              <div style={{
+                width: '56px',
+                height: '32px',
+                border: '1px solid #E9ECEF',
+                background: '#FFFFFF'
+              }} />
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#2C3E50',
+              fontWeight: 400
+            }}>
+              情報登録
+            </span>
+          </div>
+
+          {/* 接続線1 */}
+          <div style={{ 
+            position: 'absolute',
+            left: '108px',
+            top: '50%',
+            width: '64px',
+            height: '1px',
+            background: '#E9ECEF',
+            transform: 'translateY(-50%)'
+          }} />
+
+          {/* ステップ2 - 情報確認（アクティブ） */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            {/* トラックアイコン */}
+            <div style={{ 
+              width: '46px', 
+              height: '33px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px'
+            }}>
+              <svg width="46" height="33" viewBox="0 0 46 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 0L46 33H0L23 0Z" fill="#5DABA8"/>
+              </svg>
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#2C3E50',
+              fontWeight: 400
+            }}>
+              情報確認
+            </span>
+          </div>
+
+          {/* 接続線2 */}
+          <div style={{ 
+            position: 'absolute',
+            left: '230px',
+            top: '50%',
+            width: '64px',
+            height: '1px',
+            background: '#E9ECEF',
+            transform: 'translateY(-50%)'
+          }} />
+
+          {/* ステップ3 - 登録完了 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            <div style={{ 
+              width: '56px', 
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px',
+              transform: 'rotate(45deg)'
+            }}>
+              <div style={{
+                width: '56px',
+                height: '32px',
+                border: '1px solid #E9ECEF',
+                background: '#FFFFFF'
+              }} />
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#6C757D',
+              fontWeight: 400
+            }}>
+              登録完了
+            </span>
+          </div>
+        </div>
+
+        {/* メインフォームカード */}
+        <div style={{
+          width: '100%',
+          maxWidth: '353px',
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto',
+          padding: '20px'
+        }}>
+          {/* フォームタイトル */}
+          <h2 style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '20px',
+            fontWeight: 700,
+            fontStyle: 'italic',
+            color: '#2C3E50',
+            margin: '0 0 24px 0'
+          }}>
+            情報を確認してください
+          </h2>
+          {/* 情報確認項目 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>名前</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.name}</p>
+              <label style={labelStyle}>お名前</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>{formData.name}</p>
             </div>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>性別</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>
+              <label style={labelStyle}>性別</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>
                 {formData.gender === '男' ? '男性' : formData.gender === '女' ? '女性' : formData.gender === 'それ以外' ? 'その他' : ''}
               </p>
             </div>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>年齢</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.age}歳</p>
+              <label style={labelStyle}>年齢</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>{formData.age}</p>
             </div>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>電話番号</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.phone_number}</p>
+              <label style={labelStyle}>電話番号</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>{formData.phone_number}</p>
             </div>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>メールアドレス</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.email}</p>
+              <label style={labelStyle}>メールアドレス</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>{formData.email}</p>
             </div>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>ジャンル</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.genre_category}</p>
+              <label style={labelStyle}>ジャンル</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>{formData.genre_category}</p>
             </div>
             <div>
-              <label style={{ ...labelStyle, marginBottom: '8px', display: 'block' }}>より詳しいジャンル</label>
-              <p style={{ fontFamily: '"Noto Sans JP", sans-serif', fontSize: '16px', fontWeight: 600, lineHeight: '150%', color: '#000000' }}>{formData.genre_free_text}</p>
+              <label style={labelStyle}>ジャンル（自由回答）</label>
+              <p style={{ 
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif', 
+                fontSize: '15px', 
+                fontWeight: 400, 
+                lineHeight: '150%', 
+                color: '#2C3E50',
+                margin: 0
+              }}>{formData.genre_free_text}</p>
             </div>
           </div>
         </div>
 
-        {/* 書類画像プレビュー */}
+        {/* 書類プレビューカード */}
         <div style={{
+          width: '100%',
+          maxWidth: '353px',
           background: '#FFFFFF',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px',
-          padding: '24px',
-          marginBottom: '24px'
+          borderRadius: '16px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto',
+          padding: '20px'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {documentUrls.business_license && (
-              <div>
-                <label style={labelStyle}>営業許可証</label>
-                <div style={{ position: 'relative', width: '330px', height: '200px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+            {/* 営業許可証 */}
+            <div>
+              <label style={labelStyle}>営業許可証</label>
+              {documentUrls.business_license ? (
+                <>
                   <div style={{
-                    boxSizing: 'border-box',
+                    width: '100%',
+                    maxWidth: '289px',
+                    height: '187px',
+                    background: '#D9D9D9',
+                    borderRadius: '8px',
+                    marginBottom: '16px',
                     display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
                     alignItems: 'center',
-                    padding: '32px 99px',
-                    gap: '10px',
-                    width: '330px',
-                    height: '200px',
-                    background: '#F7F7F7',
-                    border: '2px solid #5DABA8',
-                    borderRadius: '8px'
+                    justifyContent: 'center',
+                    overflow: 'hidden'
                   }}>
                     <img
                       src={documentUrls.business_license}
                       alt="営業許可証"
                       style={{
-                        width: '326px',
-                        height: '196px',
-                        objectFit: 'contain',
-                        borderRadius: '6px'
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'contain'
                       }}
                     />
                   </div>
+                  {licenseVerificationStatus.result === 'yes' && licenseVerificationStatus.expirationDate && (
+                    <div style={{
+                      width: '100%',
+                      maxWidth: '289px',
+                      padding: '9px 16px',
+                      background: '#A8D5BA',
+                      borderRadius: '8px',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '4px'
+                    }}>
+                      <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px'
+                      }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        <span style={{
+                          fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                          fontSize: '15px',
+                          color: '#FFFFFF',
+                          fontWeight: 400
+                        }}>
+                          有効
+                        </span>
+                      </div>
+                      <p style={{
+                        fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                        fontSize: '15px',
+                        color: '#FFFFFF',
+                        fontWeight: 400,
+                        margin: 0
+                      }}>
+                        期限: {licenseVerificationStatus.expirationDate}
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px'
+                }} />
+              )}
+            </div>
+            {/* 車検証 */}
+            <div>
+              <label style={labelStyle}>車検証</label>
+              {documentUrls.vehicle_inspection ? (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  <img
+                    src={documentUrls.vehicle_inspection}
+                    alt="車検証"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
                 </div>
-              </div>
-            )}
-            {documentUrls.vehicle_inspection && (
-              <div>
-                <label style={labelStyle}>車検証</label>
-                <div style={{ position: 'relative', width: '330px', height: '200px' }}>
-                  <div style={{
-                    boxSizing: 'border-box',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '32px 99px',
-                    gap: '10px',
-                    width: '330px',
-                    height: '200px',
-                    background: '#F7F7F7',
-                    border: '2px solid #5DABA8',
-                    borderRadius: '8px'
-                  }}>
-                    <img
-                      src={documentUrls.vehicle_inspection}
-                      alt="車検証"
-                      style={{
-                        width: '326px',
-                        height: '196px',
-                        objectFit: 'contain',
-                        borderRadius: '6px'
-                      }}
-                    />
-                  </div>
+              ) : (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px'
+                }} />
+              )}
+            </div>
+
+            {/* 自動車検査証 */}
+            <div>
+              <label style={labelStyle}>自動車検査証</label>
+              {documentUrls.automobile_inspection ? (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  <img
+                    src={documentUrls.automobile_inspection}
+                    alt="自動車検査証"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
                 </div>
-              </div>
-            )}
-            {documentUrls.automobile_inspection && (
-              <div>
-                <label style={labelStyle}>自動車検査証</label>
-                <div style={{ position: 'relative', width: '330px', height: '200px' }}>
-                  <div style={{
-                    boxSizing: 'border-box',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '32px 99px',
-                    gap: '10px',
-                    width: '330px',
-                    height: '200px',
-                    background: '#F7F7F7',
-                    border: '2px solid #5DABA8',
-                    borderRadius: '8px'
-                  }}>
-                    <img
-                      src={documentUrls.automobile_inspection}
-                      alt="自動車検査証"
-                      style={{
-                        width: '326px',
-                        height: '196px',
-                        objectFit: 'contain',
-                        borderRadius: '6px'
-                      }}
-                    />
-                  </div>
+              ) : (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px'
+                }} />
+              )}
+            </div>
+
+            {/* PL保険 */}
+            <div>
+              <label style={labelStyle}>PL保険</label>
+              {documentUrls.pl_insurance ? (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  <img
+                    src={documentUrls.pl_insurance}
+                    alt="PL保険"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
                 </div>
-              </div>
-            )}
-            {documentUrls.fire_equipment_layout && (
-              <div>
-                <label style={labelStyle}>火器類配置図</label>
-                <div style={{ position: 'relative', width: '330px', height: '200px' }}>
-                  <div style={{
-                    boxSizing: 'border-box',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '32px 99px',
-                    gap: '10px',
-                    width: '330px',
-                    height: '200px',
-                    background: '#F7F7F7',
-                    border: '2px solid #5DABA8',
-                    borderRadius: '8px'
-                  }}>
-                    <img
-                      src={documentUrls.fire_equipment_layout}
-                      alt="火器類配置図"
-                      style={{
-                        width: '326px',
-                        height: '196px',
-                        objectFit: 'contain',
-                        borderRadius: '6px'
-                      }}
-                    />
-                  </div>
+              ) : (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px'
+                }} />
+              )}
+            </div>
+
+            {/* 火器類配置図 */}
+            <div>
+              <label style={labelStyle}>火器類配置図</label>
+              {documentUrls.fire_equipment_layout ? (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  overflow: 'hidden'
+                }}>
+                  <img
+                    src={documentUrls.fire_equipment_layout}
+                    alt="火器類配置図"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain'
+                    }}
+                  />
                 </div>
-              </div>
-            )}
-            {documentUrls.pl_insurance && (
-              <div>
-                <label style={labelStyle}>PL保険登録証</label>
-                <div style={{ position: 'relative', width: '330px', height: '200px' }}>
-                  <div style={{
-                    boxSizing: 'border-box',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    padding: '32px 99px',
-                    gap: '10px',
-                    width: '330px',
-                    height: '200px',
-                    background: '#F7F7F7',
-                    border: '2px solid #5DABA8',
-                    borderRadius: '8px'
-                  }}>
-                    <img
-                      src={documentUrls.pl_insurance}
-                      alt="PL保険登録証"
-                      style={{
-                        width: '326px',
-                        height: '196px',
-                        objectFit: 'contain',
-                        borderRadius: '6px'
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
+              ) : (
+                <div style={{
+                  width: '100%',
+                  maxWidth: '289px',
+                  height: '187px',
+                  background: '#D9D9D9',
+                  borderRadius: '8px'
+                }} />
+              )}
+            </div>
           </div>
         </div>
 
-        {/* ボタン */}
-        <div style={{ display: 'flex', flexDirection: 'row', gap: '16px' }}>
+        {/* 次へ進むボタン */}
+        <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
           <button
-            onClick={handleBack}
-            style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '16px 24px',
-              gap: '10px',
-              height: '48px',
-              background: '#FFFFFF',
-              border: '2px solid #5DABA8',
-              borderRadius: '8px',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '16px',
-              fontWeight: 700,
-              lineHeight: '19px',
-              color: '#5DABA8',
-              cursor: 'pointer'
-            }}
-          >
-            修正する
-          </button>
-          <button
-            onClick={handleSubmit}
+            onClick={handleNext}
             disabled={loading}
             style={{
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              padding: '16px 24px',
-              gap: '10px',
-              height: '48px',
-              background: loading ? '#D9D9D9' : '#5DABA8',
-              borderRadius: '8px',
+              width: '100%',
+              maxWidth: '289px',
+              height: '52px',
+              padding: 0,
+              background: loading ? '#9ca3af' : '#5DABA8',
+              borderRadius: '12px',
               border: 'none',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '16px',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '15px',
               fontWeight: 700,
-              lineHeight: '19px',
+              fontStyle: 'italic',
               color: '#FFFFFF',
-              cursor: loading ? 'not-allowed' : 'pointer'
+              cursor: loading ? 'not-allowed' : 'pointer',
+              transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: loading ? 'none' : '0px 8px 32px rgba(0, 0, 0, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}
           >
-            {loading ? '登録中...' : '登録する'}
+            次へ進む
+            <svg width="5" height="10" viewBox="0 0 5 10" fill="none">
+              <path d="M0 0L5 5L0 10" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
           </button>
-        </div>
         </div>
       </div>
     </div>
@@ -1691,154 +2015,236 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
   // ステップ3: 登録完了
   const renderStep3 = () => (
     <div style={{ 
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
       minHeight: '100vh',
       width: '100%',
-      background: '#E8F5F5',
-      padding: isDesktop ? '40px 20px' : 0
+      background: '#FFF5F0',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+      padding: isDesktop ? '40px 20px' : '20px'
     }}>
-      <div style={{ 
-        position: 'relative',
-        width: '100%',
-        maxWidth: isDesktop ? '600px' : '393px',
-        minHeight: isDesktop ? '800px' : '852px',
-        background: '#E8F5F5',
-        ...(isDesktop && {
-          padding: '40px 0',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-          borderRadius: '12px'
-        })
-      }}>
-        <div className="container mx-auto" style={{ padding: isDesktop ? '20px 32px' : '9px 16px', maxWidth: isDesktop ? '600px' : '393px' }}>
-          {/* ヘッダーカード - SVGデコレーションを直接埋め込み、テキストはReactで制御 */}
-          <div style={{
-            position: 'relative',
-            width: '100%',
-            height: isDesktop ? '93px' : '93px',
-            marginBottom: '24px',
-            maxWidth: isDesktop ? '600px' : '393px',
-            margin: '0 auto 24px auto'
-          }}>
-            <svg 
-              width="100%" 
-              height="100%" 
-              viewBox="0 0 417 125" 
-              preserveAspectRatio="xMidYMid meet"
-              style={{ position: 'absolute', top: 0, left: 0 }}
-            >
-              <defs>
-                <filter id="filter0_d_exhibitor_step3" x="0" y="0" width="417" height="93" filterUnits="userSpaceOnUse" colorInterpolationFilters="sRGB">
-                  <feFlood floodOpacity="0" result="BackgroundImageFix"/>
-                  <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/>
-                  <feOffset/>
-                  <feGaussianBlur stdDeviation="4"/>
-                  <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
-                  <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
-                  <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
-                </filter>
-              </defs>
-              {/* カード背景 */}
-              <g filter="url(#filter0_d_exhibitor_step3)">
-                <rect x="32" y="32" width="353" height="93" rx="16" fill="white"/>
-              </g>
-              {/* デコレーション - 星（左） */}
-              <path d="M212.752 61.7178C212.906 61.6299 213.094 61.6299 213.248 61.7178L239.232 76.5654C239.568 76.7574 239.568 77.2426 239.232 77.4346L213.248 92.2822C213.094 92.3701 212.906 92.3701 212.752 92.2822L186.768 77.4346C186.432 77.2426 186.432 76.7574 186.768 76.5654L212.752 61.7178Z" fill="#A8D5BA" stroke="#A8D5BA"/>
-              {/* デコレーション - 星（右） */}
-              <path d="M333.504 61.2835C333.811 61.1078 334.189 61.1078 334.496 61.2835L360.481 76.1318C361.152 76.5157 361.152 77.4843 360.481 77.8682L334.496 92.7165C334.189 92.8922 333.811 92.8922 333.504 92.7165L307.519 77.8682C306.848 77.4843 306.848 76.5157 307.519 76.1318L333.504 61.2835Z" fill="#A8D5BA"/>
-              {/* デコレーション - 線（左） */}
-              <line x1="120" y1="77" x2="184" y2="77" stroke="#A8D5BA" strokeWidth="2"/>
-              {/* デコレーション - 線（右） */}
-              <line x1="242" y1="77" x2="306" y2="77" stroke="#A8D5BA" strokeWidth="2"/>
-            </svg>
-            {/* テキストはReactで制御（動的変更に対応） */}
-            <h2 style={{ 
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '20px',
-              fontWeight: 700,
-              lineHeight: '120%',
-              color: '#2C3E50',
-              margin: 0,
-              whiteSpace: 'nowrap'
-            }}>
-              出店者情報登録フォーム
-            </h2>
-          </div>
-
-          <ProgressIndicator />
-          
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 0' }}>
-            {/* チェックマークアイコン */}
-            <div style={{
-              width: '80px',
-              height: '80px',
-              background: '#5DABA8',
-              borderRadius: '50%',
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: '393px'
+    }}>
+      <div style={{ padding: '0 20px' }}>
+        {/* プログレスバーヘッダー */}
+        <div style={{
+          width: '100%',
+          maxWidth: '353px',
+          height: '93px',
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto 24px',
+          padding: '0 20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          position: 'relative'
+        }}>
+          {/* ステップ1 - 情報登録 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            <div style={{ 
+              width: '56px', 
+              height: '32px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              marginBottom: '24px'
+              marginBottom: '8px',
+              transform: 'rotate(45deg)'
             }}>
-              <svg style={{ width: '48px', height: '48px', color: '#FFFFFF' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" />
+              <div style={{
+                width: '56px',
+                height: '32px',
+                border: '1px solid #E9ECEF',
+                background: '#FFFFFF'
+              }} />
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#2C3E50',
+              fontWeight: 400
+            }}>
+              情報登録
+            </span>
+          </div>
+
+          {/* 接続線1 */}
+          <div style={{ 
+            position: 'absolute',
+            left: '108px',
+            top: '50%',
+            width: '64px',
+            height: '1px',
+            background: '#E9ECEF',
+            transform: 'translateY(-50%)'
+          }} />
+
+          {/* ステップ2 - 情報確認 */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            <div style={{ 
+              width: '56px', 
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px',
+              transform: 'rotate(45deg)'
+            }}>
+              <div style={{
+                width: '56px',
+                height: '32px',
+                border: '1px solid #E9ECEF',
+                background: '#FFFFFF'
+              }} />
+            </div>
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#6C757D',
+              fontWeight: 400
+            }}>
+              情報確認
+            </span>
+          </div>
+
+          {/* 接続線2 */}
+          <div style={{ 
+            position: 'absolute',
+            left: '230px',
+            top: '50%',
+            width: '64px',
+            height: '1px',
+            background: '#E9ECEF',
+            transform: 'translateY(-50%)'
+          }} />
+
+          {/* ステップ3 - 登録完了（アクティブ） */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, position: 'relative' }}>
+            {/* チェックマークアイコン */}
+            <div style={{ 
+              width: '46px', 
+              height: '33px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '8px'
+            }}>
+              <svg width="46" height="33" viewBox="0 0 46 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M23 0L46 33H0L23 0Z" fill="#5DABA8"/>
               </svg>
             </div>
-            
-            <h2 style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '24px',
-              fontWeight: 700,
-              lineHeight: '120%',
-              color: '#000000',
-              marginBottom: '16px',
-              textAlign: 'center'
+            <span style={{ 
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '13px',
+              color: '#2C3E50',
+              fontWeight: 400
             }}>
               登録完了
-            </h2>
-
-            <p style={{
-              fontFamily: '"Noto Sans JP", sans-serif',
-              fontSize: '16px',
-              fontWeight: 400,
-              lineHeight: '150%',
-              color: '#666666',
-              marginBottom: '32px',
-              textAlign: 'center'
-            }}>
-              出店者登録が完了しました
-            </p>
-            
-            <button
-              onClick={onRegistrationComplete}
-              style={{
-                width: '100%',
-                maxWidth: '330px',
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-                alignItems: 'center',
-                padding: '16px 24px',
-                gap: '10px',
-                height: '48px',
-                background: '#FFFFFF',
-                borderRadius: '8px',
-                border: '2px solid #5DABA8',
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '16px',
-                fontWeight: 700,
-                lineHeight: '19px',
-                color: '#5DABA8',
-                cursor: 'pointer'
-              }}
-            >
-              ホームへ戻る
-            </button>
+            </span>
           </div>
+        </div>
+
+        {/* メインコンテンツカード */}
+        <div style={{
+          width: '100%',
+          maxWidth: '353px',
+          background: '#FFFFFF',
+          borderRadius: '16px',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+          margin: '0 auto',
+          padding: '60px 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          {/* チェックマークアイコン */}
+          <div style={{
+            width: '80px',
+            height: '80px',
+            background: '#FF8A5C',
+            borderRadius: '50%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '32px'
+          }}>
+            <svg width="33" height="21" viewBox="0 0 33 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M2 10.5L11.5 19.5L31 2" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          
+          {/* タイトル */}
+          <h2 style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '24px',
+            fontWeight: 700,
+            lineHeight: 'normal',
+            color: '#2C3E50',
+            margin: '0 0 16px 0',
+            textAlign: 'center'
+          }}>
+            登録完了
+          </h2>
+
+          {/* 説明テキスト1 */}
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '14px',
+            fontWeight: 400,
+            lineHeight: 'normal',
+            color: '#6C757D',
+            margin: '0 0 10px 0',
+            textAlign: 'center'
+          }}>
+            出店者登録が完了しました
+          </p>
+
+          {/* 説明テキスト2 */}
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '14px',
+            fontWeight: 400,
+            lineHeight: 'normal',
+            color: '#6C757D',
+            margin: '0 0 48px 0',
+            textAlign: 'center'
+          }}>
+            メールアドレスに確認メールを送信しました
+          </p>
+          
+          {/* ホームへ戻るボタン */}
+          <button
+            onClick={onRegistrationComplete}
+            style={{
+              width: '100%',
+              maxWidth: '289px',
+              height: '52px',
+              padding: 0,
+              background: '#5DABA8',
+              borderRadius: '12px',
+              border: 'none',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '16px',
+              fontWeight: 700,
+              color: '#FFFFFF',
+              cursor: 'pointer',
+              boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
+              transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.opacity = '0.9'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.opacity = '1'
+            }}
+          >
+            ホームへ戻る
+          </button>
         </div>
       </div>
     </div>

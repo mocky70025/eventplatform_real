@@ -7,6 +7,7 @@ import EventList from './EventList'
 import EventApplications from './EventApplications'
 import OrganizerProfile from './OrganizerProfile'
 import NotificationBox from './NotificationBox'
+import EventDetail from './EventDetail'
 
 import { type LineProfile } from '@/lib/auth'
 
@@ -31,6 +32,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
   const [showEventForm, setShowEventForm] = useState(false)
   const [eventToEdit, setEventToEdit] = useState<Event | null>(null)
   const [eventForApplications, setEventForApplications] = useState<Event | null>(null)
+  const [eventForDetail, setEventForDetail] = useState<Event | null>(null)
   const [currentView, setCurrentView] = useState<'home' | 'create' | 'notifications' | 'profile'>('home')
   const [loading, setLoading] = useState(true)
   const [navVisible, setNavVisible] = useState(true)
@@ -277,6 +279,20 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
     )
   }
 
+  if (eventForDetail) {
+    return (
+      <EventDetail
+        event={eventForDetail}
+        onBack={() => setEventForDetail(null)}
+        onEdit={() => {
+          setEventToEdit(eventForDetail)
+          setEventForDetail(null)
+          setShowEventForm(true)
+        }}
+      />
+    )
+  }
+
   const renderCurrentView = () => {
     switch (currentView) {
       case 'home':
@@ -301,13 +317,13 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
               margin: '0 auto'
             }}>
               <h1 style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '20px',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '18px',
                 fontWeight: 700,
                 lineHeight: '120%',
                 color: '#FFFFFF',
                 margin: 0
-              }}>主催者マイページ</h1>
+              }}>マイイベント</h1>
             </div>
 
             <div className="container mx-auto" style={{ padding: '24px 16px', maxWidth: '393px', paddingBottom: '24px' }}>
@@ -316,6 +332,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                 onEventUpdated={fetchOrganizerData}
                 onEdit={(ev) => { setEventToEdit(ev); setShowEventForm(true) }}
                 onViewApplications={(ev) => { setEventForApplications(ev) }}
+                onViewDetail={(ev) => { setEventForDetail(ev) }}
               />
             </div>
           </div>

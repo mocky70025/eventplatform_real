@@ -204,20 +204,24 @@ export default function ExhibitorEditForm({
       }}>
         {/* ヘッダー */}
         <div style={{
-          background: '#5DABA8',
+          width: '100%',
           height: '64px',
+          background: '#5DABA8',
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
-          padding: '0 16px'
+          justifyContent: 'center',
+          position: 'relative'
         }}>
           <button
             onClick={onCancel}
             style={{
+              position: 'absolute',
+              left: '16px',
               background: 'transparent',
               border: 'none',
               color: '#FFFFFF',
-              fontSize: '20px',
+              fontSize: '24px',
+              fontWeight: 700,
               cursor: 'pointer',
               padding: '4px',
               display: 'flex',
@@ -225,45 +229,57 @@ export default function ExhibitorEditForm({
               justifyContent: 'center'
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            &lt;
           </button>
           <h1 style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
             fontSize: '18px',
-            fontWeight: 600,
+            fontWeight: 700,
             color: '#FFFFFF',
             margin: 0,
-            flex: 1,
-            textAlign: 'center',
-            fontFamily: '"Noto Sans JP", sans-serif'
+            textAlign: 'center'
           }}>
             プロフィール編集
           </h1>
-          <div style={{ width: '32px' }}></div>
         </div>
 
         {/* フォーム */}
-        <div style={{ padding: '24px 20px' }}>
+        <div style={{ padding: '20px' }}>
           <form onSubmit={handleSubmit}>
             <div style={{
+              width: '100%',
+              maxWidth: '353px',
+              margin: '0 auto',
               background: '#FFFFFF',
               borderRadius: '16px',
-              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-              padding: '24px'
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+              padding: '20px'
             }}>
+              {/* フォームタイトル */}
+              <h2 style={{
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '20px',
+                fontWeight: 700,
+                fontStyle: 'italic',
+                color: '#2C3E50',
+                margin: '0 0 24px 0'
+              }}>
+                情報を入力してください
+              </h2>
+
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 {/* お名前 */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
                   }}>
-                    お名前 <span style={{ color: '#FF3B30' }}>*</span>
+                    お名前
                   </label>
                   <input
                     type="text"
@@ -271,13 +287,17 @@ export default function ExhibitorEditForm({
                     value={formData.name}
                     onChange={handleInputChange}
                     required
+                    placeholder="例: 山田太郎"
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      maxWidth: '289px',
+                      height: '44px',
+                      padding: '0 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                       color: '#2C3E50',
                       outline: 'none'
                     }}
@@ -287,14 +307,15 @@ export default function ExhibitorEditForm({
                 {/* 性別 */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
                   }}>
-                    性別 <span style={{ color: '#FF3B30' }}>*</span>
+                    性別
                   </label>
                   <select
                     name="gender"
@@ -303,21 +324,23 @@ export default function ExhibitorEditForm({
                     required
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      maxWidth: '289px',
+                      height: '44px',
+                      padding: '0 40px 0 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      color: '#2C3E50',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      color: formData.gender ? '#2C3E50' : '#6C757D',
                       outline: 'none',
                       appearance: 'none',
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236C757D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%236C757D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
                       backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'right 16px center',
-                      paddingRight: '40px'
+                      backgroundPosition: 'right 16px center'
                     }}
                   >
-                    <option value="">選択してください</option>
+                    <option value="" style={{ color: '#6C757D' }}>選択してください</option>
                     <option value="男">男</option>
                     <option value="女">女</option>
                     <option value="その他">その他</option>
@@ -327,14 +350,15 @@ export default function ExhibitorEditForm({
                 {/* 年齢 */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
                   }}>
-                    年齢 <span style={{ color: '#FF3B30' }}>*</span>
+                    年齢
                   </label>
                   <input
                     type="number"
@@ -344,13 +368,17 @@ export default function ExhibitorEditForm({
                     min="0"
                     max="99"
                     required
+                    placeholder="例: 35"
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      maxWidth: '289px',
+                      height: '44px',
+                      padding: '0 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                       color: '#2C3E50',
                       outline: 'none'
                     }}
@@ -360,14 +388,15 @@ export default function ExhibitorEditForm({
                 {/* 電話番号 */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
                   }}>
-                    電話番号 <span style={{ color: '#FF3B30' }}>*</span>
+                    電話番号
                   </label>
                   <input
                     type="tel"
@@ -375,13 +404,17 @@ export default function ExhibitorEditForm({
                     value={formData.phone_number}
                     onChange={handleInputChange}
                     required
+                    placeholder="例: 090-1234-5678"
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      maxWidth: '289px',
+                      height: '44px',
+                      padding: '0 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                       color: '#2C3E50',
                       outline: 'none'
                     }}
@@ -391,14 +424,15 @@ export default function ExhibitorEditForm({
                 {/* メールアドレス */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
                   }}>
-                    メールアドレス <span style={{ color: '#FF3B30' }}>*</span>
+                    メールアドレス
                   </label>
                   <input
                     type="email"
@@ -406,13 +440,17 @@ export default function ExhibitorEditForm({
                     value={formData.email}
                     onChange={handleInputChange}
                     required
+                    placeholder="例: example@email.com"
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      maxWidth: '289px',
+                      height: '44px',
+                      padding: '0 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                       color: '#2C3E50',
                       outline: 'none'
                     }}
@@ -422,9 +460,10 @@ export default function ExhibitorEditForm({
                 {/* ジャンル */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
@@ -437,21 +476,23 @@ export default function ExhibitorEditForm({
                     onChange={handleInputChange}
                     style={{
                       width: '100%',
-                      padding: '12px 16px',
+                      maxWidth: '289px',
+                      height: '44px',
+                      padding: '0 40px 0 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
-                      color: '#2C3E50',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      color: formData.genre_category ? '#2C3E50' : '#6C757D',
                       outline: 'none',
                       appearance: 'none',
-                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236C757D' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
+                      backgroundImage: `url("data:image/svg+xml,%3Csvg width='8' height='5' viewBox='0 0 8 5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L4 4L7 1' stroke='%236C757D' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")`,
                       backgroundRepeat: 'no-repeat',
-                      backgroundPosition: 'right 16px center',
-                      paddingRight: '40px'
+                      backgroundPosition: 'right 16px center'
                     }}
                   >
-                    <option value="">選択してください</option>
+                    <option value="" style={{ color: '#6C757D' }}>選択してください</option>
                     <option value="飲食">飲食</option>
                     <option value="物販">物販</option>
                     <option value="サービス">サービス</option>
@@ -462,9 +503,10 @@ export default function ExhibitorEditForm({
                 {/* ジャンル（自由回答） */}
                 <div>
                   <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     fontSize: '14px',
-                    fontWeight: 500,
+                    fontWeight: 700,
+                    fontStyle: 'italic',
                     color: '#2C3E50',
                     marginBottom: '8px',
                     display: 'block'
@@ -475,37 +517,41 @@ export default function ExhibitorEditForm({
                     name="genre_free_text"
                     value={formData.genre_free_text}
                     onChange={handleInputChange}
-                    rows={3}
-                    placeholder="ジャンルの詳細を入力してください"
+                    placeholder="例: 焼きそば、たこ焼きなど"
                     style={{
                       width: '100%',
+                      maxWidth: '289px',
+                      height: '80px',
                       padding: '12px 16px',
                       border: '1px solid #E9ECEF',
                       borderRadius: '8px',
-                      fontSize: '16px',
-                      fontFamily: '"Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                       color: '#2C3E50',
                       outline: 'none',
-                      resize: 'vertical'
+                      resize: 'none'
                     }}
                   />
                 </div>
 
                 {/* 画像アップロード */}
-                <div>
-                  <label style={{
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    color: '#2C3E50',
-                    marginBottom: '16px',
-                    display: 'block'
-                  }}>
-                    登録書類
-                  </label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  {/* 営業許可証 */}
+                  <div>
+                    <label style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      fontStyle: 'italic',
+                      color: '#2C3E50',
+                      marginBottom: '8px',
+                      display: 'block'
+                    }}>
+                      営業許可証
+                    </label>
                     <ImageUpload
-                      label="営業許可証"
+                      label=""
                       documentType="business_license"
                       userId={userProfile.userId}
                       currentImageUrl={imageUrls.business_license_image_url}
@@ -513,6 +559,154 @@ export default function ExhibitorEditForm({
                       onUploadError={(error) => alert(error)}
                       onImageDelete={() => handleImageDelete('business_license_image_url')}
                     />
+                    {!imageUrls.business_license_image_url && (
+                      <p style={{
+                        fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                        fontSize: '13px',
+                        fontWeight: 400,
+                        color: '#6C757D',
+                        textAlign: 'center',
+                        marginTop: '8px',
+                        marginBottom: 0
+                      }}>
+                        AI確認機能付き
+                      </p>
+                    )}
+                    {/* 有効期限表示（データがある場合のみ表示） */}
+                    {(exhibitorData as any).business_license_expiration_date && (
+                      <div style={{
+                        width: '100%',
+                        maxWidth: '289px',
+                        marginTop: '16px',
+                        padding: '9px 16px',
+                        background: '#A8D5BA',
+                        borderRadius: '8px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px'
+                      }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M9 12L11 14L15 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span style={{
+                            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                            fontSize: '15px',
+                            color: '#FFFFFF',
+                            fontWeight: 400
+                          }}>
+                            有効
+                          </span>
+                        </div>
+                        <p style={{
+                          fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                          fontSize: '15px',
+                          color: '#FFFFFF',
+                          fontWeight: 400,
+                          margin: 0
+                        }}>
+                          期限: {(exhibitorData as any).business_license_expiration_date}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* その他の書類 */}
+                  <div>
+                    <label style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      fontStyle: 'italic',
+                      color: '#2C3E50',
+                      marginBottom: '8px',
+                      display: 'block'
+                    }}>
+                      車検証
+                    </label>
+                    <ImageUpload
+                      label=""
+                      documentType="vehicle_inspection"
+                      userId={userProfile.userId}
+                      currentImageUrl={imageUrls.vehicle_inspection_image_url}
+                      onUploadComplete={(url) => handleImageUpload('vehicle_inspection_image_url', url)}
+                      onUploadError={(error) => alert(error)}
+                      onImageDelete={() => handleImageDelete('vehicle_inspection_image_url')}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      fontStyle: 'italic',
+                      color: '#2C3E50',
+                      marginBottom: '8px',
+                      display: 'block'
+                    }}>
+                      自動車検査証
+                    </label>
+                    <ImageUpload
+                      label=""
+                      documentType="automobile_inspection"
+                      userId={userProfile.userId}
+                      currentImageUrl={imageUrls.automobile_inspection_image_url}
+                      onUploadComplete={(url) => handleImageUpload('automobile_inspection_image_url', url)}
+                      onUploadError={(error) => alert(error)}
+                      onImageDelete={() => handleImageDelete('automobile_inspection_image_url')}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      fontStyle: 'italic',
+                      color: '#2C3E50',
+                      marginBottom: '8px',
+                      display: 'block'
+                    }}>
+                      PL保険
+                    </label>
+                    <ImageUpload
+                      label=""
+                      documentType="pl_insurance"
+                      userId={userProfile.userId}
+                      currentImageUrl={imageUrls.pl_insurance_image_url}
+                      onUploadComplete={(url) => handleImageUpload('pl_insurance_image_url', url)}
+                      onUploadError={(error) => alert(error)}
+                      onImageDelete={() => handleImageDelete('pl_insurance_image_url')}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '14px',
+                      fontWeight: 700,
+                      fontStyle: 'italic',
+                      color: '#2C3E50',
+                      marginBottom: '8px',
+                      display: 'block'
+                    }}>
+                      火器類配置図
+                    </label>
+                    <ImageUpload
+                      label=""
+                      documentType="fire_equipment_layout"
+                      userId={userProfile.userId}
+                      currentImageUrl={imageUrls.fire_equipment_layout_image_url}
+                      onUploadComplete={(url) => handleImageUpload('fire_equipment_layout_image_url', url)}
+                      onUploadError={(error) => alert(error)}
+                      onImageDelete={() => handleImageDelete('fire_equipment_layout_image_url')}
+                    />
+                  </div>
 
                     <ImageUpload
                       label="車検証"
@@ -557,47 +751,29 @@ export default function ExhibitorEditForm({
                 </div>
               </div>
 
-              {/* ボタン */}
-              <div style={{ 
-                display: 'flex', 
-                gap: '12px', 
-                marginTop: '32px',
-                justifyContent: 'flex-end'
-              }}>
-                <button
-                  type="button"
-                  onClick={onCancel}
-                  style={{
-                    padding: '12px 24px',
-                    border: '1px solid #E9ECEF',
-                    borderRadius: '16px',
-                    background: '#FFFFFF',
-                    color: '#2C3E50',
-                    fontSize: '16px',
-                    fontWeight: 500,
-                    fontFamily: '"Noto Sans JP", sans-serif',
-                    cursor: 'pointer'
-                  }}
-                >
-                  キャンセル
-                </button>
+              {/* 保存ボタン */}
+              <div style={{ marginTop: '32px', display: 'flex', justifyContent: 'center' }}>
                 <button
                   type="submit"
                   disabled={loading}
                   style={{
-                    padding: '12px 24px',
+                    width: '100%',
+                    maxWidth: '289px',
+                    height: '52px',
                     border: 'none',
-                    borderRadius: '16px',
+                    borderRadius: '12px',
                     background: loading ? '#6C757D' : '#5DABA8',
                     color: '#FFFFFF',
-                    fontSize: '16px',
-                    fontWeight: 500,
-                    fontFamily: '"Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 700,
+                    fontStyle: 'italic',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                     cursor: loading ? 'not-allowed' : 'pointer',
-                    opacity: loading ? 0.6 : 1
+                    opacity: loading ? 0.6 : 1,
+                    boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
                   }}
                 >
-                  {loading ? '更新中...' : '更新'}
+                  {loading ? '保存中...' : '保存'}
                 </button>
               </div>
             </div>

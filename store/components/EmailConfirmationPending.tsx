@@ -96,127 +96,207 @@ export default function EmailConfirmationPending({ email, onEmailConfirmed }: Em
 
   return (
     <div style={{
-      background: '#F7F7F7',
       minHeight: '100vh',
+      width: '100%',
+      background: 'linear-gradient(-44.94deg, rgba(255, 245, 240, 1) 0%, rgba(232, 245, 245, 1) 99.95%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px'
+      padding: '20px'
     }}>
+      {/* メインカード */}
       <div style={{
-        background: '#FFFFFF',
-        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px',
-        padding: '48px 24px',
-        maxWidth: '394px',
         width: '100%',
-        textAlign: 'center'
+        maxWidth: '352px',
+        background: '#FFFFFF',
+        borderRadius: '16px',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+        padding: '0',
+        position: 'relative'
       }}>
+        {/* ヘッダー */}
         <div style={{
-          width: '64px',
-          height: '64px',
-          background: '#FFF4E6',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0 auto 24px'
+          textAlign: 'center',
+          marginTop: '40px',
+          marginBottom: '32px',
+          padding: '0 20px'
         }}>
-          <span style={{
-            fontSize: '32px'
-          }}>📧</span>
-        </div>
-        
-        <h1 style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '20px',
-          fontWeight: 700,
-          lineHeight: '120%',
-          color: '#000000',
-          marginBottom: '16px'
-        }}>
-          メールアドレスの確認が必要です
-        </h1>
-        
-        <p style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '16px',
-          lineHeight: '150%',
-          color: '#666666',
-          marginBottom: '24px'
-        }}>
-          {email} に確認メールを送信しました。
-          <br />
-          メール内のリンクをクリックして、メールアドレスを確認してください。
-        </p>
-
-        <div style={{
-          background: '#F7F7F7',
-          borderRadius: '8px',
-          padding: '16px',
-          marginBottom: '24px',
-          textAlign: 'left'
-        }}>
-          <p style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '14px',
-            lineHeight: '150%',
-            color: '#666666',
-            margin: 0
-          }}>
-            <strong>確認メールが届かない場合：</strong>
-            <br />
-            • スパムフォルダを確認してください
-            <br />
-            • メールアドレスが正しいか確認してください
-            <br />
-            • 下のボタンから再送信できます
-          </p>
-        </div>
-
-        <button
-          onClick={handleResend}
-          disabled={resending}
-          style={{
-            width: '100%',
-            padding: '12px 24px',
-            background: resending ? '#CCCCCC' : '#06C755',
-            color: '#FFFFFF',
+          <div style={{
+            width: '64px',
+            height: '64px',
+            margin: '0 auto 12px',
+            background: '#5DABA8',
             borderRadius: '8px',
-            border: 'none',
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+          }}>
+          </div>
+          <h1 style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '24px',
             fontWeight: 700,
-            cursor: resending ? 'not-allowed' : 'pointer',
-            marginBottom: '16px',
-            transition: 'background 0.2s'
-          }}
-        >
-          {resending ? '送信中...' : '確認メールを再送信'}
-        </button>
-
-        {resendSuccess && (
+            fontStyle: 'italic',
+            lineHeight: 1.3,
+            color: '#2C3E50',
+            margin: '0 0 12px'
+          }}>
+            デミセル
+          </h1>
           <p style={{
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '15px',
+            color: '#6C757D',
+            margin: 0,
+            lineHeight: 1.6
+          }}>
+            出店者向けプラットフォーム
+          </p>
+        </div>
+
+        {/* 区切り線 */}
+        <div style={{
+          width: '100%',
+          height: '1px',
+          background: '#E9ECEF',
+          marginBottom: '32px'
+        }} />
+
+        {/* メインメッセージ */}
+        <div style={{
+          padding: '0 20px',
+          marginBottom: '32px',
+          textAlign: 'center'
+        }}>
+          <h2 style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '24px',
+            fontWeight: 700,
+            color: '#2C3E50',
+            margin: '0 0 16px',
+            lineHeight: 1.3
+          }}>
+            メールを送信しました
+          </h2>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
             fontSize: '14px',
-            lineHeight: '150%',
-            color: '#06C755',
+            lineHeight: 1.5,
+            color: '#6C757D',
+            margin: '0 0 8px'
+          }}>
+            確認メールを送信しました
+          </p>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '14px',
+            lineHeight: 1.5,
+            color: '#6C757D',
+            margin: '0 0 8px'
+          }}>
+            メール内のリンクをクリックして
+          </p>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '14px',
+            lineHeight: 1.5,
+            color: '#6C757D',
             margin: 0
           }}>
-            確認メールを再送信しました
+            登録を完了してください
           </p>
-        )}
+        </div>
 
-        <p style={{
-          fontFamily: 'Inter, sans-serif',
-          fontSize: '12px',
-          lineHeight: '150%',
-          color: '#999999',
-          marginTop: '24px',
-          marginBottom: 0
+        {/* メールが届かない場合セクション */}
+        <div style={{
+          margin: '0 20px 24px',
+          padding: '16px',
+          background: '#F8F9FA',
+          border: '1px solid #E9ECEF',
+          borderRadius: '8px',
+          textAlign: 'center'
         }}>
-          メール確認が完了すると、自動的に登録フォームに進みます。
-        </p>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '12px',
+            fontWeight: 700,
+            color: '#2C3E50',
+            margin: '0 0 8px',
+            lineHeight: 1.5
+          }}>
+            メールが届かない場合
+          </p>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '12px',
+            lineHeight: 1.5,
+            color: '#6C757D',
+            margin: '0 0 8px'
+          }}>
+            迷惑メールフォルダをご確認ください
+          </p>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '12px',
+            lineHeight: 1.5,
+            color: '#6C757D',
+            margin: '0 0 8px'
+          }}>
+            それでもメールを確認できない場合
+          </p>
+          <p style={{
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontSize: '12px',
+            lineHeight: 1.5,
+            color: '#6C757D',
+            margin: '0 0 16px'
+          }}>
+            再送信ボタンを押してください
+          </p>
+
+          {/* メール再送信ボタン */}
+          <button
+            onClick={handleResend}
+            disabled={resending}
+            style={{
+              width: '100%',
+              maxWidth: '256px',
+              height: '52px',
+              padding: 0,
+              background: resending ? '#9ca3af' : '#5DABA8',
+              color: '#FFFFFF',
+              borderRadius: '12px',
+              border: 'none',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '15px',
+              fontWeight: 700,
+              fontStyle: 'italic',
+              cursor: resending ? 'not-allowed' : 'pointer',
+              transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: resending ? 'none' : '0px 8px 32px rgba(0, 0, 0, 0.08)',
+              margin: '0 auto'
+            }}
+          >
+            {resending ? '送信中...' : 'メール再送信'}
+          </button>
+
+          {resendSuccess && (
+            <p style={{
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '12px',
+              lineHeight: 1.5,
+              color: '#5DABA8',
+              margin: '12px 0 0',
+              fontWeight: 600
+            }}>
+              確認メールを再送信しました
+            </p>
+          )}
+        </div>
+
+        {/* パディング調整 */}
+        <div style={{ height: '32px' }} />
       </div>
     </div>
   )

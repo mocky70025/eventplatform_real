@@ -117,21 +117,24 @@ export default function ImageUpload({
   }
 
   return (
-    <div style={{ marginBottom: '24px', width: '100%', maxWidth: '330px' }} data-error-field={documentType}>
-      <label style={{
-        fontFamily: 'Inter, sans-serif',
-        fontSize: '14px',
-        fontWeight: 500,
-        lineHeight: '120%',
-        color: '#000000',
-        marginBottom: '10px',
-        display: 'block'
-      }}>
-        {label}
-      </label>
+    <div style={{ marginBottom: '24px', width: '100%', maxWidth: '289px' }} data-error-field={documentType}>
+      {label && (
+        <label style={{
+          fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+          fontSize: '14px',
+          fontWeight: 700,
+          fontStyle: 'italic',
+          lineHeight: '120%',
+          color: '#2C3E50',
+          marginBottom: '8px',
+          display: 'block'
+        }}>
+          {label}
+        </label>
+      )}
       
       {previewUrl ? (
-        <div style={{ position: 'relative', width: '100%', height: '200px' }}>
+        <div style={{ position: 'relative', width: '100%', height: '187px' }}>
           <div style={{
             boxSizing: 'border-box',
             display: 'flex',
@@ -141,15 +144,15 @@ export default function ImageUpload({
             padding: '2px',
             gap: '10px',
             width: '100%',
-            height: '200px',
+            height: '187px',
             background: '#F7F7F7',
-            border: '2px solid #06C755',
+            border: hasError ? '2px solid #FF3B30' : '2px solid #5DABA8',
             borderRadius: '8px',
             position: 'relative'
           }}>
             <img
               src={previewUrl}
-              alt={label}
+              alt={label || 'アップロード画像'}
               onLoad={() => console.log('[ImageUpload] Image loaded successfully:', previewUrl, 'label:', label)}
               onError={(e) => {
                 console.error('[ImageUpload] Failed to load image:', previewUrl, 'label:', label)
@@ -158,7 +161,7 @@ export default function ImageUpload({
               }}
               style={{
                 width: 'calc(100% - 4px)',
-                height: '196px',
+                height: '183px',
                 objectFit: 'contain',
                 borderRadius: '6px'
               }}
@@ -197,7 +200,7 @@ export default function ImageUpload({
           </div>
         </div>
       ) : (
-        <div style={{ position: 'relative', width: '100%', height: '200px' }}>
+        <div style={{ position: 'relative', width: '100%', height: '187px' }}>
           <div
             style={{
               boxSizing: 'border-box',
@@ -205,12 +208,12 @@ export default function ImageUpload({
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              padding: '32px 16px',
-              gap: '10px',
+              padding: '0',
+              gap: '8px',
               width: '100%',
-              height: '200px',
-              background: '#F7F7F7',
-              border: hasError ? '2px dashed #FF3B30' : '2px dashed #E5E5E5',
+              height: '187px',
+              background: '#FFFFFF',
+              border: hasError ? '2px dashed #FF3B30' : '2px dashed #5DABA8',
               borderRadius: '8px',
               cursor: 'pointer',
               position: 'relative'
@@ -227,17 +230,22 @@ export default function ImageUpload({
               id={`file-${documentType}`}
             />
             <div style={{
-              fontFamily: 'Inter, sans-serif',
+              width: '48px',
+              height: '48px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               fontSize: '32px',
-              color: '#D9D9D9',
-              marginBottom: '8px'
+              color: '#5DABA8',
+              fontWeight: 400,
+              lineHeight: '48px'
             }}>+</div>
             <div style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '16px',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '15px',
               lineHeight: '150%',
-              color: '#6B6B6B'
-            }}>画像を選択</div>
+              color: '#5DABA8'
+            }}>画像をアップロード</div>
           </div>
           {hasError && (
             <div style={{

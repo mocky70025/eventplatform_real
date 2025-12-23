@@ -110,26 +110,57 @@ export default function NotificationBox({ userProfile, onBack, onUnreadCountChan
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     const now = new Date()
-    const diff = now.getTime() - date.getTime()
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+    const diffMs = now.getTime() - date.getTime()
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
 
-    if (days === 0) {
-      return date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })
-    } else if (days === 1) {
-      return '昨日'
-    } else if (days < 7) {
-      return `${days}日前`
+    if (diffHours < 1) {
+      const diffMinutes = Math.floor(diffMs / (1000 * 60))
+      return `${diffMinutes}分前`
+    } else if (diffHours < 24) {
+      return `${diffHours}時間前`
+    } else if (diffDays === 1) {
+      return '1日前'
     } else {
-      return date.toLocaleDateString('ja-JP', { month: 'long', day: 'numeric' })
+      return `${diffDays}日前`
     }
   }
 
-  // ベルアイコン（オレンジ色で主催者アプリ用）
-  const BellIcon = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25-2.5 7.5-2.5 7.5h19S19 14.25 19 9c0-3.87-3.13-7-7-7zm0 20c-1.1 0-2-.9-2-2h4c0 1.1-.9 2-2 2z" fill="#FF8A5C"/>
-    </svg>
-  )
+  // 通知タイプに応じたアイコンを返す
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'application_submitted':
+        // ベルアイコン
+        return (
+          <svg width="12" height="15" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 0C4.067 0 2.5 1.567 2.5 3.5V5.5C2.5 7.25 1.25 8.5 1.25 8.5H10.75C10.75 8.5 9.5 7.25 9.5 5.5V3.5C9.5 1.567 7.933 0 6 0ZM6 15C5.175 15 4.5 14.325 4.5 13.5H7.5C7.5 14.325 6.825 15 6 15Z" fill="#2C3E50"/>
+            <rect x="4" y="5" width="4" height="3" rx="0.5" fill="#2C3E50"/>
+          </svg>
+        )
+      case 'event_approved':
+        // 四角アイコン（承認済み）
+        return (
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="1" y="1" width="10" height="10" rx="1" stroke="#2C3E50" strokeWidth="1.5" fill="none"/>
+            <path d="M3 6L5.5 8.5L9 5" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )
+      case 'organizer_approved':
+        // チェックマークアイコン
+        return (
+          <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 4L4.5 7.5L11 1" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )
+      default:
+        // デフォルトのベルアイコン
+        return (
+          <svg width="12" height="15" viewBox="0 0 12 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 0C4.067 0 2.5 1.567 2.5 3.5V5.5C2.5 7.25 1.25 8.5 1.25 8.5H10.75C10.75 8.5 9.5 7.25 9.5 5.5V3.5C9.5 1.567 7.933 0 6 0ZM6 15C5.175 15 4.5 14.325 4.5 13.5H7.5C7.5 14.325 6.825 15 6 15Z" fill="#2C3E50"/>
+          </svg>
+        )
+    }
+  }
 
   if (loading) {
     return (
@@ -208,17 +239,18 @@ export default function NotificationBox({ userProfile, onBack, onUnreadCountChan
               background: 'transparent',
               border: 'none',
               color: '#FFFFFF',
-              fontSize: '20px',
+              fontSize: '24px',
+              fontWeight: 700,
+              fontFamily: '"Inter", sans-serif',
               cursor: 'pointer',
               padding: '4px',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              lineHeight: '1'
             }}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 19L9 12L15 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+            &lt;
           </button>
           <h1 style={{
             fontSize: '18px',
@@ -227,7 +259,7 @@ export default function NotificationBox({ userProfile, onBack, onUnreadCountChan
             margin: 0,
             flex: 1,
             textAlign: 'center',
-            fontFamily: '"Noto Sans JP", sans-serif',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
             lineHeight: '120%'
           }}>
             通知
@@ -237,11 +269,11 @@ export default function NotificationBox({ userProfile, onBack, onUnreadCountChan
         </div>
 
         <div style={{ 
-          paddingTop: '88px', // ヘッダーの高さ(64px) + 余白(24px)
+          paddingTop: '88px',
           paddingBottom: '24px',
-          paddingLeft: '16px',
-          paddingRight: '16px',
-          maxWidth: isDesktop ? '600px' : '361px', 
+          paddingLeft: '20px',
+          paddingRight: '20px',
+          maxWidth: isDesktop ? '600px' : '353px', 
           margin: '0 auto' 
         }}>
           {notifications.length === 0 ? (
@@ -253,100 +285,93 @@ export default function NotificationBox({ userProfile, onBack, onUnreadCountChan
               textAlign: 'center'
             }}>
               <p style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                 fontSize: '16px',
                 lineHeight: '150%',
                 color: '#6C757D'
               }}>通知はありません</p>
             </div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
                   onClick={() => !notification.is_read && markAsRead(notification.id)}
                   style={{
+                    width: '100%',
+                    height: '120px',
                     background: '#FFFFFF',
                     borderRadius: '16px',
-                    padding: '16px',
+                    padding: '20px',
                     cursor: notification.is_read ? 'default' : 'pointer',
                     border: notification.is_read ? '1px solid #E9ECEF' : '2px solid #FF8A5C',
                     position: 'relative',
-                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+                    display: 'flex',
+                    gap: '12px',
+                    alignItems: 'flex-start'
                   }}
                 >
-                  <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                    {/* ベルアイコン */}
-                    <div style={{
-                      width: '48px',
-                      height: '48px',
-                      borderRadius: '50%',
-                      background: 'white',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      flexShrink: 0,
-                      border: notification.is_read ? '1px solid #E9ECEF' : '2px solid #FF8A5C',
-                      boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
-                    }}>
-                      <BellIcon />
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-                        <h3 style={{
-                          fontSize: '16px',
-                          fontWeight: 700,
-                          lineHeight: '150%',
-                          color: '#2C3E50',
-                          margin: 0,
-                          fontFamily: '"Noto Sans JP", sans-serif',
-                          wordBreak: 'break-word'
-                        }}>
-                          {notification.title}
-                        </h3>
-                        {!notification.is_read && (
-                          <span style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '50%',
-                            background: '#FF8A5C',
-                            flexShrink: 0,
-                            marginTop: '6px',
-                            marginLeft: '8px'
-                          }}></span>
-                        )}
-                      </div>
-                      <p style={{
-                        fontSize: '14px',
+                  {/* アイコン */}
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '8px',
+                    background: '#E8F5F5',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}>
+                    {getNotificationIcon(notification.notification_type)}
+                  </div>
+                  
+                  {/* 内容 */}
+                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <h3 style={{
+                        fontSize: '15px',
+                        fontWeight: notification.is_read ? 400 : 700,
                         lineHeight: '150%',
                         color: '#2C3E50',
-                        margin: '0 0 8px 0',
-                        fontFamily: '"Noto Sans JP", sans-serif',
-                        wordBreak: 'break-word'
-                      }}>
-                        {notification.message}
-                      </p>
-                      {notification.events && (
-                        <p style={{
-                          fontSize: '12px',
-                          lineHeight: '120%',
-                          color: '#6C757D',
-                          margin: '0 0 8px 0',
-                          fontFamily: '"Noto Sans JP", sans-serif'
-                        }}>
-                          イベント: {notification.events.event_name}
-                        </p>
-                      )}
-                      <p style={{
-                        fontSize: '12px',
-                        lineHeight: '120%',
-                        color: '#6C757D',
                         margin: 0,
-                        fontFamily: '"Noto Sans JP", sans-serif'
+                        fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                        wordBreak: 'break-word',
+                        flex: 1
                       }}>
-                        {formatDate(notification.created_at)}
-                      </p>
+                        {notification.title}
+                      </h3>
+                      {!notification.is_read && (
+                        <div style={{
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          background: '#FF8A5C',
+                          flexShrink: 0,
+                          marginLeft: '8px',
+                          marginTop: '6px'
+                        }}></div>
+                      )}
                     </div>
+                    <p style={{
+                      fontSize: '13px',
+                      lineHeight: '150%',
+                      color: '#6C757D',
+                      margin: 0,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      wordBreak: 'break-word'
+                    }}>
+                      {notification.message}
+                    </p>
+                    <p style={{
+                      fontSize: '12px',
+                      lineHeight: '150%',
+                      color: '#6C757D',
+                      margin: 0,
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif'
+                    }}>
+                      {formatDate(notification.created_at)}
+                    </p>
                   </div>
                 </div>
               ))}

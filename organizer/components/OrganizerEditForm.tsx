@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { type LineProfile } from '@/lib/auth'
 
@@ -18,12 +18,12 @@ export default function OrganizerEditForm({
   onCancel
 }: OrganizerEditFormProps) {
   const [formData, setFormData] = useState({
-    company_name: organizerData.company_name || '',
     name: organizerData.name || '',
     gender: organizerData.gender || '',
     age: organizerData.age || 0,
     phone_number: organizerData.phone_number || '',
     email: organizerData.email || '',
+    genre: organizerData.genre || '',
   })
 
   const [loading, setLoading] = useState(false)
@@ -57,30 +57,31 @@ export default function OrganizerEditForm({
     display: 'flex',
     flexDirection: 'row' as const,
     alignItems: 'center',
-    padding: '12px 16px',
+    padding: '0 16px',
     gap: '10px',
     width: '100%',
-    height: '48px',
+    height: '44px',
     background: '#FFFFFF',
     border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
     borderRadius: '8px'
   })
 
   const labelStyle = {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
     fontSize: '14px',
-    fontWeight: 500,
+    fontStyle: 'italic' as const,
+    fontWeight: 700,
     lineHeight: '120%',
-    color: '#000000',
-    marginBottom: '10px',
+    color: '#2C3E50',
+    marginBottom: '8px',
     display: 'block' as const
   }
 
   const inputStyle = (hasValue: boolean) => ({
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '16px',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+    fontSize: '15px',
     lineHeight: '150%',
-    color: hasValue ? '#000000' : '#6B6B6B',
+    color: hasValue ? '#2C3E50' : '#6C757D',
     border: 'none',
     outline: 'none',
     width: '100%',
@@ -113,12 +114,12 @@ export default function OrganizerEditForm({
     try {
       // バリデーション
       const newErrors: Record<string, boolean> = {}
-      if (!formData.company_name.trim()) newErrors.company_name = true
       if (!formData.name.trim()) newErrors.name = true
       if (!formData.gender) newErrors.gender = true
       if (!validateAge(formData.age)) newErrors.age = true
       if (!formData.phone_number.trim() || !validatePhoneNumber(formData.phone_number)) newErrors.phone_number = true
       if (!formData.email.trim() || !validateEmail(formData.email)) newErrors.email = true
+      if (!formData.genre) newErrors.genre = true
 
       if (Object.keys(newErrors).length > 0) {
         setErrors(newErrors)
@@ -201,80 +202,112 @@ export default function OrganizerEditForm({
     }
   }
 
+  const [isDesktop, setIsDesktop] = useState(false)
+
+  // 画面サイズを検出
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setIsDesktop(window.innerWidth >= 1024)
+      const checkScreenSize = () => {
+        setIsDesktop(window.innerWidth >= 1024)
+      }
+      window.addEventListener('resize', checkScreenSize)
+      return () => window.removeEventListener('resize', checkScreenSize)
+    }
+  }, [])
+
   return (
-    <div style={{ background: '#F7F7F7', minHeight: '100vh' }}>
-      <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px', paddingTop: '24px' }}>
-          <button
-            onClick={onCancel}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '16px',
-              lineHeight: '150%',
-              color: '#FF8A5C',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px'
-            }}
-          >
-            ← キャンセル
-          </button>
-          <h1 style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '20px',
+    <div style={{ 
+      position: 'relative',
+      width: '100%',
+      maxWidth: isDesktop ? '600px' : '393px',
+      minHeight: '852px',
+      margin: '0 auto',
+      background: '#E8F5F5'
+    }}>
+      {/* ヘッダー */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+        background: '#FF8A5C',
+        color: '#FFFFFF',
+        padding: '16px',
+        textAlign: 'center',
+        fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+        fontSize: '18px',
+        fontWeight: 700,
+        lineHeight: '120%',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+        maxWidth: isDesktop ? '1000px' : '393px',
+        margin: '0 auto',
+        boxSizing: 'border-box',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '64px'
+      }}>
+        <button
+          onClick={onCancel}
+          style={{
+            position: 'absolute',
+            left: '16px',
+            background: 'none',
+            border: 'none',
+            color: '#FFFFFF',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: '"Inter", sans-serif',
+            fontSize: '24px',
             fontWeight: 700,
-            lineHeight: '120%',
-            color: '#000000'
-          }}>登録情報編集</h1>
-          <div style={{ width: '60px' }}></div>
-        </div>
+            lineHeight: '1'
+          }}
+        >
+          &lt;
+        </button>
+        プロフィール編集
+      </div>
+
+      <div style={{ paddingTop: '88px', paddingBottom: '24px', paddingLeft: '20px', paddingRight: '20px' }}>
 
         <form onSubmit={handleSubmit}>
           <div style={{
             background: '#FFFFFF',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px'
+            borderRadius: '16px',
+            padding: '20px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', alignItems: 'center' }}>
-              {/* 会社名 */}
-              <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="company_name">
-                <label style={labelStyle}>会社名</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.company_name), width: '100%' }}>
-                    <input
-                      type="text"
-                      name="company_name"
-                      value={formData.company_name}
-                      onChange={handleInputChange}
-                      placeholder="株式会社サンプル"
-                      style={inputStyle(!!formData.company_name)}
-                    />
-                  </div>
-                </div>
-                {errors.company_name && (
-                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
-                )}
-              </div>
+            <h2 style={{
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+              fontSize: '20px',
+              fontStyle: 'italic',
+              fontWeight: 700,
+              lineHeight: '120%',
+              color: '#2C3E50',
+              marginBottom: '24px',
+              paddingLeft: '4px'
+            }}>
+              情報を入力してください
+            </h2>
 
-              {/* 名前 */}
-              <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="name">
-                <label style={labelStyle}>名前</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.name), width: '100%' }}>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="山田太郎"
-                      style={inputStyle(!!formData.name)}
-                    />
-                  </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {/* お名前 */}
+              <div style={{ width: '100%', maxWidth: '289px', position: 'relative' }} data-error-field="name">
+                <label style={labelStyle}>お名前</label>
+                <div style={{ ...formFieldStyle(errors.name), width: '100%' }}>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="例: 山田太郎"
+                    style={inputStyle(!!formData.name)}
+                  />
                 </div>
                 {errors.name && (
                   <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
@@ -282,57 +315,58 @@ export default function OrganizerEditForm({
               </div>
 
               {/* 性別 */}
-              <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="gender">
+              <div style={{ width: '100%', maxWidth: '289px', position: 'relative' }} data-error-field="gender">
                 <label style={labelStyle}>性別</label>
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-                  {(['男性', '女性', 'その他'] as const).map((option) => {
-                    const value = option === '男性' ? '男' : option === '女性' ? '女' : 'それ以外'
-                    return (
-                      <label key={option} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '8px' }}>
-                        <input
-                          type="radio"
-                          name="gender"
-                          value={value}
-                          checked={formData.gender === value}
-                          onChange={handleInputChange}
-                          style={{
-                            width: '20px',
-                            height: '20px',
-                            border: '1px solid #E5E5E5',
-                            accentColor: formData.gender === value ? '#FF8A5C' : undefined
-                          }}
-                        />
-                        <span style={{
-                          fontFamily: 'Inter, sans-serif',
-                          fontSize: '16px',
-                          lineHeight: '150%',
-                          color: '#000000'
-                        }}>{option}</span>
-                      </label>
-                    )
-                  })}
+                <div style={{ ...formFieldStyle(errors.gender), width: '100%', position: 'relative' }}>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    style={{
+                      ...inputStyle(!!formData.gender),
+                      appearance: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">選択してください</option>
+                    <option value="男">男性</option>
+                    <option value="女">女性</option>
+                    <option value="それ以外">その他</option>
+                  </select>
+                  <svg
+                    width="8"
+                    height="5"
+                    viewBox="0 0 8 5"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      position: 'absolute',
+                      right: '16px',
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    <path d="M1 1L4 4L7 1" stroke="#6C757D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
                 </div>
                 {errors.gender && (
-                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
+                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>選択してください</p>
                 )}
               </div>
 
               {/* 年齢 */}
-              <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="age">
+              <div style={{ width: '100%', maxWidth: '289px', position: 'relative' }} data-error-field="age">
                 <label style={labelStyle}>年齢</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
-                    <input
-                      type="number"
-                      name="age"
-                      min="0"
-                      max="100"
-                      value={formData.age || ''}
-                      onChange={handleInputChange}
-                      placeholder="25"
-                      style={inputStyle(formData.age > 0)}
-                    />
-                  </div>
+                <div style={{ ...formFieldStyle(errors.age), width: '100%' }}>
+                  <input
+                    type="number"
+                    name="age"
+                    min="0"
+                    max="100"
+                    value={formData.age || ''}
+                    onChange={handleInputChange}
+                    placeholder="例: 35"
+                    style={inputStyle(formData.age > 0)}
+                  />
                 </div>
                 {errors.age && (
                   <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
@@ -340,19 +374,17 @@ export default function OrganizerEditForm({
               </div>
 
               {/* 電話番号 */}
-              <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="phone_number">
+              <div style={{ width: '100%', maxWidth: '289px', position: 'relative' }} data-error-field="phone_number">
                 <label style={labelStyle}>電話番号</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.phone_number), width: '100%' }}>
-                    <input
-                      type="tel"
-                      name="phone_number"
-                      value={formData.phone_number}
-                      onChange={handleInputChange}
-                      placeholder="01234567890"
-                      style={inputStyle(!!formData.phone_number)}
-                    />
-                  </div>
+                <div style={{ ...formFieldStyle(errors.phone_number), width: '100%' }}>
+                  <input
+                    type="tel"
+                    name="phone_number"
+                    value={formData.phone_number}
+                    onChange={handleInputChange}
+                    placeholder="例: 090-1234-5678"
+                    style={inputStyle(!!formData.phone_number)}
+                  />
                 </div>
                 {errors.phone_number && (
                   <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
@@ -360,67 +392,86 @@ export default function OrganizerEditForm({
               </div>
 
               {/* メールアドレス */}
-              <div style={{ width: '100%', maxWidth: '330px', height: '73px', position: 'relative' }} data-error-field="email">
+              <div style={{ width: '100%', maxWidth: '289px', position: 'relative' }} data-error-field="email">
                 <label style={labelStyle}>メールアドレス</label>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '10px' }}>
-                  <div style={{ ...formFieldStyle(errors.email), width: '100%' }}>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      placeholder="kitchencar@gmail.com"
-                      style={inputStyle(!!formData.email)}
-                    />
-                  </div>
+                <div style={{ ...formFieldStyle(errors.email), width: '100%' }}>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    placeholder="例: example@email.com"
+                    style={inputStyle(!!formData.email)}
+                  />
                 </div>
                 {errors.email && (
                   <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>入力してください</p>
                 )}
               </div>
+
+              {/* ジャンル */}
+              <div style={{ width: '100%', maxWidth: '289px', position: 'relative' }} data-error-field="genre">
+                <label style={labelStyle}>ジャンル</label>
+                <div style={{ ...formFieldStyle(errors.genre), width: '100%', position: 'relative' }}>
+                  <select
+                    name="genre"
+                    value={formData.genre}
+                    onChange={handleInputChange}
+                    style={{
+                      ...inputStyle(!!formData.genre),
+                      appearance: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">選択してください</option>
+                    <option value="飲食">飲食</option>
+                    <option value="その他">その他</option>
+                  </select>
+                  <svg
+                    width="8"
+                    height="5"
+                    viewBox="0 0 8 5"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    style={{
+                      position: 'absolute',
+                      right: '16px',
+                      pointerEvents: 'none'
+                    }}
+                  >
+                    <path d="M1 1L4 4L7 1" stroke="#6C757D" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                {errors.genre && (
+                  <p style={{ fontSize: '12px', color: '#FF3B30', marginTop: '4px' }}>選択してください</p>
+                )}
+              </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', marginBottom: '24px' }}>
-            <button
-              type="button"
-              onClick={onCancel}
-              style={{
-                padding: '16px 24px',
-                background: '#FFFFFF',
-                color: '#000000',
-                borderRadius: '8px',
-                border: '1px solid #E5E5E5',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
-                fontWeight: 700,
-                lineHeight: '19px',
-                cursor: 'pointer',
-                flex: 1,
-                maxWidth: '157px'
-              }}
-            >
-              キャンセル
-            </button>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
             <button
               type="submit"
               disabled={loading}
               style={{
-                padding: '16px 24px',
+                width: '100%',
+                maxWidth: '289px',
+                height: '52px',
+                padding: '0',
                 background: loading ? '#D9D9D9' : '#FF8A5C',
                 color: '#FFFFFF',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 border: 'none',
-                fontFamily: 'Inter, sans-serif',
-                fontSize: '16px',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '15px',
+                fontStyle: 'italic',
                 fontWeight: 700,
-                lineHeight: '19px',
+                lineHeight: '52px',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                flex: 1,
-                maxWidth: '157px'
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
               }}
             >
-              {loading ? '更新中...' : '更新'}
+              {loading ? '保存中...' : '保存する'}
             </button>
           </div>
         </form>

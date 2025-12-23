@@ -503,19 +503,21 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   const cardStyle = {
     background: '#FFFFFF',
     boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-    borderRadius: '12px',
-    padding: '24px',
+    borderRadius: '16px',
+    padding: '20px',
     marginBottom: '24px'
   }
 
   const sectionTitleStyle = {
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '16px',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+    fontSize: '20px',
+    fontStyle: 'italic' as const,
     fontWeight: 700,
     lineHeight: '120%',
-    color: '#000000',
+    color: '#2C3E50',
     marginBottom: '24px',
-    textAlign: 'center' as const
+    textAlign: 'left' as const,
+    paddingLeft: '4px'
   }
 
   const fieldsContainerStyle = {
@@ -527,17 +529,18 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
 
   const fieldWrapperStyle = {
     width: '100%',
-    maxWidth: '330px',
+    maxWidth: '289px',
     position: 'relative' as const
   }
 
   const labelStyle = {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
     fontSize: '14px',
-    fontWeight: 500,
+    fontStyle: 'italic' as const,
+    fontWeight: 700,
     lineHeight: '120%',
-    color: '#000000',
-    marginBottom: '10px',
+    color: '#2C3E50',
+    marginBottom: '8px',
     display: 'block' as const
   }
 
@@ -545,22 +548,24 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     boxSizing: 'border-box' as const,
     display: 'flex',
     flexDirection: 'row' as const,
-    alignItems: options?.minHeight && options.minHeight > 48 ? 'flex-start' : 'center',
-    padding: '12px 16px',
+    alignItems: options?.minHeight && options.minHeight > 44 ? 'flex-start' : 'center',
+    padding: '0 16px',
     gap: '10px',
     width: '100%',
     minWidth: 0,
-    minHeight: options?.minHeight ?? 56,
+    minHeight: options?.minHeight ?? 44,
+    height: options?.minHeight ? undefined : '44px',
+    maxWidth: '289px',
     background: '#FFFFFF',
-    border: hasError ? '1px solid #FF3B30' : '1px solid #E5E5E5',
+    border: hasError ? '1px solid #FF3B30' : '1px solid #E9ECEF',
     borderRadius: '8px'
   })
 
   const inputStyle = (hasValue: boolean) => ({
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '16px',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+    fontSize: '15px',
     lineHeight: '150%',
-    color: hasValue ? '#000000' : '#6B6B6B',
+    color: hasValue ? '#2C3E50' : '#6C757D',
     border: 'none',
     outline: 'none',
     width: '100%',
@@ -569,10 +574,10 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   })
 
   const textareaStyle = (hasValue: boolean) => ({
-    fontFamily: 'Inter, sans-serif',
-    fontSize: '16px',
+    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+    fontSize: '15px',
     lineHeight: '150%',
-    color: hasValue ? '#000000' : '#6B6B6B',
+    color: hasValue ? '#2C3E50' : '#6C757D',
     border: 'none',
     outline: 'none',
     width: '100%',
@@ -1011,37 +1016,18 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   // ステップ3: 登録完了画面
   if (currentStep === 3 && submittedEvent) {
   return (
-      <div style={{ background: '#E8F5F5', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', padding: '40px 20px' }}>
-        <div style={{ maxWidth: '393px', width: '100%' }}>
-          {/* ヘッダー */}
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: 1000,
-            background: '#FFFFFF',
-            padding: '16px',
-            textAlign: 'center',
-            fontFamily: '"Noto Sans JP", sans-serif',
-            fontSize: '18px',
-            fontWeight: 700,
-            lineHeight: '120%',
-            color: '#2C3E50',
-            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-            maxWidth: '1000px',
-            margin: '0 auto'
-          }}>
-            主催者イベント掲載完了
-          </div>
+      <div style={{ background: '#E8F5F5', minHeight: '100vh' }}>
+        <div className="container mx-auto" style={{ padding: '9px 16px', maxWidth: '394px' }}>
+          <div style={{ paddingTop: '24px' }}>
+            <ProgressIndicator />
 
-          <div style={{ paddingTop: '64px', paddingBottom: '24px' }}>
             <div style={{
               background: '#FFFFFF',
               borderRadius: '16px',
               padding: '48px 24px',
               textAlign: 'center',
-              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+              marginTop: '24px'
             }}>
               {/* チェックマークアイコン */}
               <div style={{
@@ -1054,67 +1040,74 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                 justifyContent: 'center',
                 margin: '0 auto 40px'
               }}>
-                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M20 30L14 24L11 27L20 36L37 19L34 16L20 30Z" fill="#FFFFFF"/>
+                <svg width="33" height="21" viewBox="0 0 33 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2 10.5L12 19.5L31 2" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
 
               {/* タイトル */}
               <h2 style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '20px',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '24px',
                 fontWeight: 700,
                 lineHeight: '120%',
                 color: '#2C3E50',
                 marginBottom: '16px',
                 marginTop: 0
               }}>
-                主催者イベント掲載完了
+                登録完了
               </h2>
 
               {/* 説明テキスト */}
               <p style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '16px',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '14px',
                 lineHeight: '150%',
                 color: '#6C757D',
-                marginBottom: '32px',
+                marginBottom: '8px',
                 marginTop: 0
               }}>
-                イベントが正常に掲載されました。
+                イベントが完了しました
+              </p>
+              <p style={{
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '14px',
+                lineHeight: '150%',
+                color: '#6C757D',
+                marginBottom: '40px',
+                marginTop: 0
+              }}>
+                運営の承諾があり次第出店者募集を始めます
               </p>
 
               {/* ボタン */}
-              <button
-                type="button"
-                onClick={() => {
-                  onEventCreated(submittedEvent)
-                  onCancel()
-                }}
-                style={{
-                  width: '100%',
-                  padding: '12px 24px',
-                  background: '#FF8A5C',
-                  borderRadius: '8px',
-                  border: 'none',
-                  fontFamily: '"Noto Sans JP", sans-serif',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  lineHeight: '120%',
-                  color: '#FFFFFF',
-                  cursor: 'pointer',
-                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-                  transition: 'all 0.2s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#FF7840'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#FF8A5C'
-                }}
-              >
-                ホームへ戻る
-              </button>
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onEventCreated(submittedEvent)
+                    onCancel()
+                  }}
+                  style={{
+                    width: '100%',
+                    maxWidth: '289px',
+                    height: '52px',
+                    padding: '0',
+                    background: '#FF8A5C',
+                    borderRadius: '12px',
+                    border: 'none',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '16px',
+                    fontWeight: 700,
+                    lineHeight: '52px',
+                    color: '#FFFFFF',
+                    cursor: 'pointer',
+                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  ホームへ戻る
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1168,53 +1161,366 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
           }}>
             <h2 style={{
-              fontFamily: 'Inter, sans-serif',
+              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
               fontSize: '20px',
+              fontStyle: 'italic',
               fontWeight: 700,
               lineHeight: '120%',
-              color: '#000000',
+              color: '#2C3E50',
               marginBottom: '24px',
-              textAlign: 'center'
+              textAlign: 'left',
+              paddingLeft: '4px'
             }}>
               イベント情報を確認してください
             </h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div>
-                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>イベント名</div>
-                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.event_name}</div>
+                <label style={labelStyle}>イベント名</label>
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                  lineHeight: '150%',
+                  color: '#2C3E50',
+                  margin: 0
+                }}>{formData.event_name || '未入力'}</p>
               </div>
               <div>
-                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>ジャンル</div>
-                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.genre}</div>
+                <label style={labelStyle}>イベント名フリガナ</label>
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                  lineHeight: '150%',
+                  color: '#2C3E50',
+                  margin: 0
+                }}>{formData.event_name_furigana || '未入力'}</p>
               </div>
               <div>
-                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>開催期間</div>
-                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.event_display_period}</div>
+                <label style={labelStyle}>ジャンル</label>
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                  lineHeight: '150%',
+                  color: '#2C3E50',
+                  margin: 0
+                }}>{formData.genre || '未選択'}</p>
               </div>
               <div>
-                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>会場名</div>
-                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.venue_name}</div>
+                <label style={labelStyle}>イベント日程</label>
+                {formData.schedules && formData.schedules.length > 0 ? (
+                  formData.schedules.map((schedule, index) => (
+                    <p key={index} style={{
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      lineHeight: '150%',
+                      color: '#2C3E50',
+                      margin: index > 0 ? '8px 0 0 0' : '0'
+                    }}>
+                      {schedule.date ? formatDateToJapanese(schedule.date) : '未入力'}
+                    </p>
+                  ))
+                ) : (
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>未入力</p>
+                )}
               </div>
               <div>
-                <div style={{ fontSize: '14px', color: '#6C757D', marginBottom: '4px' }}>連絡先</div>
-                <div style={{ fontSize: '16px', color: '#2C3E50', fontWeight: 500 }}>{formData.contact_name} ({formData.contact_phone})</div>
+                <label style={labelStyle}>イベント開催時間</label>
+                {formData.schedules && formData.schedules.length > 0 ? (
+                  formData.schedules.map((schedule, index) => (
+                    <p key={index} style={{
+                      fontFamily: '"Inter", sans-serif',
+                      fontSize: '15px',
+                      fontWeight: 400,
+                      lineHeight: '150%',
+                      color: '#2C3E50',
+                      margin: index > 0 ? '8px 0 0 0' : '0'
+                    }}>
+                      {schedule.start_time && schedule.end_time ? `${schedule.start_time}~${schedule.end_time}` : '未入力'}
+                    </p>
+                  ))
+                ) : (
+                  <p style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>未入力</p>
+                )}
               </div>
+              {formData.event_period_notes && (
+                <div>
+                  <label style={labelStyle}>イベント日程の備考</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.event_period_notes}</p>
+                </div>
+              )}
+              <div>
+                <label style={labelStyle}>出店者募集期間</label>
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                  lineHeight: '150%',
+                  color: '#2C3E50',
+                  margin: 0
+                }}>{formData.application_display_period || '未入力'}</p>
+              </div>
+              {formData.application_notes && (
+                <div>
+                  <label style={labelStyle}>出店者募集期間の備考</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.application_notes}</p>
+                </div>
+              )}
+              {formData.lead_text && (
+                <div>
+                  <label style={labelStyle}>イベントのリードテキスト</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.lead_text}</p>
+                </div>
+              )}
+              {formData.event_introduction_text && (
+                <div>
+                  <label style={labelStyle}>イベントの概要</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0,
+                    whiteSpace: 'pre-wrap'
+                  }}>{formData.event_introduction_text}</p>
+                </div>
+              )}
+              {formData.event_description && (
+                <div>
+                  <label style={labelStyle}>イベントの詳細</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0,
+                    whiteSpace: 'pre-wrap'
+                  }}>{formData.event_description}</p>
+                </div>
+              )}
+              <div>
+                <label style={labelStyle}>会場名</label>
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '15px',
+                  fontWeight: 400,
+                  lineHeight: '150%',
+                  color: '#2C3E50',
+                  margin: 0
+                }}>{formData.venue_name || '未入力'}</p>
+              </div>
+              {formData.venue_postal_code && (
+                <div>
+                  <label style={labelStyle}>郵便番号</label>
+                  <p style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.venue_postal_code}</p>
+                </div>
+              )}
+              {formData.venue_city && (
+                <div>
+                  <label style={labelStyle}>都道府県</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.venue_city}</p>
+                </div>
+              )}
+              {formData.venue_town && (
+                <div>
+                  <label style={labelStyle}>市区町村・郡</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.venue_town}</p>
+                </div>
+              )}
+              {formData.venue_address && (
+                <div>
+                  <label style={labelStyle}>細かい住所</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.venue_address}</p>
+                </div>
+              )}
+              {formData.homepage_url && (
+                <div>
+                  <label style={labelStyle}>イベントホームページURL</label>
+                  <p style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.homepage_url}</p>
+                </div>
+              )}
+              {formData.related_page_url && (
+                <div>
+                  <label style={labelStyle}>イベント関連ページURL</label>
+                  <p style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.related_page_url}</p>
+                </div>
+              )}
+              {formData.contact_name && (
+                <div>
+                  <label style={labelStyle}>連絡先担当者名</label>
+                  <p style={{
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.contact_name}</p>
+                </div>
+              )}
+              {formData.contact_phone && (
+                <div>
+                  <label style={labelStyle}>連絡先電話番号</label>
+                  <p style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.contact_phone}</p>
+                </div>
+              )}
+              {formData.contact_email && (
+                <div>
+                  <label style={labelStyle}>連絡先メールアドレス</label>
+                  <p style={{
+                    fontFamily: '"Inter", sans-serif',
+                    fontSize: '15px',
+                    fontWeight: 400,
+                    lineHeight: '150%',
+                    color: '#2C3E50',
+                    margin: 0
+                  }}>{formData.contact_email}</p>
+                </div>
+              )}
+              {imageUrls.main && (
+                <div>
+                  <label style={labelStyle}>イベントメイン画像</label>
+                  <div style={{
+                    width: '289px',
+                    height: '187px',
+                    background: '#D9D9D9',
+                    borderRadius: '8px',
+                    marginTop: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src={imageUrls.main} alt="メイン画像" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'cover' }} />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{
-              ...buttonPrimaryStyle,
-              width: '100%',
-              background: loading ? '#D9D9D9' : '#FF8A5C',
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
-          >
-            {loading ? (eventId ? '更新中...' : '作成中...') : '次へ'}
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              style={{
+                width: '100%',
+                maxWidth: '289px',
+                height: '52px',
+                padding: '0',
+                background: loading ? '#D9D9D9' : '#FF8A5C',
+                borderRadius: '12px',
+                border: 'none',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '15px',
+                fontStyle: 'italic',
+                fontWeight: 700,
+                lineHeight: '52px',
+                color: '#FFFFFF',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+              }}
+            >
+              {loading ? (eventId ? '更新中...' : '作成中...') : '次へ進む'}
+              {!loading && (
+                <svg width="5" height="10" viewBox="0 0 5 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L4 5L1 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     )
@@ -1275,12 +1581,12 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
         <ProgressIndicator />
 
         <form onSubmit={(e) => { e.preventDefault(); handleNextToConfirmation(); }}>
-          {/* 基本情報 */}
+          {/* メインカード */}
           <div style={cardStyle}>
-            <h2 style={sectionTitleStyle}>基本情報</h2>
+            <h2 style={sectionTitleStyle}>イベント情報を入力してください</h2>
             <div style={fieldsContainerStyle}>
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>イベント名称</label>
+                <label style={labelStyle}>イベント名</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-event_name"
@@ -1290,13 +1596,13 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_name}
                     onChange={(e) => setFormData({ ...formData, event_name: e.target.value })}
                     style={inputStyle(!!formData.event_name)}
-                    placeholder="イベント名称を入力"
+                    placeholder="例: 静岡フリーマーケット"
                   />
                 </div>
               </div>
 
               <div style={fieldWrapperStyle}>
-                <label style={labelStyle}>イベント名称フリガナ</label>
+                <label style={labelStyle}>イベント名フリガナ</label>
                 <div style={formFieldStyle(false)}>
                   <input
                     id="field-event_name_furigana"
@@ -1306,7 +1612,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
                     value={formData.event_name_furigana}
                     onChange={(e) => setFormData({ ...formData, event_name_furigana: e.target.value })}
                     style={inputStyle(!!formData.event_name_furigana)}
-                    placeholder="イベント名称フリガナを入力"
+                    placeholder="例: シズオカフリーマーケット"
                   />
                 </div>
               </div>

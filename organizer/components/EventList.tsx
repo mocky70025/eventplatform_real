@@ -8,9 +8,10 @@ interface EventListProps {
   onEventUpdated: () => void
   onEdit?: (event: Event) => void
   onViewApplications?: (event: Event) => void
+  onViewDetail?: (event: Event) => void
 }
 
-export default function EventList({ events, onEventUpdated, onEdit, onViewApplications }: EventListProps) {
+export default function EventList({ events, onEventUpdated, onEdit, onViewApplications, onViewDetail }: EventListProps) {
   const [deleting, setDeleting] = useState<string | null>(null)
 
   const handleDelete = async (eventId: string) => {
@@ -38,12 +39,13 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
     return (
       <div style={{
         background: '#FFFFFF',
-        border: '1px solid #E9ECEF',
+        borderRadius: '16px',
         padding: '48px 24px',
-        textAlign: 'center'
+        textAlign: 'center',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
       }}>
         <p style={{
-          fontFamily: '"Noto Sans JP", sans-serif',
+          fontFamily: '"Inter", "Noto Sans JP", sans-serif',
           fontSize: '16px',
           lineHeight: '150%',
           color: '#6C757D'
@@ -52,39 +54,64 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
     )
   }
 
+  // 日付をフォーマット
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return ''
+    const date = new Date(dateString)
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    return `${year}年${month}月${day}日`
+  }
+
+  // 期間をフォーマット
+  const formatPeriod = (event: Event) => {
+    if (event.event_display_period) {
+      return event.event_display_period
+    }
+    const startDate = formatDate(event.event_start_date)
+    const endDate = formatDate(event.event_end_date)
+    if (startDate && endDate && startDate !== endDate) {
+      return `${startDate} - ${endDate}`
+    }
+    return startDate || endDate || ''
+  }
+
+  // 場所をフォーマット
+  const formatLocation = (event: Event) => {
+    const parts = []
+    if (event.venue_city) parts.push(event.venue_city)
+    if (event.venue_town) parts.push(event.venue_town)
+    return parts.join(' ') || ''
+  }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {events.map((event) => {
         return (
           <div
             key={event.id}
             onClick={() => {
-              // クリック時に詳細を表示する場合はここで処理
-              // 現在はクリックしても何もしない（SVGデザインに合わせてシンプルに）
+              if (onViewDetail) {
+                onViewDetail(event)
+              }
             }}
             style={{
               background: '#FFFFFF',
-              border: '1px solid #E9ECEF',
-              borderRadius: '0',
-              padding: '12px',
+              borderRadius: '16px',
+              padding: '16px',
               display: 'flex',
               gap: '16px',
               cursor: 'pointer',
-              transition: 'background-color 0.2s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = '#F8F9FA'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = '#FFFFFF'
+              boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
             }}
           >
             {/* 左側: 画像 */}
             <div style={{
-              width: '160px',
-              height: '139px',
+              width: '120px',
+              height: '80px',
               background: '#E9ECEF',
-              borderRadius: '0',
+              borderRadius: '8px',
               flexShrink: 0,
               display: 'flex',
               alignItems: 'center',
@@ -105,18 +132,19 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
                 <div style={{
                   width: '100%',
                   height: '100%',
-                  background: '#E9ECEF'
+                  background: '#E9ECEF',
+                  borderRadius: '8px'
                 }} />
               )}
             </div>
             
-            {/* 右側: タイトルと説明 */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {/* 右側: タイトルと情報 */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px', justifyContent: 'center' }}>
               <h3 style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                 fontSize: '16px',
                 fontWeight: 700,
-                lineHeight: '150%',
+                lineHeight: '120%',
                 color: '#2C3E50',
                 margin: 0
               }}>
@@ -124,14 +152,26 @@ export default function EventList({ events, onEventUpdated, onEdit, onViewApplic
               </h3>
               
               <p style={{
-                fontFamily: '"Noto Sans JP", sans-serif',
-                fontSize: '16px',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '12px',
                 lineHeight: '150%',
                 color: '#6C757D',
                 margin: 0
               }}>
-                {event.lead_text || 'イベントの説明がここに表示されます'}
+                {formatPeriod(event)}
               </p>
+
+              {formatLocation(event) && (
+                <p style={{
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontSize: '12px',
+                  lineHeight: '150%',
+                  color: '#6C757D',
+                  margin: 0
+                }}>
+                  {formatLocation(event)}
+                </p>
+              )}
             </div>
           </div>
         )
