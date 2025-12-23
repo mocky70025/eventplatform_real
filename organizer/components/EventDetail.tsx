@@ -10,7 +10,7 @@ interface EventDetailProps {
 
 export default function EventDetail({ event, onBack, onEdit }: EventDetailProps) {
   // 日付をフォーマット
-  const formatDate = (dateString: string | null) => {
+  const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return ''
     const date = new Date(dateString)
     const year = date.getFullYear()

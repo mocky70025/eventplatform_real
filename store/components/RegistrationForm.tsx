@@ -1411,7 +1411,6 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         </div>
 
       </div>
-      </div>
     </div>
   )
 
@@ -1925,6 +1924,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
           </button>
         </div>
       </div>
+      </div>
     </div>
   )
 
@@ -2246,6 +2246,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
             ホームへ戻る
           </button>
         </div>
+      </div>
       </div>
     </div>
   )
