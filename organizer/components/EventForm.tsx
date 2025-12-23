@@ -241,6 +241,9 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1) // ステップ1: 全部の情報入力、ステップ2: 確認、ステップ3: 登録完了
   const [submittedEvent, setSubmittedEvent] = useState<Event | null>(null) // 登録完了画面で表示するイベント情報
 
+  // 編集モードかどうかを判定
+  const isEditMode = !!(initialEvent?.id || eventId)
+
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const lastPayloadRef = useRef<string>('')
   const draftExistsRef = useRef(false)
@@ -1217,9 +1220,6 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
     )
   }
 
-  // 編集モードかどうかを判定
-  const isEditMode = !!(initialEvent?.id || eventId)
-
   // ステップ1: 全部の情報入力
   return (
     <div style={{ background: '#E8F5F5', minHeight: '100vh' }}>
@@ -2000,6 +2000,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   )

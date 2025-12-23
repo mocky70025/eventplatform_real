@@ -183,8 +183,6 @@ export default function EventApplications({ eventId, eventName, organizerId, org
       // 申し込み一覧を更新
       await fetchApplications()
 
-      if (error) throw error
-
       // イベント情報を取得
       const { data: eventData } = await supabase
         .from('events')
