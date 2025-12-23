@@ -301,7 +301,7 @@ export default function WelcomeScreen() {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      background: '#E8F5F5',
+      background: 'linear-gradient(-44.94deg, rgba(255, 245, 240, 1) 0%, rgba(232, 245, 245, 1) 99.95%)',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
