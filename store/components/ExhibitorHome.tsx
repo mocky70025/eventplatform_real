@@ -204,7 +204,7 @@ export default function ExhibitorHome({ userProfile, onNavigate }: ExhibitorHome
                 background: 'white',
                 borderRadius: '12px',
                 padding: '16px',
-                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)'
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
                 cursor: 'pointer'
               }}
             >
