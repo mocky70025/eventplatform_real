@@ -42,16 +42,18 @@ export default function Home() {
           sessionStorage.removeItem('user_email')
           sessionStorage.removeItem('is_registered')
           sessionStorage.removeItem('email_confirmed')
+          sessionStorage.removeItem('show_email_sent')
           setUserProfile(null)
           setIsRegistered(false)
+          setHasActiveSession(false)
           return
         }
         
         // セッションが有効な場合のみ、認証情報を読み込む
         const savedIsRegistered = sessionStorage.getItem('is_registered')
         
-        // LINE認証のプロフィールを確認
-        if (savedProfile) {
+        // LINE認証のプロフィールを確認（セッションが有効な場合のみ）
+        if (savedProfile && session) {
           console.log('[Home] LINE Login profile found')
           try {
             const profile = JSON.parse(savedProfile) as LineProfile
