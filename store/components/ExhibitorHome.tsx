@@ -179,6 +179,13 @@ export default function ExhibitorHome({ userProfile, onNavigate }: ExhibitorHome
         width: '100%',
         maxWidth: '353px'
       }}>
+      {/* イベントリスト */}
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
         {events.length === 0 ? (
           <div style={{
             textAlign: 'center',
@@ -189,35 +196,29 @@ export default function ExhibitorHome({ userProfile, onNavigate }: ExhibitorHome
             イベントがありません
           </div>
         ) : (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px'
-          }}>
-            {events.map((event) => (
-              <div
-                key={event.id}
-                onClick={() => onNavigate('events')}
-                style={{
-                  background: '#FFFFFF',
-                  borderRadius: '16px',
-                  boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
-                  padding: '16px',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  gap: '16px'
-                }}
-              >
-                {/* 画像プレースホルダー */}
+          events.map((event) => (
+            <div
+              key={event.id}
+              onClick={() => onNavigate('events')}
+              style={{
+                background: 'white',
+                borderRadius: '12px',
+                padding: '16px',
+                boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)', // Shadow SM
+                cursor: 'pointer'
+              }}
+            >
+              <div style={{
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '12px'
+              }}>
                 <div style={{
                   width: '120px',
                   height: '80px',
-                  background: '#D9D9D9',
                   borderRadius: '8px',
+                  background: '#D9D9D9',
                   flexShrink: 0,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
                   overflow: 'hidden'
                 }}>
                   {event.main_image_url ? (
@@ -230,53 +231,58 @@ export default function ExhibitorHome({ userProfile, onNavigate }: ExhibitorHome
                         objectFit: 'cover'
                       }}
                     />
-                  ) : (
-                    <div style={{ color: '#6C757D', fontSize: '12px' }}>画像なし</div>
-                  )}
+                  ) : null}
                 </div>
-
-                {/* イベント情報 */}
-                <div style={{
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px'
-                }}>
-                  {/* イベント名 */}
-                  <div style={{
-                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                <div style={{ flex: 1 }}>
+                  <h3 style={{
+                    margin: '0 0 4px',
                     fontSize: '16px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontStyle: 'normal',
                     fontWeight: 700,
-                    color: '#2C3E50',
-                    lineHeight: '1.4'
+                    color: '#2C3E50'
                   }}>
                     {event.event_name}
-                  </div>
-
-                  {/* 日付 */}
+                  </h3>
                   <div style={{
-                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-                    fontSize: '12px',
-                    fontWeight: 400,
-                    color: '#6C757D'
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    marginBottom: '2px'
                   }}>
-                    {formatDateRange(event.event_start_date, event.event_end_date)}
+                    <img 
+                      src="/mdi_calendar-outline.svg" 
+                      alt="カレンダー" 
+                      style={{ width: '16px', height: '16px' }}
+                    />
+                    <p style={{
+                      margin: 0,
+                      fontSize: '12px',
+                      fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                      fontStyle: 'normal',
+                      fontWeight: 400,
+                      color: '#6C757D'
+                    }}>
+                      {formatDateRange(event.event_start_date, event.event_end_date)}
+                    </p>
                   </div>
-
-                  {/* 場所 */}
-                  <div style={{
-                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  <p style={{
+                    margin: 0,
                     fontSize: '12px',
+                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                    fontStyle: 'normal',
                     fontWeight: 400,
                     color: '#6C757D'
                   }}>
                     {formatLocation(event.venue_city, event.venue_town)}
-                  </div>
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))
         )}
+      </div>
+      </div>
       </div>
       </div>
       </div>

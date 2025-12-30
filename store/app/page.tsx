@@ -444,18 +444,11 @@ export default function Home() {
     </svg>
   )
 
-  const tabItems: Array<{ key: typeof currentView; label: string; icon: JSX.Element }> = [
-    { key: 'home', label: 'カレンダー', icon: <CalendarIcon /> },
-    { key: 'home', label: 'マイページ', icon: <ProfileIcon /> },
-    { key: 'events', label: '検索', icon: <SearchIcon /> },
-    { key: 'notifications', label: '設定', icon: <NotificationIcon /> }
-  ]
-
   // メール未確認の場合はバナーを表示
   const showEmailConfirmationBanner = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && userProfile?.email
 
   return (
-    <div style={{ background: '#fff5f0', minHeight: '100vh', paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 88px)' }}>
+    <div style={{ background: '#FFFFFF', minHeight: '100vh' }}>
       {showEmailConfirmationBanner && (
         <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
           <EmailConfirmationBanner email={userProfile.email} />
@@ -466,78 +459,186 @@ export default function Home() {
       <nav
         style={{
           position: 'fixed',
-          left: 0,
-          right: 0,
           bottom: 0,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '393px',
+          minWidth: '393px',
+          flexShrink: 0,
+          height: '80px',
+          background: '#E8F5F5', // Secondary Light（出店者用）
+          borderTop: '1px solid #E9ECEF',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          padding: '0 8px',
           zIndex: 1000,
-          background: '#FFFFFF',
-          borderTop: '1px solid #E5E5E5',
-          boxShadow: '0px -2px 8px rgba(0, 0, 0, 0.08)',
           willChange: 'transform',
           transition: 'transform 0.25s ease-out',
           transform: navVisible ? 'translateY(0) translateZ(0)' : 'translateY(110%) translateZ(0)'
         }}
       >
-        <div
+        <button
+          onClick={() => setCurrentView('notifications')}
           style={{
             display: 'flex',
-            justifyContent: 'space-around',
+            flexDirection: 'column',
             alignItems: 'center',
-            width: '100%',
-            padding: '8px 16px',
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 0) + 8px)'
+            gap: '4px',
+            flex: 1,
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer'
           }}
         >
-          {tabItems.map((item, index) => {
-            // カレンダーとマイページは両方homeビューに遷移
-            const viewKey = item.key === 'home' && index === 1 ? 'home' : item.key
-            const isActive = currentView === viewKey || (currentView === 'home' && item.key === 'home')
-            const activeColor = '#5DABA8'
-            const inactiveColor = '#666666'
-            return (
-              <button
-                key={`${item.key}-${index}`}
-                onClick={() => setCurrentView(viewKey)}
-                style={{
-                  flex: 1,
-                  background: 'transparent',
-                  border: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                  fontFamily: 'Inter, sans-serif'
-                }}
-              >
-                <span style={{ color: isActive ? activeColor : inactiveColor, position: 'relative' }}>
-                  {item.icon}
-                  {item.key === 'notifications' && unreadNotificationCount > 0 && (
-                    <span style={{
-                      position: 'absolute',
-                      top: '-4px',
-                      right: '-4px',
-                      width: '16px',
-                      height: '16px',
-                      borderRadius: '50%',
-                      background: '#FF3B30',
-                      color: '#FFFFFF',
-                      fontFamily: 'Inter, sans-serif',
-                      fontSize: '10px',
-                      fontWeight: 600,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}>
-                      {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
-                    </span>
-                  )}
-                </span>
-                <span style={{ fontSize: '12px', color: isActive ? activeColor : inactiveColor }}>{item.label}</span>
-              </button>
-            )
-          })}
-        </div>
+          <div style={{
+            width: '56px',
+            height: '56px',
+            background: 'white',
+            borderRadius: '8px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative'
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.89 22 12 22ZM18 16V11C18 7.93 16.36 5.36 13.5 4.68V4C13.5 3.17 12.83 2.5 12 2.5C11.17 2.5 10.5 3.17 10.5 4V4.68C7.63 5.36 6 7.92 6 11V16L4 18V19H20V18L18 16Z" fill="#2C3E50"/>
+            </svg>
+            {unreadNotificationCount > 0 && (
+              <span style={{
+                position: 'absolute',
+                top: '-4px',
+                right: '-4px',
+                width: '16px',
+                height: '16px',
+                borderRadius: '50%',
+                background: '#FF3B30',
+                color: '#FFFFFF',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: '10px',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {unreadNotificationCount > 9 ? '9+' : unreadNotificationCount}
+              </span>
+            )}
+          </div>
+          <span style={{
+            fontSize: '12px',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 400,
+            color: '#2C3E50'
+          }}>通知</span>
+        </button>
+        <button
+          onClick={() => setCurrentView('applications')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            flex: 1,
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          <div style={{
+            width: '56px',
+            height: '56px',
+            background: 'white',
+            borderRadius: '8px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M19 4H5C3.89 4 3 4.9 3 6V20C3 21.1 3.89 22 5 22H19C20.1 22 21 21.1 21 20V6C21 4.9 20.1 4 19 4ZM19 20H5V10H19V20ZM19 8H5V6H19V8Z" fill="#2C3E50"/>
+            </svg>
+          </div>
+          <span style={{
+            fontSize: '12px',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 400,
+            color: '#2C3E50'
+          }}>履歴</span>
+        </button>
+        <button
+          onClick={() => setCurrentView('events')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            flex: 1,
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          <div style={{
+            width: '56px',
+            height: '56px',
+            background: 'white',
+            borderRadius: '8px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z" fill="#2C3E50"/>
+            </svg>
+          </div>
+          <span style={{
+            fontSize: '12px',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 400,
+            color: '#2C3E50'
+          }}>検索</span>
+        </button>
+        <button
+          onClick={() => setCurrentView('profile')}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '4px',
+            flex: 1,
+            background: 'transparent',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          <div style={{
+            width: '56px',
+            height: '56px',
+            background: 'white',
+            borderRadius: '8px',
+            boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="#2C3E50"/>
+            </svg>
+          </div>
+          <span style={{
+            fontSize: '12px',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 400,
+            color: '#2C3E50'
+          }}>プロフィール</span>
+        </button>
       </nav>
     </div>
   )
