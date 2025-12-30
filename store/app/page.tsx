@@ -218,8 +218,17 @@ export default function Home() {
   }, [])
 
   if (loading) {
+    console.log('[Home] Still loading, showing LoadingSpinner')
     return <LoadingSpinner />
   }
+
+  console.log('[Home] Render check:', {
+    loading,
+    hasUserProfile: !!userProfile,
+    userProfile: userProfile ? { userId: userProfile.userId, authType: userProfile.authType } : null,
+    isRegistered,
+    hasActiveSession
+  })
 
   // EmailSent画面を表示するかチェック（セッションが有効な場合のみ）
   const showEmailSent = typeof window !== 'undefined' && 
@@ -227,12 +236,19 @@ export default function Home() {
     sessionStorage.getItem('show_email_sent') === 'true'
   
   if (showEmailSent) {
+    console.log('[Home] Showing EmailSent screen')
     return <EmailSent />
   }
 
   // ログイン状態のチェック
   if (!userProfile) {
     console.log('[Home] No userProfile, showing WelcomeScreen')
+    console.log('[Home] SessionStorage state:', {
+      line_profile: sessionStorage.getItem('line_profile') ? 'exists' : 'null',
+      auth_type: sessionStorage.getItem('auth_type'),
+      user_id: sessionStorage.getItem('user_id'),
+      is_registered: sessionStorage.getItem('is_registered')
+    })
     return <WelcomeScreen />
   }
 
