@@ -754,7 +754,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
       justifyContent: 'center',
       minHeight: '100vh',
       width: '100%',
-      background: '#FFF5F0',
+      background: '#E8F5F5',
       padding: isDesktop ? '40px 20px' : '20px'
     }}>
     <div style={{ 
@@ -1419,7 +1419,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     <div style={{ 
       minHeight: '100vh',
       width: '100%',
-      background: '#FFF5F0',
+      background: '#E8F5F5',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'flex-start',
@@ -2017,7 +2017,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     <div style={{ 
       minHeight: '100vh',
       width: '100%',
-      background: '#FFF5F0',
+      background: '#E8F5F5',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'flex-start',
