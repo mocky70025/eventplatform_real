@@ -60,7 +60,15 @@ export default function Home() {
         
         // LINE認証のプロフィールがない場合のみ、メール認証またはGoogle認証を確認
         if (!savedProfile) {
-          if (session && session.user) {
+          // セッションが無効な場合、sessionStorageをクリア
+          if (!session && (authType === 'email' || authType === 'google')) {
+            sessionStorage.removeItem('auth_type')
+            sessionStorage.removeItem('user_id')
+            sessionStorage.removeItem('user_email')
+            sessionStorage.removeItem('is_registered')
+            sessionStorage.removeItem('email_confirmed')
+            console.log('[Home] No valid session for email/google auth, cleared sessionStorage')
+          } else if (session && session.user) {
             // Supabaseのセッションが存在する場合、優先的に使用
             console.log('[Home] Auth session found:', session.user.id, 'authType from storage:', authType)
             

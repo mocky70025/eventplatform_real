@@ -22,6 +22,17 @@ export default function Home() {
         // Supabase Authのセッションを確認
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
+        // セッションが無効な場合、sessionStorageをクリア
+        if (!session) {
+          sessionStorage.removeItem('auth_type')
+          sessionStorage.removeItem('user_id')
+          sessionStorage.removeItem('user_email')
+          sessionStorage.removeItem('is_registered')
+          sessionStorage.removeItem('email_confirmed')
+          console.log('[Home] No valid session, cleared sessionStorage')
+          return
+        }
+        
         // セッションストレージから認証情報を確認
         const authType = sessionStorage.getItem('auth_type')
         const storedUserId = sessionStorage.getItem('user_id')
