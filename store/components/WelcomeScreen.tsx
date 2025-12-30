@@ -283,13 +283,11 @@ export default function WelcomeScreen() {
         width: '353px',
         background: 'white',
         borderRadius: '16px',
-        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', // Shadow LG
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         paddingTop: '32px',
         paddingBottom: '32px',
         paddingLeft: '20px',
         paddingRight: '20px',
-        position: 'relative',
-        minHeight: '472px',
         boxSizing: 'border-box'
       }}>
         {/* ロゴ */}
@@ -451,206 +449,105 @@ export default function WelcomeScreen() {
         {/* 初期画面：ログイン or 新規登録を選択 */}
         {authMode === 'initial' && !loginMethod && !registerMethod && (
           <div>
-            {/* ログインセクション */}
-            {activeTab === 'login' && (
-            <div>
+            {/* LINEボタン */}
+            <button
+              onClick={activeTab === 'login' ? handleLineLogin : handleLineRegister}
+              disabled={loading}
+              style={{
+                width: '100%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '16px 24px',
+                background: '#00C300',
+                borderRadius: '12px',
+                border: 'none',
+                fontSize: '16px',
+                fontFamily: '"Inter", sans-serif',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                color: '#FFFFFF',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                marginBottom: '16px'
+              }}
+            >
+              <div style={{ position: 'absolute', left: '24px' }}>
+                <LineIcon />
+              </div>
+              <span>LINE</span>
+            </button>
 
-              {/* LINEログインボタン */}
-              <button
-                onClick={handleLineLogin}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 24px',
-                  background: '#00C300', // LINE Green
-                  borderRadius: '12px',
-                  border: 'none',
-                  fontSize: '16px',
-                  fontFamily: '"Inter", sans-serif',
-                  fontStyle: 'normal',
-                  fontWeight: 600,
-                  color: '#FFFFFF',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                  marginBottom: '16px'
-                }}
-              >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <LineIcon />
-                </div>
-                <span>LINE</span>
-              </button>
+            {/* Googleボタン */}
+            <button
+              onClick={activeTab === 'login' ? handleGoogleLogin : handleGoogleRegister}
+              disabled={loading}
+              style={{
+                width: '100%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '16px 24px',
+                background: '#ffffff',
+                borderRadius: '12px',
+                border: '1px solid #E5E7EB',
+                fontSize: '16px',
+                fontFamily: '"Inter", sans-serif',
+                fontStyle: 'normal',
+                fontWeight: 600,
+                color: '#1A1A1A',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                marginBottom: '16px'
+              }}
+            >
+              <div style={{ position: 'absolute', left: '24px' }}>
+                <GoogleIcon />
+              </div>
+              <span>Google</span>
+            </button>
 
-              {/* Googleログインボタン */}
-              <button
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 24px',
-                  background: '#ffffff',
-                  borderRadius: '12px',
-                  border: '1px solid #E5E7EB',
-                  fontSize: '16px',
-                  fontFamily: '"Inter", sans-serif',
-                  fontStyle: 'normal',
-                  fontWeight: 600,
-                  color: '#1A1A1A',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                  marginBottom: '16px'
-                }}
-              >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <GoogleIcon />
-                </div>
-                <span>Google</span>
-              </button>
-
-              {/* メールアドレスログインボタン */}
-              <button
-                onClick={() => {
+            {/* メールアドレスボタン */}
+            <button
+              onClick={() => {
+                if (activeTab === 'login') {
                   setAuthMode('login')
                   setLoginMethod('email')
-                }}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 24px',
-                  background: '#5DABA8', // Secondary Main（出店者用）
-                  borderRadius: '12px',
-                  border: 'none',
-                  fontSize: '15px',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-                  fontStyle: 'normal',
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-                }}
-              >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <MailIcon color="#ffffff" />
-                </div>
-                <span>メールアドレス</span>
-              </button>
-            </div>
-            )}
-
-            {/* 新規登録セクション */}
-            {activeTab === 'register' && (
-            <div>
-              {/* LINE新規登録ボタン */}
-              <button
-                onClick={handleLineRegister}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 24px',
-                  background: '#00C300', // LINE Green
-                  borderRadius: '12px',
-                  border: 'none',
-                  fontSize: '16px',
-                  fontFamily: '"Inter", sans-serif',
-                  fontStyle: 'normal',
-                  fontWeight: 600,
-                  color: '#FFFFFF',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-                  marginBottom: '16px'
-                }}
-              >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <LineIcon />
-                </div>
-                <span>LINE</span>
-              </button>
-
-              {/* Google新規登録ボタン */}
-              <button
-                onClick={handleGoogleRegister}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 24px',
-                  background: '#ffffff',
-                  borderRadius: '12px',
-                  border: '1px solid #E5E7EB',
-                  fontSize: '16px',
-                  fontFamily: '"Inter", sans-serif',
-                  fontStyle: 'normal',
-                  fontWeight: 600,
-                  color: '#1A1A1A',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-                  marginBottom: '16px'
-                }}
-              >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <GoogleIcon />
-                </div>
-                <span>Google</span>
-              </button>
-
-              {/* メールアドレス新規登録ボタン */}
-              <button
-                onClick={() => {
+                } else {
                   setAuthMode('register')
                   setRegisterMethod('email')
-                }}
-                disabled={loading}
-                style={{
-                  width: '100%',
-                  position: 'relative',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  padding: '16px 24px',
-                  background: '#5DABA8', // Secondary Main（出店者用）
-                  borderRadius: '12px',
-                  border: 'none',
-                  fontSize: '15px',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-                  fontStyle: 'normal',
-                  fontWeight: 700,
-                  color: '#ffffff',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.6 : 1,
-                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-                }}
-              >
-                <div style={{ position: 'absolute', left: '24px' }}>
-                  <MailIcon color="#ffffff" />
-                </div>
-                <span>メールアドレス</span>
-              </button>
-            </div>
-            )}
+                }
+              }}
+              disabled={loading}
+              style={{
+                width: '100%',
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '16px 24px',
+                background: '#5DABA8',
+                borderRadius: '12px',
+                border: 'none',
+                fontSize: '15px',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontStyle: 'normal',
+                fontWeight: 700,
+                color: '#ffffff',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+              }}
+            >
+              <div style={{ position: 'absolute', left: '24px' }}>
+                <MailIcon color="#ffffff" />
+              </div>
+              <span>メールアドレス</span>
+            </button>
           </div>
         )}
 
