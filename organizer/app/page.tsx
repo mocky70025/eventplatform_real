@@ -19,20 +19,23 @@ export default function Home() {
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        // Supabase Authのセッションを確認
+        // まず、Supabase Authのセッションを確認
         const { data: { session }, error: sessionError } = await supabase.auth.getSession()
         
-        // セッションが無効な場合、sessionStorageをクリア
+        // セッションが無効な場合、すべてのsessionStorageをクリア
         if (!session) {
+          console.log('[Home] No valid session, clearing all sessionStorage')
           sessionStorage.removeItem('auth_type')
           sessionStorage.removeItem('user_id')
           sessionStorage.removeItem('user_email')
           sessionStorage.removeItem('is_registered')
           sessionStorage.removeItem('email_confirmed')
-          console.log('[Home] No valid session, cleared sessionStorage')
+          setUserProfile(null)
+          setIsRegistered(false)
           return
         }
         
+        // セッションが有効な場合のみ、認証情報を読み込む
         // セッションストレージから認証情報を確認
         const authType = sessionStorage.getItem('auth_type')
         const storedUserId = sessionStorage.getItem('user_id')
@@ -111,11 +114,23 @@ export default function Home() {
           })
         } else if ((authType === 'email' || authType === 'google') && storedUserId) {
           // セッションが存在しないが、セッションストレージにuser_idがある場合
+          // セッションを再確認
+          const { data: { session: storageSession } } = await supabase.auth.getSession()
+          
+          // セッションが無効な場合、sessionStorageをクリア
+          if (!storageSession) {
+            sessionStorage.removeItem('auth_type')
+            sessionStorage.removeItem('user_id')
+            sessionStorage.removeItem('user_email')
+            sessionStorage.removeItem('is_registered')
+            sessionStorage.removeItem('email_confirmed')
+            console.log('[Home] No valid session for email/google auth, cleared sessionStorage')
+            return
+          }
+          
           // メール確認待ちの状態で登録フォームにアクセスできるようにする
           console.log('[Home] Email auth - session not found, but user_id in storage:', storedUserId)
           
-          // セッションを確認して、メール確認が無効かどうかを判定
-          const { data: { session: storageSession } } = await supabase.auth.getSession()
           const emailConfirmedFromStorage = sessionStorage.getItem('email_confirmed') === 'true'
           
           // セッションが存在する場合、メール確認済みとして扱う
