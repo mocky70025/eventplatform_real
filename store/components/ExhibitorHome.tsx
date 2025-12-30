@@ -122,37 +122,62 @@ export default function ExhibitorHome({ userProfile, onNavigate }: ExhibitorHome
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      background: '#FFF5F0',
-      paddingBottom: '100px'
+      background: '#FFFFFF', // 外側は白
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
     }}>
+      <div style={{
+        width: '393px',
+        minWidth: '393px',
+        maxWidth: '393px',
+        flexShrink: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'stretch',
+        boxSizing: 'border-box'
+      }}>
       {/* ヘッダー */}
       <div style={{
         width: '100%',
+        flexShrink: 0,
         height: '64px',
-        background: '#5DABA8',
+        background: 'linear-gradient(180deg, #5DABA8 0%, #4A9A97 100%)', // Secondary Main（出店者用）
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'sticky',
-        top: 0,
-        zIndex: 100
+        position: 'relative',
+        boxSizing: 'border-box'
       }}>
-        <div style={{
-          fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+        <h1 style={{
+          margin: 0,
           fontSize: '18px',
+          fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+          fontStyle: 'normal',
           fontWeight: 700,
-          color: '#FFFFFF'
+          color: 'white'
         }}>
           マイイベント
-        </div>
+        </h1>
       </div>
 
-      {/* イベントリスト */}
       <div style={{
         width: '100%',
-        maxWidth: '393px',
-        margin: '0 auto',
-        padding: '20px'
+        flexShrink: 0,
+        background: '#E8F5F5', // スマホフレーム範囲内は薄い青緑（出店者用）
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        paddingTop: '16px',
+        paddingBottom: '80px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
+        boxSizing: 'border-box'
+      }}>
+      {/* コンテンツエリア */}
+      <div style={{
+        width: '100%',
+        maxWidth: '353px'
       }}>
         {events.length === 0 ? (
           <div style={{
@@ -252,6 +277,8 @@ export default function ExhibitorHome({ userProfile, onNavigate }: ExhibitorHome
             ))}
           </div>
         )}
+      </div>
+      </div>
       </div>
     </div>
   )

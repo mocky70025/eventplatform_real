@@ -259,23 +259,38 @@ export default function WelcomeScreen() {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      background: 'linear-gradient(-44.94deg, rgba(255, 245, 240, 1) 0%, rgba(232, 245, 245, 1) 99.95%)',
+      background: '#FFFFFF', // 外側は白
       display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: isDesktop ? '40px 20px' : 0
+      justifyContent: 'center'
     }}>
-      {/* 白いカード */}
       <div style={{
-        width: '100%',
-        maxWidth: '352px',
+        width: '393px',
+        minWidth: '393px',
+        flexShrink: 0,
+        background: '#E8F5F5', // スマホフレーム範囲内は薄い青緑（出店者用）
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: '32px',
+        paddingBottom: '32px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
+        boxSizing: 'border-box'
+      }}>
+      {/* 白いカード（基盤） */}
+      <div style={{
+        width: '353px',
         background: 'white',
         borderRadius: '16px',
-        boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
-        padding: '0',
+        boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)', // Shadow LG
+        paddingTop: '32px',
+        paddingBottom: '32px',
+        paddingLeft: '20px',
+        paddingRight: '20px',
         position: 'relative',
-        minHeight: '472px'
+        minHeight: '472px',
+        boxSizing: 'border-box'
       }}>
         {/* ヘッダー */}
         <div style={{
@@ -297,105 +312,105 @@ export default function WelcomeScreen() {
           }}>
           </div>
           <h1 style={{
-            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            margin: 0,
             fontSize: '24px',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
             fontWeight: 700,
-            fontStyle: 'italic',
             lineHeight: 1.3,
-            color: '#2C3E50',
-            margin: '0 0 12px'
+            color: '#2C3E50'
           }}>
             デミセル
           </h1>
+        </div>
+
+        {/* サブタイトル */}
+        <div style={{
+          textAlign: 'center',
+          marginBottom: '24px'
+        }}>
           <p style={{
-            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-            fontSize: '15px',
-            color: '#6C757D',
             margin: 0,
-            lineHeight: 1.6
+            fontSize: '15px',
+            fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+            fontStyle: 'normal',
+            fontWeight: 400,
+            lineHeight: 1.6,
+            color: '#6C757D'
           }}>
             出店者向けプラットフォーム
           </p>
         </div>
 
-        {/* タブナビゲーション */}
+        {/* タブ */}
         {authMode === 'initial' && !loginMethod && !registerMethod && (
           <div style={{
-            padding: '0 20px',
-            marginBottom: '32px'
+            display: 'flex',
+            position: 'relative',
+            marginBottom: '32px',
+            paddingBottom: '16px'
           }}>
-        <div style={{
-          display: 'flex',
-          borderBottom: '1px solid #E9ECEF',
-              position: 'relative'
-        }}>
-              {/* ログインタブ */}
-          <button
-            onClick={() => setActiveTab('login')}
-            style={{
-              flex: 1,
-              padding: '16px 0',
-              background: 'transparent',
-              border: 'none',
-              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-              fontSize: '16px',
-              fontWeight: activeTab === 'login' ? 700 : 400,
-              fontStyle: activeTab === 'login' ? 'italic' : 'normal',
-              color: activeTab === 'login' ? '#5DABA8' : '#6C757D',
-              cursor: 'pointer',
-              position: 'relative',
-              transition: 'all 200ms ease'
-            }}
-          >
-            ログイン
-                {activeTab === 'login' && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '40px',
-                    height: '2px',
-                    background: '#5DABA8',
-                    borderRadius: '1px 1px 0 0'
-                  }} />
-                )}
-          </button>
-
-              {/* 新規登録タブ */}
-          <button
-            onClick={() => setActiveTab('register')}
-            style={{
-              flex: 1,
-              padding: '16px 0',
-              background: 'transparent',
-              border: 'none',
-              fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-              fontSize: '16px',
-              fontWeight: activeTab === 'register' ? 700 : 400,
-              fontStyle: activeTab === 'register' ? 'italic' : 'normal',
-              color: activeTab === 'register' ? '#5DABA8' : '#6C757D',
-              cursor: 'pointer',
-              position: 'relative',
-              transition: 'all 200ms ease'
-            }}
-          >
-            新規登録
-                {activeTab === 'register' && (
-                  <div style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    width: '40px',
-                    height: '2px',
-                    background: '#5DABA8',
-                    borderRadius: '1px 1px 0 0'
-                  }} />
-                )}
-              </button>
+            <button
+              onClick={() => setActiveTab('login')}
+              style={{
+                flex: 1,
+                padding: '16px 0',
+                background: 'transparent',
+                border: 'none',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '16px',
+                fontStyle: 'normal',
+                fontWeight: activeTab === 'login' ? 600 : 400,
+                color: activeTab === 'login' ? '#5DABA8' : '#666666',
+                cursor: 'pointer',
+                position: 'relative'
+              }}
+            >
+              ログイン
+              {activeTab === 'login' && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '40px',
+                  height: '2px',
+                  background: '#5DABA8',
+                  borderRadius: '1px 1px 0 0'
+                }} />
+              )}
+            </button>
+            <button
+              onClick={() => setActiveTab('register')}
+              style={{
+                flex: 1,
+                padding: '16px 0',
+                background: 'transparent',
+                border: 'none',
+                fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                fontSize: '16px',
+                fontStyle: 'normal',
+                fontWeight: activeTab === 'register' ? 600 : 400,
+                color: activeTab === 'register' ? '#5DABA8' : '#666666',
+                cursor: 'pointer',
+                position: 'relative'
+              }}
+            >
+              新規登録
+              {activeTab === 'register' && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  width: '40px',
+                  height: '2px',
+                  background: '#5DABA8',
+                  borderRadius: '1px 1px 0 0'
+                }} />
+              )}
+            </button>
           </div>
-        </div>
         )}
 
         {/* エラーメッセージ */}
@@ -434,12 +449,10 @@ export default function WelcomeScreen() {
 
         {/* 初期画面：ログイン or 新規登録を選択 */}
         {authMode === 'initial' && !loginMethod && !registerMethod && (
-          <div style={{ padding: '0 20px' }}>
+          <div>
             {/* ログインセクション */}
             {activeTab === 'login' && (
-            <div style={{
-              marginBottom: '32px'
-        }}>
+            <div>
 
               {/* LINEログインボタン */}
               <button
@@ -452,22 +465,22 @@ export default function WelcomeScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#06C755',
+                  background: '#00C300', // LINE Green
                   borderRadius: '12px',
                   border: 'none',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontSize: '16px',
+                  fontFamily: '"Inter", sans-serif',
+                  fontStyle: 'normal',
                   fontWeight: 600,
                   color: '#FFFFFF',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
-                  marginBottom: '12px'
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  marginBottom: '16px'
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                <LineIcon />
+                  <LineIcon />
                 </div>
                 <span>LINE</span>
               </button>
@@ -483,22 +496,22 @@ export default function WelcomeScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#FFFFFF',
+                  background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #E9ECEF',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  border: '1px solid #E5E7EB',
                   fontSize: '16px',
+                  fontFamily: '"Inter", sans-serif',
+                  fontStyle: 'normal',
                   fontWeight: 600,
-                  color: '#2C3E50',
+                  color: '#1A1A1A',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
-                  marginBottom: '12px'
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                  marginBottom: '16px'
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                <GoogleIcon />
+                  <GoogleIcon />
                 </div>
                 <span>Google</span>
               </button>
@@ -512,24 +525,27 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#5DABA8',
+                  background: '#5DABA8', // Secondary Main（出店者用）
                   borderRadius: '12px',
                   border: 'none',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontSize: '15px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontStyle: 'normal',
                   fontWeight: 700,
-                  fontStyle: 'italic',
-                  color: '#FFFFFF',
+                  color: '#ffffff',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                 }}
               >
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <MailIcon color="#ffffff" />
+                </div>
                 <span>メールアドレス</span>
               </button>
             </div>
@@ -537,9 +553,7 @@ export default function WelcomeScreen() {
 
             {/* 新規登録セクション */}
             {activeTab === 'register' && (
-            <div style={{
-              marginBottom: '32px'
-            }}>
+            <div>
               {/* LINE新規登録ボタン */}
               <button
                 onClick={handleLineRegister}
@@ -551,22 +565,22 @@ export default function WelcomeScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#06C755',
+                  background: '#00C300', // LINE Green
                   borderRadius: '12px',
                   border: 'none',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontSize: '16px',
+                  fontFamily: '"Inter", sans-serif',
+                  fontStyle: 'normal',
                   fontWeight: 600,
                   color: '#FFFFFF',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
-                  marginBottom: '12px'
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                  marginBottom: '16px'
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                <LineIcon />
+                  <LineIcon />
                 </div>
                 <span>LINE</span>
               </button>
@@ -582,22 +596,22 @@ export default function WelcomeScreen() {
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#FFFFFF',
+                  background: '#ffffff',
                   borderRadius: '12px',
-                  border: '1px solid #E9ECEF',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  border: '1px solid #E5E7EB',
                   fontSize: '16px',
+                  fontFamily: '"Inter", sans-serif',
+                  fontStyle: 'normal',
                   fontWeight: 600,
-                  color: '#2C3E50',
+                  color: '#1A1A1A',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)',
-                  marginBottom: '12px'
+                  boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                  marginBottom: '16px'
                 }}
               >
                 <div style={{ position: 'absolute', left: '24px' }}>
-                <GoogleIcon />
+                  <GoogleIcon />
                 </div>
                 <span>Google</span>
               </button>
@@ -611,24 +625,27 @@ export default function WelcomeScreen() {
                 disabled={loading}
                 style={{
                   width: '100%',
+                  position: 'relative',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   padding: '16px 24px',
-                  background: '#5DABA8',
+                  background: '#5DABA8', // Secondary Main（出店者用）
                   borderRadius: '12px',
                   border: 'none',
-                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontSize: '15px',
+                  fontFamily: '"Inter", "Noto Sans JP", sans-serif',
+                  fontStyle: 'normal',
                   fontWeight: 700,
-                  fontStyle: 'italic',
-                  color: '#FFFFFF',
+                  color: '#ffffff',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   opacity: loading ? 0.6 : 1,
-                  transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
-                  boxShadow: '0px 8px 32px rgba(0, 0, 0, 0.08)'
+                  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
                 }}
               >
+                <div style={{ position: 'absolute', left: '24px' }}>
+                  <MailIcon color="#ffffff" />
+                </div>
                 <span>メールアドレス</span>
               </button>
             </div>
@@ -1450,6 +1467,7 @@ export default function WelcomeScreen() {
             </form>
           </>
         )}
+      </div>
       </div>
     </div>
   )
