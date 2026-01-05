@@ -379,9 +379,8 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
           </div>
         )
       case 'notifications':
-        return (
-          <NotificationBox userProfile={userProfile} onBack={() => setCurrentView('home')} onUnreadCountChange={setUnreadNotificationCount} />
-        )
+        // TODO: 通知一覧コンポーネントを実装
+        return null
       default:
         return null
     }
