@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { logAdminAction } from '@/lib/adminLogger'
 
 interface AdminLoginProps {
   onLoginSuccess: () => void
@@ -86,6 +87,17 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       if (data.user) {
         sessionStorage.setItem('admin_authenticated', 'true')
         sessionStorage.setItem('admin_email', email)
+        
+        // ログイン操作を記録
+        await logAdminAction({
+          adminEmail: email,
+          actionType: 'login',
+          details: {
+            loginTime: new Date().toISOString(),
+            userId: data.user.id
+          }
+        })
+        
         onLoginSuccess()
       }
     } catch (err: any) {

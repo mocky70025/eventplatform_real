@@ -4,19 +4,25 @@ import { useState, useEffect } from 'react'
 import { supabase, type Organizer, type Event } from '@/lib/supabase'
 import AdminLogin from '@/components/AdminLogin'
 import { colors, spacing, borderRadius, shadows } from '@/styles/design-system'
+import { logAdminAction, getAdminLogs } from '@/lib/adminLogger'
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentView, setCurrentView] = useState<'organizers' | 'events'>('organizers')
+  const [currentView, setCurrentView] = useState<'organizers' | 'events' | 'logs'>('organizers')
   const [organizers, setOrganizers] = useState<Organizer[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [logs, setLogs] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [adminEmail, setAdminEmail] = useState('')
 
   useEffect(() => {
     const authenticated = sessionStorage.getItem('admin_authenticated') === 'true'
+    const email = sessionStorage.getItem('admin_email') || ''
     setIsAuthenticated(authenticated)
+    setAdminEmail(email)
     if (authenticated) {
       fetchData()
+      fetchLogs()
     } else {
       setLoading(false)
     }
@@ -43,15 +49,63 @@ export default function AdminDashboard() {
     }
   }
 
+  const fetchLogs = async () => {
+    try {
+      const logsData = await getAdminLogs(100)
+      setLogs(logsData)
+    } catch (error) {
+      console.error('Failed to fetch logs:', error)
+    }
+  }
+
+  const handleLogout = async () => {
+    try {
+      // ログアウト操作を記録
+      await logAdminAction({
+        adminEmail,
+        actionType: 'logout',
+        details: {
+          logoutTime: new Date().toISOString()
+        }
+      })
+
+      sessionStorage.removeItem('admin_authenticated')
+      sessionStorage.removeItem('admin_email')
+      setIsAuthenticated(false)
+      
+      // Supabaseからもサインアウト
+      await supabase.auth.signOut()
+    } catch (error) {
+      console.error('Failed to logout:', error)
+    }
+  }
+
   const handleOrganizerApproval = async (organizerId: string, approved: boolean) => {
     try {
+      const organizer = organizers.find(o => o.id === organizerId)
+      
       const { error } = await supabase
         .from('organizers')
         .update({ is_approved: approved })
         .eq('id', organizerId)
 
       if (error) throw error
+
+      // 操作をログに記録
+      await logAdminAction({
+        adminEmail,
+        actionType: approved ? 'approve_organizer' : 'reject_organizer',
+        targetType: 'organizer',
+        targetId: organizerId,
+        targetName: organizer?.name || '不明',
+        details: {
+          previousStatus: organizer?.is_approved,
+          newStatus: approved
+        }
+      })
+
       await fetchData()
+      await fetchLogs()
       alert(approved ? '主催者を承認しました' : '主催者の承認を取り消しました')
     } catch (error) {
       console.error('Failed to update organizer:', error)
@@ -61,13 +115,30 @@ export default function AdminDashboard() {
 
   const handleEventApproval = async (eventId: string, status: 'approved' | 'rejected') => {
     try {
+      const event = events.find(e => e.id === eventId)
+      
       const { error } = await supabase
         .from('events')
         .update({ approval_status: status })
         .eq('id', eventId)
 
       if (error) throw error
+
+      // 操作をログに記録
+      await logAdminAction({
+        adminEmail,
+        actionType: status === 'approved' ? 'approve_event' : 'reject_event',
+        targetType: 'event',
+        targetId: eventId,
+        targetName: event?.event_name || '不明',
+        details: {
+          previousStatus: event?.approval_status,
+          newStatus: status
+        }
+      })
+
       await fetchData()
+      await fetchLogs()
       alert(status === 'approved' ? 'イベントを承認しました' : 'イベントを却下しました')
     } catch (error) {
       console.error('Failed to update event:', error)
@@ -164,32 +235,33 @@ export default function AdminDashboard() {
               運営管理
             </h1>
           </div>
-          <button
-            onClick={() => {
-              sessionStorage.removeItem('admin_authenticated')
-              sessionStorage.removeItem('admin_email')
-              setIsAuthenticated(false)
-            }}
-            style={{
-              padding: `${spacing[2]} ${spacing[4]}`,
-              background: 'transparent',
-              border: `1px solid ${colors.neutral[300]}`,
-              borderRadius: borderRadius.md,
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              color: colors.neutral[700],
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = colors.neutral[100]
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent'
-            }}
-          >
-            ログアウト
-          </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: spacing[3] }}>
+            <span style={{ fontSize: '0.875rem', color: colors.neutral[600] }}>
+              {adminEmail}
+            </span>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: `${spacing[2]} ${spacing[4]}`,
+                background: 'transparent',
+                border: `1px solid ${colors.neutral[300]}`,
+                borderRadius: borderRadius.md,
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                color: colors.neutral[700],
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = colors.neutral[100]
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'transparent'
+              }}
+            >
+              ログアウト
+            </button>
+          </div>
         </div>
       </div>
 
@@ -236,6 +308,22 @@ export default function AdminDashboard() {
             }}
           >
             イベント管理 ({events.length})
+          </button>
+          <button
+            onClick={() => setCurrentView('logs')}
+            style={{
+              padding: `${spacing[4]} 0`,
+              background: 'transparent',
+              border: 'none',
+              borderBottom: `2px solid ${currentView === 'logs' ? colors.primary : 'transparent'}`,
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              color: currentView === 'logs' ? colors.primary[500] : colors.neutral[500],
+              cursor: 'pointer',
+              transition: 'all 0.2s',
+            }}
+          >
+            操作ログ ({logs.length})
           </button>
         </div>
       </div>
@@ -360,6 +448,83 @@ export default function AdminDashboard() {
                     )}
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+        ) : currentView === 'logs' ? (
+          <div>
+            <h2 style={{
+              fontSize: '1.25rem',
+              fontWeight: 700,
+              color: colors.neutral[900],
+              marginBottom: spacing[12],
+            }}>
+              操作ログ
+            </h2>
+            {logs.length === 0 ? (
+              <p style={{ color: colors.neutral[500] }}>ログがありません</p>
+            ) : (
+              <div style={{
+                background: colors.neutral[0],
+                borderRadius: borderRadius.lg,
+                boxShadow: shadows.md,
+                overflow: 'hidden',
+              }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                  <thead style={{ background: colors.neutral[100] }}>
+                    <tr>
+                      <th style={{ padding: spacing[3], textAlign: 'left', fontSize: '0.875rem', fontWeight: 600, color: colors.neutral[700] }}>日時</th>
+                      <th style={{ padding: spacing[3], textAlign: 'left', fontSize: '0.875rem', fontWeight: 600, color: colors.neutral[700] }}>管理者</th>
+                      <th style={{ padding: spacing[3], textAlign: 'left', fontSize: '0.875rem', fontWeight: 600, color: colors.neutral[700] }}>操作</th>
+                      <th style={{ padding: spacing[3], textAlign: 'left', fontSize: '0.875rem', fontWeight: 600, color: colors.neutral[700] }}>対象</th>
+                      <th style={{ padding: spacing[3], textAlign: 'left', fontSize: '0.875rem', fontWeight: 600, color: colors.neutral[700] }}>詳細</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {logs.map((log, index) => (
+                      <tr key={log.id} style={{ borderTop: index === 0 ? 'none' : `1px solid ${colors.neutral[200]}` }}>
+                        <td style={{ padding: spacing[3], fontSize: '0.875rem', color: colors.neutral[600] }}>
+                          {formatDate(log.created_at)}
+                        </td>
+                        <td style={{ padding: spacing[3], fontSize: '0.875rem', color: colors.neutral[900] }}>
+                          {log.admin_email}
+                        </td>
+                        <td style={{ padding: spacing[3] }}>
+                          <span style={{
+                            padding: `${spacing[1]} ${spacing[2]}`,
+                            borderRadius: borderRadius.md,
+                            fontSize: '0.75rem',
+                            fontWeight: 600,
+                            background: 
+                              log.action_type === 'login' ? colors.status.info.light :
+                              log.action_type === 'logout' ? colors.neutral[200] :
+                              log.action_type === 'approve_organizer' || log.action_type === 'approve_event' ? colors.status.success.light :
+                              colors.status.error.light,
+                            color:
+                              log.action_type === 'login' ? colors.status.info.main :
+                              log.action_type === 'logout' ? colors.neutral[600] :
+                              log.action_type === 'approve_organizer' || log.action_type === 'approve_event' ? colors.status.success.main :
+                              colors.status.error.main,
+                          }}>
+                            {log.action_type === 'login' ? 'ログイン' :
+                              log.action_type === 'logout' ? 'ログアウト' :
+                              log.action_type === 'approve_organizer' ? '主催者承認' :
+                              log.action_type === 'reject_organizer' ? '主催者却下' :
+                              log.action_type === 'approve_event' ? 'イベント承認' :
+                              log.action_type === 'reject_event' ? 'イベント却下' :
+                              log.action_type}
+                          </span>
+                        </td>
+                        <td style={{ padding: spacing[3], fontSize: '0.875rem', color: colors.neutral[600] }}>
+                          {log.target_name || '-'}
+                        </td>
+                        <td style={{ padding: spacing[3], fontSize: '0.75rem', color: colors.neutral[500] }}>
+                          {log.user_agent ? log.user_agent.substring(0, 50) + '...' : '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
