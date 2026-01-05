@@ -102,11 +102,11 @@ export default function EventCard({ event, userProfile, onClick }: EventCardProp
                     subject: `【${eventData.event_name}】新しい出店申し込みがありました`,
                     html: `
                       <div style="font-family: ${typography.fontFamily.japanese}; line-height: 1.6; color: ${colors.neutral[900]};">
-                        <h2 style="color: ${colors.primary[500]}; margin-bottom: ${spacing.lg};">新しい出店申し込み</h2>
+                        <h2 style="color: ${colors.primary[500]}; margin-bottom: ${spacing[4]};">新しい出店申し込み</h2>
                         <p>${eventData.event_name}に新しい出店申し込みがありました。</p>
-                        <p style="margin-top: ${spacing.xl};">アプリ内で申し込み内容を確認し、承認または却下を行ってください。</p>
-                        <hr style="border: none; border-top: 1px solid ${colors.neutral[200]}; margin: ${spacing.xl} 0;">
-                        <p style="font-size: ${typography.fontSize.caption}; color: ${colors.neutral[500]};">このメールは自動送信されています。</p>
+                        <p style="margin-top: ${spacing[6]};">アプリ内で申し込み内容を確認し、承認または却下を行ってください。</p>
+                        <hr style="border: none; border-top: 1px solid ${colors.neutral[200]}; margin: ${spacing[6]} 0;">
+                        <p style="font-size: ${typography.fontSize.xs}; color: ${colors.neutral[500]};">このメールは自動送信されています。</p>
                       </div>
                     `
                   })
