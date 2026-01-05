@@ -6,14 +6,12 @@ import { colors, spacing, borderRadius, typography, shadows, transitions } from 
 interface ButtonProps {
   children: ReactNode
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'text' | 'gradient'
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost'
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   loading?: boolean
   fullWidth?: boolean
   type?: 'button' | 'submit' | 'reset'
-  icon?: ReactNode
-  iconPosition?: 'left' | 'right'
   className?: string
   style?: CSSProperties
 }
@@ -27,8 +25,6 @@ export default function Button({
   loading = false,
   fullWidth = false,
   type = 'button',
-  icon,
-  iconPosition = 'left',
   className = '',
   style = {},
 }: ButtonProps) {
@@ -37,22 +33,16 @@ export default function Button({
       height: '36px',
       padding: `0 ${spacing[4]}`,
       fontSize: typography.fontSize.sm,
-      gap: spacing[1.5],
-      borderRadius: borderRadius.md,
     },
     md: {
       height: '44px',
       padding: `0 ${spacing[6]}`,
       fontSize: typography.fontSize.base,
-      gap: spacing[2],
-      borderRadius: borderRadius.lg,
     },
     lg: {
       height: '52px',
       padding: `0 ${spacing[8]}`,
       fontSize: typography.fontSize.lg,
-      gap: spacing[2.5],
-      borderRadius: borderRadius.lg,
     },
   }
 
@@ -67,12 +57,12 @@ export default function Button({
       background: colors.neutral[0],
       color: colors.neutral[900],
       border: `1px solid ${colors.neutral[200]}`,
-      boxShadow: shadows.subtle,
+      boxShadow: shadows.sm,
     },
     outline: {
       background: 'transparent',
       color: colors.primary[600],
-      border: `2px solid ${colors.primary[500]}`,
+      border: `1.5px solid ${colors.primary[500]}`,
       boxShadow: 'none',
     },
     ghost: {
@@ -81,69 +71,34 @@ export default function Button({
       border: 'none',
       boxShadow: 'none',
     },
-    text: {
-      background: 'transparent',
-      color: colors.primary[600],
-      border: 'none',
-      boxShadow: 'none',
-      padding: `0 ${spacing[2]}`,
-    },
-    gradient: {
-      background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-      color: colors.neutral[0],
-      border: 'none',
-      boxShadow: shadows.glow,
-    },
   }
 
   const baseStyle: CSSProperties = {
-    fontFamily: typography.fontFamily.primary,
+    fontFamily: typography.fontFamily.japanese,
     fontWeight: typography.fontWeight.semibold,
-    border: 'none',
     cursor: disabled || loading ? 'not-allowed' : 'pointer',
-    transition: `all ${transitions.normal}`,
+    transition: transitions.normal,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-    overflow: 'hidden',
+    borderRadius: borderRadius.lg,
     whiteSpace: 'nowrap',
     userSelect: 'none',
     width: fullWidth ? '100%' : 'auto',
-    opacity: disabled || loading ? 0.6 : 1,
+    opacity: disabled || loading ? 0.5 : 1,
     ...sizeStyles[size],
     ...variantStyles[variant],
   }
-
-  const hoverStyle: CSSProperties = !disabled && !loading ? {
-    transform: 'translateY(-2px)',
-    boxShadow: variant === 'primary' || variant === 'gradient' 
-      ? shadows.buttonHover 
-      : variant === 'secondary' 
-      ? shadows.card 
-      : shadows.subtle,
-  } : {}
 
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`${className} hover-lift`.trim()}
+      className={className}
       style={{
         ...baseStyle,
         ...style,
-      }}
-      onMouseEnter={(e) => {
-        if (!disabled && !loading) {
-          Object.assign(e.currentTarget.style, hoverStyle)
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!disabled && !loading) {
-          e.currentTarget.style.transform = 'translateY(0)'
-          e.currentTarget.style.boxShadow = variantStyles[variant].boxShadow || 'none'
-        }
       }}
     >
       {loading ? (
@@ -151,22 +106,14 @@ export default function Button({
           style={{
             width: '20px',
             height: '20px',
-            border: `3px solid ${variant === 'primary' || variant === 'gradient' ? 'rgba(255,255,255,0.3)' : 'rgba(16, 185, 129, 0.3)'}`,
-            borderTopColor: variant === 'primary' || variant === 'gradient' ? colors.neutral[0] : colors.primary[500],
+            border: `2px solid ${variant === 'primary' ? 'rgba(255,255,255,0.3)' : colors.primary[200]}`,
+            borderTopColor: variant === 'primary' ? colors.neutral[0] : colors.primary[500],
             borderRadius: '50%',
-            animation: 'spin 0.8s linear infinite',
+            animation: 'spin 0.6s linear infinite',
           }}
         />
       ) : (
-        <>
-          {icon && iconPosition === 'left' && (
-            <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>
-          )}
-          <span>{children}</span>
-          {icon && iconPosition === 'right' && (
-            <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>
-          )}
-        </>
+        children
       )}
     </button>
   )

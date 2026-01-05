@@ -36,11 +36,10 @@ export default function EmailConfirmationBanner({ email }: EmailConfirmationBann
   return (
     <div style={{
       background: colors.status.warning.light,
-      border: `1px solid ${colors.accent[200]}`,
+      border: `1px solid ${colors.status.warning.main}`,
       borderRadius: borderRadius.lg,
       padding: spacing[6],
       boxShadow: shadows.card,
-      animation: 'slideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
       <div style={{
         display: 'flex',

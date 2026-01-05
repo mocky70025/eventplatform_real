@@ -5,7 +5,6 @@ import { colors, spacing, borderRadius, shadows, transitions } from '@/styles/de
 
 interface CardProps {
   children: ReactNode
-  variant?: 'default' | 'glass' | 'elevated' | 'bordered' | 'hover'
   padding?: keyof typeof spacing
   onClick?: () => void
   hoverable?: boolean
@@ -15,76 +14,42 @@ interface CardProps {
 
 export default function Card({
   children,
-  variant = 'default',
   padding = 6,
   onClick,
   hoverable = false,
   className = '',
   style = {},
 }: CardProps) {
-  const variantStyles: Record<string, CSSProperties> = {
-    default: {
-      background: colors.neutral[0],
-      border: `1px solid ${colors.neutral[200]}`,
-      boxShadow: shadows.card,
-    },
-    glass: {
-      background: 'rgba(255, 255, 255, 0.7)',
-      backdropFilter: 'blur(20px) saturate(180%)',
-      WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-      border: `1px solid rgba(255, 255, 255, 0.3)`,
-      boxShadow: shadows.subtle,
-    },
-    elevated: {
-      background: colors.neutral[0],
-      border: 'none',
-      boxShadow: shadows.xl,
-    },
-    bordered: {
-      background: colors.neutral[0],
-      border: `2px solid ${colors.neutral[200]}`,
-      boxShadow: 'none',
-    },
-    hover: {
-      background: colors.neutral[0],
-      border: `1px solid ${colors.neutral[200]}`,
-      boxShadow: shadows.card,
-      cursor: 'pointer',
-    },
-  }
-
   const baseStyle: CSSProperties = {
+    background: colors.neutral[0],
+    border: `1px solid ${colors.neutral[200]}`,
     borderRadius: borderRadius.xl,
     padding: spacing[padding],
-    transition: `all ${transitions.normal}`,
-    position: 'relative',
-    overflow: 'hidden',
-    ...variantStyles[variant],
+    transition: transitions.normal,
+    cursor: onClick || hoverable ? 'pointer' : 'default',
   }
-
-  const hoverStyle: CSSProperties = (hoverable || onClick || variant === 'hover') ? {
-    transform: 'translateY(-4px)',
-    boxShadow: shadows.cardHover,
-  } : {}
 
   return (
     <div
       onClick={onClick}
-      className={`${className} ${(hoverable || onClick || variant === 'hover') ? 'hover-lift' : ''}`.trim()}
+      className={className}
       style={{
         ...baseStyle,
-        ...(onClick && { cursor: 'pointer' }),
+        ...(onClick || hoverable ? {
+          boxShadow: shadows.card,
+        } : {}),
         ...style,
       }}
       onMouseEnter={(e) => {
-        if (hoverable || onClick || variant === 'hover') {
-          Object.assign(e.currentTarget.style, hoverStyle)
+        if (onClick || hoverable) {
+          e.currentTarget.style.boxShadow = shadows.cardHover
+          e.currentTarget.style.transform = 'translateY(-2px)'
         }
       }}
       onMouseLeave={(e) => {
-        if (hoverable || onClick || variant === 'hover') {
+        if (onClick || hoverable) {
+          e.currentTarget.style.boxShadow = shadows.card
           e.currentTarget.style.transform = 'translateY(0)'
-          e.currentTarget.style.boxShadow = variantStyles[variant].boxShadow || shadows.card
         }
       }}
     >

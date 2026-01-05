@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import Button from './ui/Button'
 import Input from './ui/Input'
 import Card from './ui/Card'
-import { colors, spacing, typography, borderRadius, shadows } from '../styles/design-system'
+import { colors, spacing, typography, borderRadius } from '../styles/design-system'
 
 export default function WelcomeScreen() {
   const [isLogin, setIsLogin] = useState(true)
@@ -23,7 +23,7 @@ export default function WelcomeScreen() {
 
     try {
       if (isLogin) {
-        const { data, error } = await supabase.auth.signInWithOtp({
+        const { error } = await supabase.auth.signInWithOtp({
           email,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
@@ -84,29 +84,27 @@ export default function WelcomeScreen() {
         alignItems: 'center',
         justifyContent: 'center',
         padding: spacing[6],
-        background: 'radial-gradient(at 40% 20%, rgba(16, 185, 129, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%)',
+        background: colors.background.primary,
       }}>
         <Card 
-          variant="glass"
           padding={12}
           style={{
-            maxWidth: '480px',
+            maxWidth: '440px',
             width: '100%',
             textAlign: 'center',
-            animation: 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
           }}
         >
           <div style={{
-            width: '64px',
-            height: '64px',
-            background: colors.primary[50],
+            width: '56px',
+            height: '56px',
+            background: colors.primary[100],
             borderRadius: borderRadius.full,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             margin: `0 auto ${spacing[6]}`,
           }}>
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
               <path
                 d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"
                 fill={colors.primary[500]}
@@ -115,14 +113,11 @@ export default function WelcomeScreen() {
           </div>
 
           <h2 style={{
-            fontFamily: typography.fontFamily.display,
+            fontFamily: typography.fontFamily.japanese,
             fontSize: typography.fontSize['3xl'],
             fontWeight: typography.fontWeight.bold,
-            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            marginBottom: spacing[4],
+            color: colors.neutral[900],
+            marginBottom: spacing[3],
           }}>
             メールを確認してください
           </h2>
@@ -163,46 +158,34 @@ export default function WelcomeScreen() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: spacing[6],
-      background: 'radial-gradient(at 40% 20%, rgba(16, 185, 129, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%)',
+      background: colors.background.primary,
     }}>
       <Card
-        variant="glass"
         padding={12}
         style={{
-          maxWidth: '480px',
+          maxWidth: '440px',
           width: '100%',
-          animation: 'scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
         {/* ロゴ・タイトル */}
         <div style={{ textAlign: 'center', marginBottom: spacing[10] }}>
           <div style={{
-            width: '80px',
-            height: '80px',
-            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+            width: '64px',
+            height: '64px',
+            background: colors.primary[500],
             borderRadius: borderRadius.xl,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            margin: `0 auto ${spacing[6]}`,
-            boxShadow: shadows.glow,
-            animation: 'float 3s ease-in-out infinite',
+            margin: `0 auto ${spacing[5]}`,
           }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
               <path
                 d="M12 2L2 7L12 12L22 7L12 2Z"
                 fill="white"
-                opacity="0.9"
               />
               <path
-                d="M2 17L12 22L22 17"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M2 12L12 17L22 12"
+                d="M2 17L12 22L22 17M2 12L12 17L22 12"
                 stroke="white"
                 strokeWidth="2"
                 strokeLinecap="round"
@@ -212,22 +195,18 @@ export default function WelcomeScreen() {
           </div>
 
           <h1 style={{
-            fontFamily: typography.fontFamily.display,
+            fontFamily: typography.fontFamily.japanese,
             fontSize: typography.fontSize['4xl'],
             fontWeight: typography.fontWeight.bold,
-            background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
-            marginBottom: spacing[3],
-            letterSpacing: typography.letterSpacing.tight,
+            color: colors.neutral[900],
+            marginBottom: spacing[2],
           }}>
             デミセル
           </h1>
 
           <p style={{
             fontFamily: typography.fontFamily.japanese,
-            fontSize: typography.fontSize.lg,
+            fontSize: typography.fontSize.base,
             color: colors.neutral[600],
             fontWeight: typography.fontWeight.medium,
           }}>
@@ -258,7 +237,6 @@ export default function WelcomeScreen() {
               borderRadius: borderRadius.md,
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: isLogin ? shadows.subtle : 'none',
             }}
           >
             ログイン
@@ -277,7 +255,6 @@ export default function WelcomeScreen() {
               borderRadius: borderRadius.md,
               cursor: 'pointer',
               transition: 'all 0.2s',
-              boxShadow: !isLogin ? shadows.subtle : 'none',
             }}
           >
             新規登録
@@ -294,14 +271,6 @@ export default function WelcomeScreen() {
               placeholder="your@email.com"
               label="メールアドレス"
               required
-              leftIcon={
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"
-                    fill="currentColor"
-                  />
-                </svg>
-              }
             />
 
             {!isLogin && (
@@ -313,14 +282,6 @@ export default function WelcomeScreen() {
                   placeholder="••••••••"
                   label="パスワード"
                   required
-                  leftIcon={
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15.1 8H8.9V6C8.9 4.29 10.29 2.9 12 2.9C13.71 2.9 15.1 4.29 15.1 6V8Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  }
                 />
 
                 <Input
@@ -330,14 +291,6 @@ export default function WelcomeScreen() {
                   placeholder="••••••••"
                   label="パスワード（確認）"
                   required
-                  leftIcon={
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8ZM12 17C10.9 17 10 16.1 10 15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15C14 16.1 13.1 17 12 17ZM15.1 8H8.9V6C8.9 4.29 10.29 2.9 12 2.9C13.71 2.9 15.1 4.29 15.1 6V8Z"
-                        fill="currentColor"
-                      />
-                    </svg>
-                  }
                 />
               </>
             )}
@@ -347,27 +300,18 @@ export default function WelcomeScreen() {
                 padding: spacing[4],
                 background: colors.status.error.light,
                 border: `1px solid ${colors.status.error.main}`,
-                borderRadius: borderRadius.md,
+                borderRadius: borderRadius.lg,
                 fontFamily: typography.fontFamily.japanese,
                 fontSize: typography.fontSize.sm,
                 color: colors.status.error.dark,
-                display: 'flex',
-                alignItems: 'center',
-                gap: spacing[2],
               }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM13 17H11V15H13V17ZM13 13H11V7H13V13Z"
-                    fill="currentColor"
-                  />
-                </svg>
                 {error}
               </div>
             )}
 
             <Button
               type="submit"
-              variant="gradient"
+              variant="primary"
               size="lg"
               fullWidth
               loading={loading}
@@ -389,7 +333,6 @@ export default function WelcomeScreen() {
             fontFamily: typography.fontFamily.japanese,
             fontSize: typography.fontSize.sm,
             color: colors.neutral[500],
-            fontWeight: typography.fontWeight.medium,
           }}>
             または
           </span>
@@ -403,7 +346,8 @@ export default function WelcomeScreen() {
           fullWidth
           onClick={handleGoogleLogin}
           disabled={loading}
-          icon={
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: spacing[3] }}>
             <svg width="20" height="20" viewBox="0 0 24 24">
               <path
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -422,26 +366,9 @@ export default function WelcomeScreen() {
                 fill="#EA4335"
               />
             </svg>
-          }
-        >
-          Googleでログイン
+            Googleでログイン
+          </div>
         </Button>
-
-        {/* フッター */}
-        <p style={{
-          marginTop: spacing[8],
-          textAlign: 'center',
-          fontFamily: typography.fontFamily.japanese,
-          fontSize: typography.fontSize.sm,
-          color: colors.neutral[500],
-          lineHeight: typography.lineHeight.relaxed,
-        }}>
-          ログインすることで、
-          <a href="#" style={{ color: colors.primary[600], fontWeight: typography.fontWeight.semibold }}>利用規約</a>
-          および
-          <a href="#" style={{ color: colors.primary[600], fontWeight: typography.fontWeight.semibold }}>プライバシーポリシー</a>
-          に同意したものとみなされます。
-        </p>
       </Card>
     </div>
   )
