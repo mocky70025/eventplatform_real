@@ -57,7 +57,11 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL || ''
+  // 複数の管理者メールアドレスに対応（カンマ区切り）
+  const adminEmailsString = process.env.NEXT_PUBLIC_ADMIN_EMAIL || ''
+  const adminEmails = adminEmailsString
+    ? adminEmailsString.split(',').map(e => e.trim().toLowerCase())
+    : []
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -65,7 +69,8 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
     setError('')
 
     try {
-      if (adminEmail && email !== adminEmail) {
+      // 管理者メールアドレスが設定されている場合、チェック
+      if (adminEmails.length > 0 && !adminEmails.includes(email.trim().toLowerCase())) {
         setError('管理者権限がありません')
         setLoading(false)
         return
