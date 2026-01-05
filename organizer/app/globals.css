@@ -20,7 +20,7 @@ html {
 
 body {
   font-family: 'Inter', 'Noto Sans JP', sans-serif;
-  background: #FAFAFA;
+  background: #FFF7ED;
   color: #171717;
   line-height: 1.5;
 }
@@ -32,7 +32,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #F5F5F5;
+  background: #FFF7ED;
 }
 
 ::-webkit-scrollbar-thumb {

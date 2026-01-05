@@ -65,9 +65,9 @@ export const colors = {
 
   // 背景
   background: {
-    primary: '#FAFAFA',
+    primary: '#FFF7ED',
     secondary: '#FFFFFF',
-    accent: '#FFF7ED',
+    accent: '#FFEDD5',
   },
 } as const
 
