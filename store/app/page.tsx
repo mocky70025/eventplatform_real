@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { type LineProfile } from '@/lib/auth'
-import WelcomeScreen from '@/components/WelcomeScreenUltra'
+import WelcomeScreen from '@/components/WelcomeScreenCalm'
 import RegistrationForm from '@/components/RegistrationFormModern'
 import EventList from '@/components/EventListUltra'
 import ExhibitorProfile from '@/components/ExhibitorProfileUltra'

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { type LineProfile, isLiffEnvironment } from '@/lib/auth'
-import WelcomeScreen from '@/components/WelcomeScreenUltra'
+import WelcomeScreen from '@/components/WelcomeScreenCalm'
 import RegistrationForm from '@/components/RegistrationFormModern'
 import EventManagement from '@/components/EventManagementUltra'
 import LoadingSpinner from '@/components/LoadingSpinner'

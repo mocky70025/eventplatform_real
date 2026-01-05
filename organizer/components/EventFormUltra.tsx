@@ -282,7 +282,7 @@ function Step1BasicInfo({ formData, setFormData }: StepProps) {
           label="イベント名"
           required
           value={formData.event_name}
-          onChange={(value) => setFormData({ ...formData, event_name: value })}
+          onChange={(value: string) => setFormData({ ...formData, event_name: value })}
           placeholder="例: 春の手作り市"
         />
 
@@ -291,7 +291,7 @@ function Step1BasicInfo({ formData, setFormData }: StepProps) {
           required
           type="select"
           value={formData.genre}
-          onChange={(value) => setFormData({ ...formData, genre: value })}
+          onChange={(value: string) => setFormData({ ...formData, genre: value })}
           options={['フリーマーケット', 'クラフト市', '音楽フェス', '食イベント', 'その他']}
         />
 
@@ -300,7 +300,7 @@ function Step1BasicInfo({ formData, setFormData }: StepProps) {
           required
           type="textarea"
           value={formData.lead_text}
-          onChange={(value) => setFormData({ ...formData, lead_text: value })}
+          onChange={(value: string) => setFormData({ ...formData, lead_text: value })}
           placeholder="イベントの簡単な説明を記入してください"
           rows={3}
         />
@@ -309,7 +309,7 @@ function Step1BasicInfo({ formData, setFormData }: StepProps) {
           label="詳細説明"
           type="textarea"
           value={formData.event_description}
-          onChange={(value) => setFormData({ ...formData, event_description: value })}
+          onChange={(value: string) => setFormData({ ...formData, event_description: value })}
           placeholder="イベントの詳しい内容を記入してください"
           rows={6}
         />
@@ -343,21 +343,21 @@ function Step2Schedule({ formData, setFormData }: StepProps) {
             required
             type="date"
             value={formData.event_start_date}
-            onChange={(value) => setFormData({ ...formData, event_start_date: value })}
+            onChange={(value: string) => setFormData({ ...formData, event_start_date: value })}
           />
 
           <FormField
             label="終了日"
             type="date"
             value={formData.event_end_date}
-            onChange={(value) => setFormData({ ...formData, event_end_date: value })}
+            onChange={(value: string) => setFormData({ ...formData, event_end_date: value })}
           />
         </div>
 
         <FormField
           label="開催時間"
           value={formData.event_time}
-          onChange={(value) => setFormData({ ...formData, event_time: value })}
+          onChange={(value: string) => setFormData({ ...formData, event_time: value })}
           placeholder="例: 10:00〜17:00"
         />
 
@@ -365,7 +365,7 @@ function Step2Schedule({ formData, setFormData }: StepProps) {
           label="会場名"
           required
           value={formData.venue_name}
-          onChange={(value) => setFormData({ ...formData, venue_name: value })}
+          onChange={(value: string) => setFormData({ ...formData, venue_name: value })}
           placeholder="例: 〇〇公園"
         />
 
@@ -378,14 +378,14 @@ function Step2Schedule({ formData, setFormData }: StepProps) {
             label="市区町村"
             required
             value={formData.venue_city}
-            onChange={(value) => setFormData({ ...formData, venue_city: value })}
+            onChange={(value: string) => setFormData({ ...formData, venue_city: value })}
             placeholder="例: 静岡市"
           />
 
           <FormField
             label="町名"
             value={formData.venue_town}
-            onChange={(value) => setFormData({ ...formData, venue_town: value })}
+            onChange={(value: string) => setFormData({ ...formData, venue_town: value })}
             placeholder="例: 葵区"
           />
         </div>
@@ -393,7 +393,7 @@ function Step2Schedule({ formData, setFormData }: StepProps) {
         <FormField
           label="住所"
           value={formData.venue_address}
-          onChange={(value) => setFormData({ ...formData, venue_address: value })}
+          onChange={(value: string) => setFormData({ ...formData, venue_address: value })}
           placeholder="例: 〇〇1-2-3"
         />
       </div>
@@ -421,7 +421,7 @@ function Step3Application({ formData, setFormData }: StepProps) {
           required
           type="date"
           value={formData.application_end_date}
-          onChange={(value) => setFormData({ ...formData, application_end_date: value })}
+          onChange={(value: string) => setFormData({ ...formData, application_end_date: value })}
         />
 
         <div style={{
