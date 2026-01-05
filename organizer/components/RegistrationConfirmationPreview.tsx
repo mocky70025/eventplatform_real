@@ -40,7 +40,7 @@ export default function RegistrationConfirmationPreview() {
         justifyContent: 'center',
         boxSizing: 'border-box'
       }}>
-        <ProgressBar type="organizer" step="confirmation" />
+        <ProgressBar currentStep={2} totalSteps={3} />
       </div>
 
       {/* フォーム */}

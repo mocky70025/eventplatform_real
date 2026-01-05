@@ -48,7 +48,7 @@ export default function RegistrationFormPreview() {
         justifyContent: 'center',
         boxSizing: 'border-box'
       }}>
-        <ProgressBar type="organizer" step="form" />
+        <ProgressBar currentStep={1} totalSteps={3} />
       </div>
 
       {/* フォーム */}

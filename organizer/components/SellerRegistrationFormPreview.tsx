@@ -49,7 +49,7 @@ export default function SellerRegistrationFormPreview() {
         justifyContent: 'center',
         boxSizing: 'border-box'
       }}>
-        <ProgressBar type="seller" step="form" />
+        <ProgressBar currentStep={1} totalSteps={3} />
       </div>
 
       {/* フォーム */}

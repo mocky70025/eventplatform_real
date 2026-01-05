@@ -104,7 +104,7 @@ export default function WelcomeScreen() {
     <div style={{
       minHeight: '100vh',
       width: '100%',
-      background: colors.gradients.warm,
+      background: 'radial-gradient(at 40% 20%, rgba(16, 185, 129, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(168, 85, 247, 0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -125,7 +125,7 @@ export default function WelcomeScreen() {
             height: '80px',
             background: colors.gradients.primary,
             borderRadius: borderRadius.xl,
-            boxShadow: shadows.primary,
+            boxShadow: shadows.glow,
             margin: '0 auto',
             marginBottom: spacing[4],
             display: 'flex',
@@ -355,17 +355,17 @@ export default function WelcomeScreen() {
                   fontWeight: typography.fontWeight.semibold,
                   cursor: 'pointer',
                   transition: 'all 0.2s',
-                  boxShadow: shadows.primary,
+                  boxShadow: shadows.glow,
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = colors.primary[600]
                   e.currentTarget.style.transform = 'translateY(-1px)'
-                  e.currentTarget.style.boxShadow = shadows.primaryHover
+                  e.currentTarget.style.boxShadow = shadows.buttonHover
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = colors.primary[500]
                   e.currentTarget.style.transform = 'translateY(0)'
-                  e.currentTarget.style.boxShadow = shadows.primary
+                  e.currentTarget.style.boxShadow = shadows.glow
                 }}
               >
                 <MailIcon />

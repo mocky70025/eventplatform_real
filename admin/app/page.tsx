@@ -3,54 +3,7 @@
 import { useState, useEffect } from 'react'
 import { supabase, type Organizer, type Event } from '@/lib/supabase'
 import AdminLogin from '@/components/AdminLogin'
-
-// 管理者用カラーパレット
-const colors = {
-  primary: '#6366F1',
-  primaryHover: '#4F46E5',
-  primaryLight: '#EEF2FF',
-  success: '#10B981',
-  successLight: '#D1FAE5',
-  warning: '#F59E0B',
-  warningLight: '#FEF3C7',
-  error: '#EF4444',
-  errorLight: '#FEE2E2',
-  neutral: {
-    0: '#FFFFFF',
-    50: '#FAFAFA',
-    100: '#F5F5F5',
-    200: '#E5E5E5',
-    300: '#D4D4D4',
-    400: '#A3A3A3',
-    500: '#737373',
-    600: '#525252',
-    700: '#404040',
-    800: '#262626',
-    900: '#171717',
-  },
-}
-
-const spacing = {
-  2: '0.5rem',
-  3: '0.75rem',
-  4: '1rem',
-  5: '1.25rem',
-  6: '1.5rem',
-  8: '2rem',
-}
-
-const borderRadius = {
-  base: '0.5rem',
-  md: '0.75rem',
-  lg: '1rem',
-  xl: '1.5rem',
-}
-
-const shadows = {
-  sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-  md: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-  lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
-}
+import { colors, spacing, borderRadius, shadows } from '@/styles/design-system'
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -154,7 +107,7 @@ export default function AdminDashboard() {
             width: '48px',
             height: '48px',
             border: `3px solid ${colors.neutral[200]}`,
-            borderTopColor: colors.primary,
+            borderTopColor: colors.primary[500],
             borderRadius: '50%',
             animation: 'spin 0.8s linear infinite',
             margin: '0 auto 16px',
@@ -184,17 +137,17 @@ export default function AdminDashboard() {
         <div style={{
           maxWidth: '1280px',
           margin: '0 auto',
-          padding: spacing.lg,
+          padding: spacing[4],
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: spacing.md }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: spacing[3] }}>
             <div style={{
               width: '40px',
               height: '40px',
-              background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primaryHover} 100%)`,
-              borderRadius: borderRadius.medium,
+              background: `linear-gradient(135deg, ${colors.primary} 0%, ${colors.primary[600]} 100%)`,
+              borderRadius: borderRadius.md,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -218,10 +171,10 @@ export default function AdminDashboard() {
               setIsAuthenticated(false)
             }}
             style={{
-              padding: `${spacing.sm} ${spacing.lg}`,
+              padding: `${spacing[2]} ${spacing[4]}`,
               background: 'transparent',
               border: `1px solid ${colors.neutral[300]}`,
-              borderRadius: borderRadius.medium,
+              borderRadius: borderRadius.md,
               fontSize: '0.875rem',
               fontWeight: 600,
               color: colors.neutral[700],
@@ -248,14 +201,14 @@ export default function AdminDashboard() {
         <div style={{
           maxWidth: '1280px',
           margin: '0 auto',
-          padding: `0 ${spacing.lg}`,
+          padding: `0 ${spacing[4]}`,
           display: 'flex',
-          gap: spacing['4xl'],
+          gap: spacing[16],
         }}>
           <button
             onClick={() => setCurrentView('organizers')}
             style={{
-              padding: `${spacing.lg} 0`,
+              padding: `${spacing[4]} 0`,
               background: 'transparent',
               border: 'none',
               borderBottom: `2px solid ${currentView === 'organizers' ? colors.primary : 'transparent'}`,
@@ -271,7 +224,7 @@ export default function AdminDashboard() {
           <button
             onClick={() => setCurrentView('events')}
             style={{
-              padding: `${spacing.lg} 0`,
+              padding: `${spacing[4]} 0`,
               background: 'transparent',
               border: 'none',
               borderBottom: `2px solid ${currentView === 'events' ? colors.primary : 'transparent'}`,
@@ -291,7 +244,7 @@ export default function AdminDashboard() {
       <div style={{
         maxWidth: '1280px',
         margin: '0 auto',
-        padding: spacing['4xl'],
+        padding: spacing[16],
       }}>
         {currentView === 'organizers' ? (
           <div>
@@ -299,7 +252,7 @@ export default function AdminDashboard() {
               fontSize: '1.25rem',
               fontWeight: 700,
               color: colors.neutral[900],
-              marginBottom: spacing['3xl'],
+              marginBottom: spacing[12],
             }}>
               主催者承認
             </h2>
@@ -309,30 +262,30 @@ export default function AdminDashboard() {
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: spacing['3xl'],
+                gap: spacing[12],
               }}>
                 {organizers.map((organizer) => (
                   <div
                     key={organizer.id}
                     style={{
                       background: colors.neutral[0],
-                      borderRadius: borderRadius.large,
+                      borderRadius: borderRadius.lg,
                       boxShadow: shadows.md,
-                      padding: spacing['3xl'],
+                      padding: spacing[12],
                     }}
                   >
                     <div style={{
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'flex-start',
-                      marginBottom: spacing.lg,
+                      marginBottom: spacing[4],
                     }}>
                       <div>
                         <h3 style={{
                           fontSize: '1.125rem',
                           fontWeight: 700,
                           color: colors.neutral[900],
-                          marginBottom: spacing.xs,
+                          marginBottom: spacing[1],
                         }}>
                           {organizer.company_name}
                         </h3>
@@ -345,12 +298,12 @@ export default function AdminDashboard() {
                         </p>
                       </div>
                       <span style={{
-                        padding: `${spacing.xs} ${spacing.sm}`,
-                        borderRadius: borderRadius.medium,
+                        padding: `${spacing[1]} ${spacing[2]}`,
+                        borderRadius: borderRadius.md,
                         fontSize: '0.75rem',
                         fontWeight: 600,
-                        background: organizer.is_approved ? colors.successLight : colors.warningLight,
-                        color: organizer.is_approved ? colors.success : colors.warning,
+                        background: organizer.is_approved ? colors.status.success.light : colors.status.warning.light,
+                        color: organizer.is_approved ? colors.status.success.main : colors.status.warning.main,
                       }}>
                         {organizer.is_approved ? '承認済み' : '未承認'}
                       </span>
@@ -358,26 +311,26 @@ export default function AdminDashboard() {
                     <div style={{
                       fontSize: '0.875rem',
                       color: colors.neutral[500],
-                      marginBottom: spacing.lg,
+                      marginBottom: spacing[4],
                       display: 'flex',
                       flexDirection: 'column',
-                      gap: spacing.sm,
+                      gap: spacing[2],
                     }}>
                       <div>電話: {organizer.phone_number}</div>
                       <div>メール: {organizer.email}</div>
                       <div>登録日: {formatDate(organizer.created_at)}</div>
                     </div>
                     {!organizer.is_approved && (
-                      <div style={{ display: 'flex', gap: spacing.sm }}>
+                      <div style={{ display: 'flex', gap: spacing[2] }}>
                         <button
                           onClick={() => handleOrganizerApproval(organizer.id, true)}
                           style={{
                             flex: 1,
-                            padding: `${spacing.sm} ${spacing.lg}`,
-                            background: colors.success,
+                            padding: `${spacing[2]} ${spacing[4]}`,
+                            background: colors.status.success.main,
                             color: colors.neutral[0],
                             border: 'none',
-                            borderRadius: borderRadius.medium,
+                            borderRadius: borderRadius.md,
                             fontSize: '0.875rem',
                             fontWeight: 600,
                             cursor: 'pointer',
@@ -390,11 +343,11 @@ export default function AdminDashboard() {
                           onClick={() => handleOrganizerApproval(organizer.id, false)}
                           style={{
                             flex: 1,
-                            padding: `${spacing.sm} ${spacing.lg}`,
-                            background: colors.error,
+                            padding: `${spacing[2]} ${spacing[4]}`,
+                            background: colors.status.error.main,
                             color: colors.neutral[0],
                             border: 'none',
-                            borderRadius: borderRadius.medium,
+                            borderRadius: borderRadius.md,
                             fontSize: '0.875rem',
                             fontWeight: 600,
                             cursor: 'pointer',
@@ -416,7 +369,7 @@ export default function AdminDashboard() {
               fontSize: '1.25rem',
               fontWeight: 700,
               color: colors.neutral[900],
-              marginBottom: spacing['3xl'],
+              marginBottom: spacing[12],
             }}>
               イベント管理
             </h2>
@@ -426,51 +379,51 @@ export default function AdminDashboard() {
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-                gap: spacing['3xl'],
+                gap: spacing[12],
               }}>
                 {events.map((event) => (
                   <div
                     key={event.id}
                     style={{
                       background: colors.neutral[0],
-                      borderRadius: borderRadius.large,
+                      borderRadius: borderRadius.lg,
                       boxShadow: shadows.md,
-                      padding: spacing['3xl'],
+                      padding: spacing[12],
                     }}
                   >
                     <h3 style={{
                       fontSize: '1.125rem',
                       fontWeight: 700,
                       color: colors.neutral[900],
-                      marginBottom: spacing.sm,
+                      marginBottom: spacing[2],
                     }}>
                       {event.event_name}
                     </h3>
                     <p style={{
                       fontSize: '0.875rem',
                       color: colors.neutral[500],
-                      marginBottom: spacing.sm,
+                      marginBottom: spacing[2],
                     }}>
                       {event.genre}
                     </p>
                     <div style={{
                       fontSize: '0.875rem',
                       color: colors.neutral[500],
-                      marginBottom: spacing.lg,
+                      marginBottom: spacing[4],
                     }}>
                       <div>{formatDate(event.event_start_date)} 〜 {formatDate(event.event_end_date)}</div>
                       <div>{event.venue_name}</div>
                     </div>
                     <div style={{ marginBottom: spacing[4] }}>
                       <span style={{
-                        padding: `${spacing.xs} ${spacing.sm}`,
-                        borderRadius: borderRadius.medium,
+                        padding: `${spacing[1]} ${spacing[2]}`,
+                        borderRadius: borderRadius.md,
                         fontSize: '0.75rem',
                         fontWeight: 600,
-                        background: event.approval_status === 'approved' ? colors.successLight :
-                          event.approval_status === 'rejected' ? colors.errorLight : colors.warningLight,
-                        color: event.approval_status === 'approved' ? colors.success :
-                          event.approval_status === 'rejected' ? colors.error : colors.warning,
+                        background: event.approval_status === 'approved' ? colors.status.success.light :
+                          event.approval_status === 'rejected' ? colors.status.error.light : colors.status.warning.light,
+                        color: event.approval_status === 'approved' ? colors.status.success.main :
+                          event.approval_status === 'rejected' ? colors.status.error.main : colors.status.warning.main,
                       }}>
                         {event.approval_status === 'approved' ? '承認済み' :
                           event.approval_status === 'rejected' ? '却下' : '審査中'}
@@ -481,11 +434,11 @@ export default function AdminDashboard() {
                         onClick={() => handleEventApproval(event.id, 'approved')}
                         style={{
                           flex: 1,
-                          padding: `${spacing.sm} ${spacing.lg}`,
-                          background: colors.success,
+                          padding: `${spacing[2]} ${spacing[4]}`,
+                          background: colors.status.success.main,
                           color: colors.neutral[0],
                           border: 'none',
-                          borderRadius: borderRadius.medium,
+                          borderRadius: borderRadius.md,
                           fontSize: '0.875rem',
                           fontWeight: 600,
                           cursor: 'pointer',
@@ -498,11 +451,11 @@ export default function AdminDashboard() {
                         onClick={() => handleEventApproval(event.id, 'rejected')}
                         style={{
                           flex: 1,
-                          padding: `${spacing.sm} ${spacing.lg}`,
-                          background: colors.error,
+                          padding: `${spacing[2]} ${spacing[4]}`,
+                          background: colors.status.error.main,
                           color: colors.neutral[0],
                           border: 'none',
-                          borderRadius: borderRadius.medium,
+                          borderRadius: borderRadius.md,
                           fontSize: '0.875rem',
                           fontWeight: 600,
                           cursor: 'pointer',
