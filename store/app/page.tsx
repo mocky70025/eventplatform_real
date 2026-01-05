@@ -345,7 +345,8 @@ export default function Home() {
       case 'applications':
         return <ApplicationManagement userProfile={userProfile} onBack={() => setCurrentView('home')} />
       case 'notifications':
-        return <NotificationBox userProfile={userProfile} onBack={() => setCurrentView('home')} onUnreadCountChange={setUnreadNotificationCount} />
+        // TODO: 通知一覧コンポーネントを実装
+        return <ExhibitorHome userProfile={userProfile} onNavigate={setCurrentView} />
       default:
         return <ExhibitorHome userProfile={userProfile} onNavigate={setCurrentView} />
     }

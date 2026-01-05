@@ -929,7 +929,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             justifyContent: 'center',
             boxSizing: 'border-box'
           }}>
-            <ProgressBar type="organizer" step="complete" />
+            <ProgressBar currentStep={7} totalSteps={7} />
           </div>
 
           {/* コンテンツ */}
@@ -1045,7 +1045,7 @@ export default function EventForm({ organizer, onEventCreated, onCancel, initial
             justifyContent: 'center',
             boxSizing: 'border-box'
           }}>
-            <ProgressBar type="organizer" step="confirmation" />
+            <ProgressBar currentStep={6} totalSteps={7} />
           </div>
 
           {/* フォーム */}
