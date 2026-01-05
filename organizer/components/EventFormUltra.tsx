@@ -259,7 +259,12 @@ export default function EventFormUltra({ organizer, onEventCreated, onCancel }: 
 }
 
 // ステップ1: 基本情報
-function Step1BasicInfo({ formData, setFormData }: any) {
+interface StepProps {
+  formData: any
+  setFormData: (data: any) => void
+}
+
+function Step1BasicInfo({ formData, setFormData }: StepProps) {
   return (
     <div>
       <h2 style={{
@@ -314,7 +319,7 @@ function Step1BasicInfo({ formData, setFormData }: any) {
 }
 
 // ステップ2: 日程・会場
-function Step2Schedule({ formData, setFormData }: any) {
+function Step2Schedule({ formData, setFormData }: StepProps) {
   return (
     <div>
       <h2 style={{
@@ -397,7 +402,7 @@ function Step2Schedule({ formData, setFormData }: any) {
 }
 
 // ステップ3: 申込設定
-function Step3Application({ formData, setFormData }: any) {
+function Step3Application({ formData, setFormData }: StepProps) {
   return (
     <div>
       <h2 style={{
@@ -438,7 +443,7 @@ function Step3Application({ formData, setFormData }: any) {
 }
 
 // ステップ4: 確認
-function Step4Confirmation({ formData }: any) {
+function Step4Confirmation({ formData }: { formData: any }) {
   const formatDate = (dateString: string) => {
     if (!dateString) return '未設定'
     const date = new Date(dateString)
@@ -497,7 +502,18 @@ function Step4Confirmation({ formData }: any) {
 }
 
 // フォームフィールドコンポーネント
-function FormField({ label, required, type = 'text', value, onChange, placeholder, options, rows }: any) {
+interface FormFieldProps {
+  label: string
+  required?: boolean
+  type?: 'text' | 'textarea' | 'select' | 'date' | 'tel' | 'email'
+  value: string
+  onChange: (value: string) => void
+  placeholder?: string
+  options?: string[]
+  rows?: number
+}
+
+function FormField({ label, required, type = 'text', value, onChange, placeholder, options, rows }: FormFieldProps) {
   const inputStyle = {
     width: '100%',
     padding: spacing[3],
@@ -509,12 +525,12 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
     transition: `all ${transitions.fast}`,
   }
 
-  const handleFocus = (e: any) => {
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     e.currentTarget.style.borderColor = colors.primary[500]
     e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
   }
 
-  const handleBlur = (e: any) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     e.currentTarget.style.borderColor = colors.neutral[200]
     e.currentTarget.style.boxShadow = 'none'
   }
@@ -574,7 +590,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
 }
 
 // 確認セクション
-function ConfirmSection({ title, children }: any) {
+function ConfirmSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div style={{
       background: colors.neutral[50],
@@ -602,7 +618,7 @@ function ConfirmSection({ title, children }: any) {
 }
 
 // 確認行
-function ConfirmRow({ label, value }: any) {
+function ConfirmRow({ label, value }: { label: string; value: string }) {
   return (
     <div style={{
       display: 'grid',
