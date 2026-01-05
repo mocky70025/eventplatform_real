@@ -37,7 +37,7 @@ export default function Input({
     },
     lg: {
       height: '52px',
-      padding: leftIcon ? `0 ${spacing[6]} 0 ${spacing[14]}` : `0 ${spacing[6]}`,
+      padding: leftIcon ? `0 ${spacing[6]} 0 ${spacing[12]}` : `0 ${spacing[6]}`,
       fontSize: typography.fontSize.lg,
     },
   }

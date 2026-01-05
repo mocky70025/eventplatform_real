@@ -35,7 +35,7 @@ export default function ProgressBar({
   const barFillStyle: CSSProperties = {
     height: '100%',
     width: `${progress}%`,
-    background: colors.gradients.primary,
+    background: colors.primary[500],
     borderRadius: borderRadius.full,
     transition: 'width 0.3s ease-out',
   }
