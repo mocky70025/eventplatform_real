@@ -1,6 +1,7 @@
 // EventFormUltra - イベント作成フォーム (型安全版)
 'use client'
 
+import type React from 'react'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { colors, typography, spacing, borderRadius, shadows, transitions } from '@/styles/design-system'
@@ -576,7 +577,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
       {type === 'textarea' ? (
         <textarea
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows || 4}
           required={required}
@@ -587,7 +588,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
       ) : type === 'select' ? (
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => onChange(e.target.value)}
           required={required}
           style={{ ...inputStyle, background: colors.neutral[0] }}
           onFocus={handleFocus}
@@ -602,7 +603,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
         <input
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
           placeholder={placeholder}
           required={required}
           style={inputStyle}
