@@ -1,3 +1,4 @@
+// EventFormUltra - イベント作成フォーム (型安全版)
 'use client'
 
 import { useState } from 'react'
