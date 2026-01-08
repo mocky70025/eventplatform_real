@@ -442,21 +442,22 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
         style={{
           position: 'fixed',
           left: '50%',
-          bottom: 12,
+          bottom: 18,
           zIndex: 1000,
-          width: '320px',
-          minWidth: '320px',
+          width: 'min(90vw, 420px)',
+          minWidth: '280px',
+          maxWidth: '420px',
           flexShrink: 0,
-          height: '76px',
+          height: '72px',
           background: 'rgba(255,255,255,0.92)',
           backdropFilter: 'blur(12px)',
           border: '1px solid #E5E7EB',
-          borderRadius: '16px',
-          boxShadow: '0 10px 24px rgba(249,115,22,0.16)',
+          borderRadius: '20px',
+          boxShadow: '0 14px 32px rgba(249,115,22,0.16)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
-          padding: '10px 12px',
+          padding: '10px 16px',
           willChange: 'transform',
           transition: 'transform 0.25s ease-out',
           transform: navVisible ? 'translateX(-50%) translateY(0) translateZ(0)' : 'translateX(-50%) translateY(110%) translateZ(0)'
@@ -481,7 +482,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '4px',
+                gap: '3px',
                 flex: 1
               }}
             >
@@ -498,12 +499,12 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                     }
                 }}
                 style={{
-                  width: '52px',
-                  height: '52px',
+                  width: '50px',
+                  height: '50px',
                   background: isActive ? '#FFF4E9' : 'transparent',
-                  borderRadius: '12px',
+                  borderRadius: '14px',
                   border: isActive ? '1px solid #F97316' : '1px solid #E5E7EB',
-                  boxShadow: isActive ? '0 6px 16px rgba(249,115,22,0.18)' : 'none',
+                  boxShadow: isActive ? '0 8px 18px rgba(249,115,22,0.18)' : 'none',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
