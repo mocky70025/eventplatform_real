@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { colors, spacing, typography, borderRadius, shadows, transitions } from '@/styles/design-system'
 import Button from './ui/Button'
@@ -44,6 +45,7 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
         .from('organizers')
         .upsert({
           id: user.id,
+          line_user_id: user.id,
           email: formData.email,
           name: formData.name,
           company_name: formData.company_name,
@@ -164,21 +166,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
             ))}
           </div>
 
-          {/* ヘルプ */}
-          <div style={{
-            marginTop: spacing[8],
-            padding: spacing[4],
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: borderRadius.lg,
-            fontSize: typography.fontSize.sm,
-          }}>
-            <div style={{ fontWeight: typography.fontWeight.semibold, marginBottom: spacing[2] }}>
-              💡 ヘルプ
-            </div>
-            <div style={{ opacity: 0.9 }}>
-              ご不明な点がございましたら、サポートまでお問い合わせください。
-            </div>
-          </div>
         </div>
 
         {/* 右側 - フォーム */}
@@ -254,16 +241,16 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                       性別
                     </label>
                     <div style={{ display: 'flex', gap: spacing[3] }}>
-                      {['男性', '女性', 'その他'].map((option) => (
+                      {[{ label: '男性', value: '男' }, { label: '女性', value: '女' }, { label: 'その他', value: 'それ以外' }].map((option) => (
                         <button
-                          key={option}
+                          key={option.value}
                           type="button"
-                          onClick={() => setFormData({ ...formData, gender: option })}
+                          onClick={() => setFormData({ ...formData, gender: option.value })}
                           style={{
                             flex: 1,
                             padding: spacing[3],
-                            background: formData.gender === option ? colors.primary[500] : colors.neutral[100],
-                            color: formData.gender === option ? colors.neutral[0] : colors.neutral[700],
+                            background: formData.gender === option.value ? colors.primary[500] : colors.neutral[100],
+                            color: formData.gender === option.value ? colors.neutral[0] : colors.neutral[700],
                             border: 'none',
                             borderRadius: borderRadius.lg,
                             fontFamily: typography.fontFamily.japanese,
@@ -273,7 +260,7 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                             transition: `all ${transitions.normal}`,
                           }}
                         >
-                          {option}
+                          {option.label}
                         </button>
                       ))}
                     </div>
@@ -282,9 +269,13 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                   <Input
                     label="年齢"
                     type="number"
-                    value={formData.age}
-                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                    value={Number(formData.age) < 0 ? '0' : Number(formData.age) > 99 ? '99' : formData.age}
+                    onChange={(e) => {
+                      const next = Math.min(99, Math.max(0, Number(e.target.value) || 0))
+                      setFormData({ ...formData, age: String(next) })
+                    }}
                     placeholder="30"
+                    min={0}
                     required
                     fullWidth
                   />
@@ -401,6 +392,24 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
               </div>
             )}
 
+            {/* 規約リンク */}
+            <div style={{
+              marginTop: spacing[6],
+              fontSize: typography.fontSize.sm,
+              color: colors.neutral[600],
+              lineHeight: typography.lineHeight.relaxed,
+            }}>
+              登録を進めることで、
+              <Link href="/terms" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+                利用規約
+              </Link>
+              と
+              <Link href="/privacy" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+                プライバシーポリシー
+              </Link>
+              に同意したものとみなされます。
+            </div>
+
             {/* フッターボタン */}
             <div style={{
               marginTop: spacing[10],
@@ -448,4 +457,3 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     </div>
   )
 }
-

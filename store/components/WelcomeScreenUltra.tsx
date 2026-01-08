@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { Check, Mail, Store } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import Button from './ui/Button'
 import Input from './ui/Input'
@@ -94,7 +96,7 @@ export default function WelcomeScreenUltra() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: `linear-gradient(135deg, ${colors.primary[500]} 0%, ${colors.primary[700]} 50%, ${colors.primary[900]} 100%)`,
+        background: colors.primary[100],
       }}>
         <div style={{
           maxWidth: '600px',
@@ -115,9 +117,9 @@ export default function WelcomeScreenUltra() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: typography.fontSize['3xl'],
+            color: colors.primary[700],
           }}>
-            📧
+            <Mail size={28} />
           </div>
           <h2 style={{
             fontFamily: typography.fontFamily.japanese,
@@ -151,13 +153,13 @@ export default function WelcomeScreenUltra() {
     }}>
       {/* 左側 - ヒーロー */}
       <div style={{
-        background: `linear-gradient(135deg, ${colors.primary[500]} 0%, ${colors.primary[700]} 50%, ${colors.primary[900]} 100%)`,
+        background: colors.primary[100],
         position: 'relative',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         padding: spacing[12],
-        color: colors.neutral[0],
+        color: colors.primary[800],
       }}>
         {/* 装飾的な背景要素 */}
         <div style={{
@@ -166,7 +168,7 @@ export default function WelcomeScreenUltra() {
           left: '-10%',
           width: '60%',
           height: '60%',
-          background: 'rgba(255,255,255,0.05)',
+          background: 'rgba(255,255,255,0.15)',
           borderRadius: '50%',
           filter: 'blur(100px)',
         }} />
@@ -176,7 +178,7 @@ export default function WelcomeScreenUltra() {
           right: '-10%',
           width: '50%',
           height: '50%',
-          background: 'rgba(255,255,255,0.03)',
+          background: 'rgba(255,255,255,0.12)',
           borderRadius: '50%',
           filter: 'blur(80px)',
         }} />
@@ -191,11 +193,10 @@ export default function WelcomeScreenUltra() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: typography.fontSize['5xl'],
             backdropFilter: 'blur(10px)',
             border: '2px solid rgba(255,255,255,0.2)',
           }}>
-            🎪
+            <Store size={48} />
           </div>
 
           <h1 style={{
@@ -225,30 +226,31 @@ export default function WelcomeScreenUltra() {
             gap: spacing[4],
           }}>
             {[
-              { icon: '✓', text: 'カンタン出店申込' },
-              { icon: '✓', text: 'リアルタイム管理' },
-              { icon: '✓', text: '安心のサポート' },
+              { icon: <Check size={16} />, text: 'カンタン出店申込' },
+              { icon: <Check size={16} />, text: 'リアルタイム管理' },
+              { icon: <Check size={16} />, text: '安心のサポート' },
             ].map((feature, index) => (
               <div key={index} style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: spacing[3],
                 fontSize: typography.fontSize.lg,
-                opacity: 0.9,
+                opacity: 0.95,
               }}>
                 <div style={{
                   width: '32px',
                   height: '32px',
-                  background: 'rgba(255,255,255,0.2)',
+                  background: index === 0 ? colors.primary[600] : 'rgba(255,255,255,0.2)',
                   borderRadius: borderRadius.full,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  color: index === 0 ? colors.neutral[0] : colors.primary[700],
                   fontWeight: typography.fontWeight.bold,
                 }}>
                   {feature.icon}
                 </div>
-                {feature.text}
+                <span style={{ color: colors.primary[800] }}>{feature.text}</span>
               </div>
             ))}
           </div>
@@ -271,7 +273,16 @@ export default function WelcomeScreenUltra() {
           padding: spacing[10],
           boxShadow: shadows['2xl'],
         }}>
-          <div style={{ marginBottom: spacing[8] }}>
+          <div style={{
+            marginBottom: spacing[8],
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: spacing[1],
+            height: '104px', // 見出しエリアの高さを固定して切替時の位置ずれを防ぐ
+            textAlign: 'center',
+          }}>
             <h2 style={{
               fontFamily: typography.fontFamily.japanese,
               fontSize: typography.fontSize['3xl'],
@@ -445,9 +456,36 @@ export default function WelcomeScreenUltra() {
               {isLogin ? '新規登録' : 'ログイン'}
             </button>
           </div>
+
+          <div style={{
+            marginTop: spacing[4],
+            minHeight: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: typography.fontSize.sm,
+            color: colors.neutral[600],
+            lineHeight: typography.lineHeight.relaxed,
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            gap: spacing[1],
+          }}>
+            {!isLogin && (
+              <>
+                <span>新規登録は、</span>
+                <Link href="/terms" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+                  利用規約
+                </Link>
+                <span>と</span>
+                <Link href="/privacy" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+                  プライバシーポリシー
+                </Link>
+                <span>に同意したものとみなされます。</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
   )
 }
-

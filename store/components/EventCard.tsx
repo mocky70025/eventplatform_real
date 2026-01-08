@@ -24,32 +24,50 @@ export default function EventCard({ event, userProfile, onClick }: EventCardProp
       return
     }
 
-    setApplying(true)
-    try {
-      const authType = userProfile.authType || 'line'
-      let exhibitor
+      setApplying(true)
+      try {
+        const authType = userProfile.authType || 'line'
+        let exhibitor
 
-      if (authType === 'email') {
-        const { data } = await supabase
+        if (authType === 'email') {
+          const { data } = await supabase
+            .from('exhibitors')
+            .select('id, business_license_image_url, vehicle_inspection_image_url, automobile_inspection_image_url, pl_insurance_image_url, fire_equipment_layout_image_url')
+            .eq('user_id', userProfile.userId)
+            .single()
+          exhibitor = data
+        } else {
+          const { data } = await supabase
           .from('exhibitors')
-          .select('id')
-          .eq('user_id', userProfile.userId)
+          .select('id, business_license_image_url, vehicle_inspection_image_url, automobile_inspection_image_url, pl_insurance_image_url, fire_equipment_layout_image_url')
+          .eq('line_user_id', userProfile.userId)
           .single()
-        exhibitor = data
-      } else {
-        const { data } = await supabase
-        .from('exhibitors')
-        .select('id')
-        .eq('line_user_id', userProfile.userId)
-        .single()
-        exhibitor = data
-      }
+          exhibitor = data
+        }
 
-      if (!exhibitor) {
-        throw new Error('出店者情報が見つかりません')
-      }
+        if (!exhibitor) {
+          throw new Error('出店者情報が見つかりません')
+        }
 
-      const { data: applicationData, error } = await supabase
+        const requiredDocs = {
+          営業許可証: exhibitor.business_license_image_url,
+          車検証: exhibitor.vehicle_inspection_image_url,
+          自動車検査証: exhibitor.automobile_inspection_image_url,
+          PL保険: exhibitor.pl_insurance_image_url,
+          火器類配置図: exhibitor.fire_equipment_layout_image_url,
+        }
+
+        const missingDocs = Object.entries(requiredDocs)
+          .filter(([, value]) => !value)
+          .map(([label]) => label)
+
+        if (missingDocs.length > 0) {
+          alert(`以下の書類をアップロードしてから申し込んでください。\n${missingDocs.join(' / ')}\n\nプロフィール編集または登録フローから登録できます。`)
+          setApplying(false)
+          return
+        }
+
+        const { data: applicationData, error } = await supabase
         .from('event_applications')
         .insert({
           exhibitor_id: exhibitor.id,

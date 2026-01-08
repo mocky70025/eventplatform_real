@@ -271,7 +271,16 @@ export default function WelcomeScreenUltra() {
           padding: spacing[10],
           boxShadow: shadows['2xl'],
         }}>
-          <div style={{ marginBottom: spacing[8] }}>
+          <div style={{
+            marginBottom: spacing[8],
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: spacing[1],
+            height: '104px', // 見出しエリアの高さを固定して切替時の位置ずれを防ぐ
+            textAlign: 'center',
+          }}>
             <h2 style={{
               fontFamily: typography.fontFamily.japanese,
               fontSize: typography.fontSize['3xl'],
@@ -450,4 +459,3 @@ export default function WelcomeScreenUltra() {
     </div>
   )
 }
-

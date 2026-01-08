@@ -442,18 +442,21 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
         style={{
           position: 'fixed',
           left: '50%',
-          bottom: 0,
+          bottom: 16,
           zIndex: 1000,
-          width: '393px',
-          minWidth: '393px',
+          width: '360px',
+          minWidth: '360px',
           flexShrink: 0,
-          height: '80px',
-          background: '#E8F5F5',
-          borderTop: '1px solid #E9ECEF',
+          height: '90px',
+          background: 'rgba(255,255,255,0.92)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid #E5E7EB',
+          borderRadius: '18px',
+          boxShadow: '0 12px 30px rgba(249,115,22,0.16)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-around',
-          padding: '0 8px',
+          padding: '10px 14px',
           willChange: 'transform',
           transition: 'transform 0.25s ease-out',
           transform: navVisible ? 'translateX(-50%) translateY(0) translateZ(0)' : 'translateX(-50%) translateY(110%) translateZ(0)'
@@ -478,7 +481,7 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '4px',
+                  gap: '6px',
                   flex: 1
                 }}
               >
@@ -495,21 +498,23 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                     }
                   }}
                   style={{
-                    width: '56px',
-                    height: '56px',
-                    background: 'white',
-                    borderRadius: '8px',
-                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)',
+                    width: '58px',
+                    height: '58px',
+                    background: isActive ? '#FFF4E9' : 'transparent',
+                    borderRadius: '14px',
+                    border: isActive ? '1px solid #F97316' : '1px solid #E5E7EB',
+                    boxShadow: isActive ? '0 6px 20px rgba(249,115,22,0.18)' : 'none',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     border: 'none',
                     cursor: 'pointer',
                     padding: 0,
-                    position: 'relative'
+                    position: 'relative',
+                    color: isActive ? '#F97316' : '#2C3E50',
                   }}
                 >
-                  <div style={{ color: '#2C3E50', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {item.icon}
                     {item.key === 'notifications' && unreadNotificationCount > 0 && (
                       <span style={{
@@ -537,8 +542,8 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                   fontSize: '12px',
                   fontFamily: '"Inter", "Noto Sans JP", sans-serif',
                   fontStyle: 'normal',
-                  fontWeight: 400,
-                  color: '#2C3E50'
+                  fontWeight: 600,
+                  color: isActive ? '#F97316' : '#475467'
                 }}>{item.label}</span>
               </div>
             )

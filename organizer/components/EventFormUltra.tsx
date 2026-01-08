@@ -2,6 +2,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { ChangeEvent, Dispatch, FocusEvent, ReactNode, SetStateAction } from 'react'
 import { supabase } from '@/lib/supabase'
 import { colors, typography, spacing, borderRadius, shadows, transitions } from '@/styles/design-system'
 import Button from './ui/Button'
@@ -12,10 +13,25 @@ interface EventFormProps {
   onCancel: () => void
 }
 
+interface EventFormData {
+  event_name: string
+  genre: string
+  lead_text: string
+  event_description: string
+  event_start_date: string
+  event_end_date: string
+  event_time: string
+  venue_name: string
+  venue_city: string
+  venue_town: string
+  venue_address: string
+  application_end_date: string
+}
+
 export default function EventFormUltra({ organizer, onEventCreated, onCancel }: EventFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<EventFormData>({
     // 基本情報
     event_name: '',
     genre: '',
@@ -261,8 +277,8 @@ export default function EventFormUltra({ organizer, onEventCreated, onCancel }: 
 
 // ステップ1: 基本情報
 interface StepProps {
-  formData: any
-  setFormData: (data: any) => void
+  formData: EventFormData
+  setFormData: Dispatch<SetStateAction<EventFormData>>
 }
 
 function Step1BasicInfo({ formData, setFormData }: StepProps) {
@@ -468,7 +484,7 @@ function Step3Application({ formData, setFormData }: StepProps) {
 }
 
 // ステップ4: 確認
-function Step4Confirmation({ formData }: { formData: any }) {
+function Step4Confirmation({ formData }: { formData: EventFormData }) {
   const formatDate = (dateString: string) => {
     if (!dateString) return '未設定'
     const date = new Date(dateString)
@@ -550,14 +566,18 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
     transition: `all ${transitions.fast}`,
   }
 
-  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleFocus = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     e.currentTarget.style.borderColor = colors.primary[500]
     e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
   }
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleBlur = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     e.currentTarget.style.borderColor = colors.neutral[200]
     e.currentTarget.style.boxShadow = 'none'
+  }
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    onChange(e.target.value)
   }
 
   return (
@@ -576,7 +596,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
       {type === 'textarea' ? (
         <textarea
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           placeholder={placeholder}
           rows={rows || 4}
           required={required}
@@ -587,7 +607,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
       ) : type === 'select' ? (
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           required={required}
           style={{ ...inputStyle, background: colors.neutral[0] }}
           onFocus={handleFocus}
@@ -602,7 +622,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
         <input
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleChange}
           placeholder={placeholder}
           required={required}
           style={inputStyle}
@@ -615,7 +635,7 @@ function FormField({ label, required, type = 'text', value, onChange, placeholde
 }
 
 // 確認セクション
-function ConfirmSection({ title, children }: { title: string; children: React.ReactNode }) {
+function ConfirmSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div style={{
       background: colors.neutral[50],
@@ -667,4 +687,3 @@ function ConfirmRow({ label, value }: { label: string; value: string }) {
     </div>
   )
 }
-

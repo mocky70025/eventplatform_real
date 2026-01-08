@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { supabase } from '../lib/supabase'
+import ImageUpload from './ImageUpload'
 import { colors, spacing, typography, borderRadius, shadows, transitions } from '../styles/design-system'
 import Button from './ui/Button'
 import Input from './ui/Input'
@@ -20,6 +22,13 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     age: '',
     phone_number: '',
     email: userProfile?.email || '',
+  })
+  const [documents, setDocuments] = useState({
+    business_license_image_url: '',
+    vehicle_inspection_image_url: '',
+    automobile_inspection_image_url: '',
+    pl_insurance_image_url: '',
+    fire_equipment_layout_image_url: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -40,16 +49,23 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       
       if (!user) throw new Error('ユーザーが見つかりません')
 
+      const exhibitorName = formData.shop_name || formData.name
+
       const { error: insertError } = await supabase
         .from('exhibitors')
         .upsert({
           id: user.id,
+          line_user_id: user.id,
           email: formData.email,
-          name: formData.name,
-          shop_name: formData.shop_name,
+          name: exhibitorName,
           phone_number: formData.phone_number,
           gender: formData.gender,
           age: parseInt(formData.age),
+          business_license_image_url: documents.business_license_image_url || null,
+          vehicle_inspection_image_url: documents.vehicle_inspection_image_url || null,
+          automobile_inspection_image_url: documents.automobile_inspection_image_url || null,
+          pl_insurance_image_url: documents.pl_insurance_image_url || null,
+          fire_equipment_layout_image_url: documents.fire_equipment_layout_image_url || null,
         })
 
       if (insertError) throw insertError
@@ -66,7 +82,7 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
   return (
     <div style={{
       minHeight: '100vh',
-      background: `linear-gradient(135deg, ${colors.primary[50]} 0%, ${colors.neutral[50]} 100%)`,
+      background: colors.neutral[50],
       padding: spacing[8],
       display: 'flex',
       alignItems: 'center',
@@ -82,32 +98,32 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
         display: 'grid',
         gridTemplateColumns: '400px 1fr',
         minHeight: '700px',
-      }}>
-        {/* 左サイドバー - プログレス */}
-        <div style={{
-          background: `linear-gradient(180deg, ${colors.primary[500]} 0%, ${colors.primary[700]} 100%)`,
-          padding: spacing[8],
-          color: colors.neutral[0],
-          display: 'flex',
-          flexDirection: 'column',
         }}>
-          <div style={{ marginBottom: spacing[10] }}>
-            <h1 style={{
-              fontFamily: typography.fontFamily.japanese,
-              fontSize: typography.fontSize['3xl'],
-              fontWeight: typography.fontWeight.bold,
-              marginBottom: spacing[2],
-            }}>
-              出店者登録
-            </h1>
-            <p style={{
-              fontFamily: typography.fontFamily.japanese,
-              fontSize: typography.fontSize.sm,
-              opacity: 0.9,
-            }}>
-              イベントに出店するための登録を行います
-            </p>
-          </div>
+          {/* 左サイドバー - プログレス */}
+          <div style={{
+            background: colors.primary[100],
+            padding: spacing[8],
+            color: colors.primary[800],
+            display: 'flex',
+            flexDirection: 'column',
+          }}>
+            <div style={{ marginBottom: spacing[10] }}>
+              <h1 style={{
+                fontFamily: typography.fontFamily.japanese,
+                fontSize: typography.fontSize['3xl'],
+                fontWeight: typography.fontWeight.bold,
+                marginBottom: spacing[2],
+              }}>
+                出店者登録
+              </h1>
+              <p style={{
+                fontFamily: typography.fontFamily.japanese,
+                fontSize: typography.fontSize.sm,
+                color: colors.primary[700],
+              }}>
+                イベントに出店するための登録を行います
+              </p>
+            </div>
 
           {/* ステップインジケーター */}
           <div style={{ flex: 1 }}>
@@ -127,20 +143,16 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                   width: '40px',
                   height: '40px',
                   borderRadius: borderRadius.full,
-                  background: currentStep > step.num 
-                    ? colors.neutral[0]
-                    : currentStep === step.num
-                    ? colors.neutral[0]
-                    : 'rgba(255,255,255,0.2)',
-                  color: currentStep >= step.num ? colors.primary[500] : colors.neutral[0],
+                  background: colors.neutral[0],
+                  color: currentStep >= step.num ? colors.primary[600] : colors.neutral[500],
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontWeight: typography.fontWeight.bold,
                   fontSize: typography.fontSize.lg,
                   flexShrink: 0,
-                  border: currentStep === step.num ? `3px solid ${colors.neutral[0]}` : 'none',
-                  boxShadow: currentStep === step.num ? shadows.lg : 'none',
+                  border: currentStep === step.num ? `3px solid ${colors.primary[200]}` : `1px solid ${colors.primary[200]}`,
+                  boxShadow: currentStep === step.num ? shadows.md : 'none',
                 }}>
                   {currentStep > step.num ? '✓' : step.num}
                 </div>
@@ -149,12 +161,13 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                     fontWeight: typography.fontWeight.semibold,
                     fontSize: typography.fontSize.base,
                     marginBottom: spacing[1],
+                    color: colors.primary[800],
                   }}>
                     {step.title}
                   </div>
                   <div style={{
                     fontSize: typography.fontSize.sm,
-                    opacity: 0.8,
+                    color: colors.primary[700],
                   }}>
                     {step.desc}
                   </div>
@@ -163,21 +176,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
             ))}
           </div>
 
-          {/* ヘルプ */}
-          <div style={{
-            marginTop: spacing[8],
-            padding: spacing[4],
-            background: 'rgba(255,255,255,0.1)',
-            borderRadius: borderRadius.lg,
-            fontSize: typography.fontSize.sm,
-          }}>
-            <div style={{ fontWeight: typography.fontWeight.semibold, marginBottom: spacing[2] }}>
-              💡 ヘルプ
-            </div>
-            <div style={{ opacity: 0.9 }}>
-              ご不明な点がございましたら、サポートまでお問い合わせください。
-            </div>
-          </div>
         </div>
 
         {/* 右側 - フォーム */}
@@ -253,16 +251,16 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                       性別
                     </label>
                     <div style={{ display: 'flex', gap: spacing[3] }}>
-                      {['男性', '女性', 'その他'].map((option) => (
+                      {[{ label: '男性', value: '男' }, { label: '女性', value: '女' }, { label: 'その他', value: 'それ以外' }].map((option) => (
                         <button
-                          key={option}
+                          key={option.value}
                           type="button"
-                          onClick={() => setFormData({ ...formData, gender: option })}
+                          onClick={() => setFormData({ ...formData, gender: option.value })}
                           style={{
                             flex: 1,
                             padding: spacing[3],
-                            background: formData.gender === option ? colors.primary[500] : colors.neutral[100],
-                            color: formData.gender === option ? colors.neutral[0] : colors.neutral[700],
+                            background: formData.gender === option.value ? colors.primary[500] : colors.neutral[100],
+                            color: formData.gender === option.value ? colors.neutral[0] : colors.neutral[700],
                             border: 'none',
                             borderRadius: borderRadius.lg,
                             fontFamily: typography.fontFamily.japanese,
@@ -272,7 +270,7 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                             transition: `all ${transitions.normal}`,
                           }}
                         >
-                          {option}
+                          {option.label}
                         </button>
                       ))}
                     </div>
@@ -281,9 +279,18 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                   <Input
                     label="年齢"
                     type="number"
-                    value={formData.age}
-                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                    value={Number(formData.age) < 0 ? '0' : Number(formData.age) > 99 ? '99' : formData.age}
+                    onChange={(e) => {
+                      const next = Math.min(99, Math.max(0, Number(e.target.value) || 0))
+                      setFormData({ ...formData, age: String(next) })
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown' && Number(formData.age || 0) <= 0) {
+                        e.preventDefault()
+                      }
+                    }}
                     placeholder="30"
+                    min={0}
                     required
                     fullWidth
                   />
@@ -331,6 +338,77 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                     required
                     fullWidth
                   />
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: spacing[4] }}>
+                    <div>
+                      <div style={{
+                        fontFamily: typography.fontFamily.japanese,
+                        fontSize: typography.fontSize.base,
+                        fontWeight: typography.fontWeight.semibold,
+                        color: colors.neutral[900],
+                        marginBottom: spacing[1],
+                      }}>
+                        営業許可証（任意・未登録だとイベント申込不可）
+                      </div>
+                      <div style={{
+                        fontFamily: typography.fontFamily.japanese,
+                        fontSize: typography.fontSize.sm,
+                        color: colors.neutral[600],
+                        lineHeight: typography.lineHeight.relaxed,
+                      }}>
+                        まだ手元にない場合はスキップできますが、アップロードしないとイベント申込はできません。
+                      </div>
+                    </div>
+                    <ImageUpload
+                      label="営業許可証"
+                      documentType="business_license"
+                      userId={userProfile?.userId || ''}
+                      currentImageUrl={documents.business_license_image_url || undefined}
+                      onUploadComplete={(url) => setDocuments((prev) => ({ ...prev, business_license_image_url: url }))}
+                      onUploadError={(msg) => setError(msg)}
+                      onImageDelete={() => setDocuments((prev) => ({ ...prev, business_license_image_url: '' }))}
+                    />
+
+                    <ImageUpload
+                      label="車検証"
+                      documentType="vehicle_inspection"
+                      userId={userProfile?.userId || ''}
+                      currentImageUrl={documents.vehicle_inspection_image_url || undefined}
+                      onUploadComplete={(url) => setDocuments((prev) => ({ ...prev, vehicle_inspection_image_url: url }))}
+                      onUploadError={(msg) => setError(msg)}
+                      onImageDelete={() => setDocuments((prev) => ({ ...prev, vehicle_inspection_image_url: '' }))}
+                    />
+
+                    <ImageUpload
+                      label="自動車検査証"
+                      documentType="automobile_inspection"
+                      userId={userProfile?.userId || ''}
+                      currentImageUrl={documents.automobile_inspection_image_url || undefined}
+                      onUploadComplete={(url) => setDocuments((prev) => ({ ...prev, automobile_inspection_image_url: url }))}
+                      onUploadError={(msg) => setError(msg)}
+                      onImageDelete={() => setDocuments((prev) => ({ ...prev, automobile_inspection_image_url: '' }))}
+                    />
+
+                    <ImageUpload
+                      label="PL保険"
+                      documentType="pl_insurance"
+                      userId={userProfile?.userId || ''}
+                      currentImageUrl={documents.pl_insurance_image_url || undefined}
+                      onUploadComplete={(url) => setDocuments((prev) => ({ ...prev, pl_insurance_image_url: url }))}
+                      onUploadError={(msg) => setError(msg)}
+                      onImageDelete={() => setDocuments((prev) => ({ ...prev, pl_insurance_image_url: '' }))}
+                    />
+
+                    <ImageUpload
+                      label="火器類配置図"
+                      documentType="fire_equipment_layout"
+                      userId={userProfile?.userId || ''}
+                      currentImageUrl={documents.fire_equipment_layout_image_url || undefined}
+                      onUploadComplete={(url) => setDocuments((prev) => ({ ...prev, fire_equipment_layout_image_url: url }))}
+                      onUploadError={(msg) => setError(msg)}
+                      onImageDelete={() => setDocuments((prev) => ({ ...prev, fire_equipment_layout_image_url: '' }))}
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -400,13 +478,31 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
               </div>
             )}
 
-            {/* フッターボタン */}
-            <div style={{
-              marginTop: spacing[10],
-              display: 'flex',
-              gap: spacing[4],
-              justifyContent: 'flex-end',
-            }}>
+          {/* 規約リンク */}
+          <div style={{
+            marginTop: spacing[6],
+            fontSize: typography.fontSize.sm,
+            color: colors.neutral[600],
+            lineHeight: typography.lineHeight.relaxed,
+          }}>
+            登録を進めることで、
+            <Link href="/terms" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+              利用規約
+            </Link>
+            と
+            <Link href="/privacy" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+              プライバシーポリシー
+            </Link>
+            に同意したものとみなされます。
+          </div>
+
+          {/* フッターボタン */}
+          <div style={{
+            marginTop: spacing[10],
+            display: 'flex',
+            gap: spacing[4],
+            justifyContent: 'flex-end',
+          }}>
               {currentStep > 1 && (
                 <Button
                   type="button"
@@ -447,4 +543,3 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     </div>
   )
 }
-

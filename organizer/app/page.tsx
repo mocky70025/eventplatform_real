@@ -9,6 +9,7 @@ import EventManagement from '@/components/EventManagementUltra'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 import EmailConfirmationPending from '@/components/EmailConfirmationPending'
+import Button from '@/components/ui/Button'
 
 export default function Home() {
   const [userProfile, setUserProfile] = useState<LineProfile | null>(null)
@@ -16,6 +17,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
   const [hasActiveSession, setHasActiveSession] = useState(false)
   const [currentView, setCurrentView] = useState<'home' | 'create-event' | 'profile' | 'notifications'>('home')
+  const [registrationComplete, setRegistrationComplete] = useState(false)
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -37,27 +39,18 @@ export default function Home() {
         }
         
         // セッションが有効な場合のみ、認証情報を読み込む
-        // セッションストレージから認証情報を確認
-        const authType = sessionStorage.getItem('auth_type')
-        const storedUserId = sessionStorage.getItem('user_id')
-        const storedEmail = sessionStorage.getItem('user_email')
-        const storedIsRegistered = sessionStorage.getItem('is_registered') === 'true'
-        
         if (session && session.user) {
           // Supabaseのセッションが存在する場合、優先的に使用
-          console.log('[Home] Auth session found:', session.user.id, 'authType from storage:', authType)
+          console.log('[Home] Auth session found:', session.user.id)
           
-          // セッションストレージにauth_typeがない場合、セッションから推測する
           // Google認証の場合はapp_metadataにprovider情報がある
           const provider = (session.user.app_metadata as any)?.provider || 'email'
-          const detectedAuthType = provider === 'google' ? 'google' : (authType || 'email')
+          const detectedAuthType = provider === 'google' ? 'google' : 'email'
           
           // セッションストレージに保存（次回のために）
-          if (!authType) {
-            sessionStorage.setItem('auth_type', detectedAuthType)
-            sessionStorage.setItem('user_id', session.user.id)
-            sessionStorage.setItem('user_email', session.user.email || '')
-          }
+          sessionStorage.setItem('auth_type', detectedAuthType)
+          sessionStorage.setItem('user_id', session.user.id)
+          sessionStorage.setItem('user_email', session.user.email || '')
           
           // メール確認済みかチェック
           const isEmailConfirmed = !!session.user.email_confirmed_at
@@ -85,107 +78,38 @@ export default function Home() {
           
           if (organizerError) {
             console.error('[Home] Error fetching organizer:', organizerError)
-            // エラーが発生した場合でも、セッションストレージに保存されていれば登録済みとして扱う
-            if (storedIsRegistered) {
-              console.log('[Home] Error fetching organizer, but is_registered in storage is true, setting isRegistered to true')
-              setIsRegistered(true)
-              return
-            }
-          }
-          
-          // データベースから取得できた場合、またはセッションストレージに保存されている場合
-          const shouldBeRegistered = !!organizer || storedIsRegistered
-          setIsRegistered(shouldBeRegistered)
-          
-          if (organizer) {
-            // データベースから取得できた場合、セッションストレージにも保存
-            sessionStorage.setItem('is_registered', 'true')
-          } else if (!storedIsRegistered) {
-            // 登録されていない場合、セッションストレージにも保存
+            setIsRegistered(false)
             sessionStorage.setItem('is_registered', 'false')
-          }
-          
-          console.log('[Home] Auth user profile set:', { 
-            userId: session.user.id, 
-            authType: detectedAuthType,
-            isRegistered: shouldBeRegistered,
-            is_approved: organizer?.is_approved,
-            emailConfirmed: isEmailConfirmed || true,
-            fromStorage: storedIsRegistered && !organizer
-          })
-        } else if ((authType === 'email' || authType === 'google') && storedUserId) {
-          // セッションが存在しないが、セッションストレージにuser_idがある場合
-          // セッションを再確認
-          const { data: { session: storageSession } } = await supabase.auth.getSession()
-          
-          // セッションが無効な場合、sessionStorageをクリア
-          if (!storageSession) {
-            sessionStorage.removeItem('auth_type')
-            sessionStorage.removeItem('user_id')
-            sessionStorage.removeItem('user_email')
-            sessionStorage.removeItem('is_registered')
-            sessionStorage.removeItem('email_confirmed')
-            console.log('[Home] No valid session for email/google auth, cleared sessionStorage')
-            return
-          }
-          
-          // メール確認待ちの状態で登録フォームにアクセスできるようにする
-          console.log('[Home] Email auth - session not found, but user_id in storage:', storedUserId)
-          
-          const emailConfirmedFromStorage = sessionStorage.getItem('email_confirmed') === 'true'
-          
-          // セッションが存在する場合、メール確認済みとして扱う
-          // セッションが存在しない場合、メール確認待ちとして扱う
-          const effectiveEmailConfirmed = emailConfirmedFromStorage || !!storageSession
-          
-          setUserProfile({
-            userId: storedUserId,
-            displayName: storedEmail || '',
-            email: storedEmail || '',
-            authType: 'email' as const,
-            emailConfirmed: effectiveEmailConfirmed
-          })
-          
-          // 登録済みかチェック
-          const { data: organizer, error: organizerError } = await supabase
-            .from('organizers')
-            .select('id, is_approved')
-            .eq('user_id', storedUserId)
-            .maybeSingle()
-          
-          if (organizerError) {
-            console.error('[Home] Error fetching organizer from storage:', organizerError)
-            // エラーが発生した場合でも、セッションストレージに保存されていれば登録済みとして扱う
-            if (storedIsRegistered) {
-              console.log('[Home] Error fetching organizer from storage, but is_registered in storage is true, setting isRegistered to true')
-              setIsRegistered(true)
-              return
-            }
-          }
-          
-          // データベースから取得できた場合、またはセッションストレージに保存されている場合
-          const shouldBeRegistered = !!organizer || storedIsRegistered
-          setIsRegistered(shouldBeRegistered)
-          
-          if (organizer) {
-            // データベースから取得できた場合、セッションストレージにも保存
+            setHasActiveSession(true)
+          } else if (!organizer) {
+            console.log('[Home] Organizer not found - allow registration')
+            setIsRegistered(false)
+            sessionStorage.setItem('is_registered', 'false')
+            setHasActiveSession(true)
+          } else {
+            setIsRegistered(true)
             sessionStorage.setItem('is_registered', 'true')
+            
+            console.log('[Home] Auth user profile set:', { 
+              userId: session.user.id, 
+              authType: detectedAuthType,
+              isRegistered: true,
+              is_approved: organizer?.is_approved,
+              emailConfirmed: isEmailConfirmed || true,
+            })
           }
           
-          console.log('[Home] Email auth user profile set from storage:', { 
-            userId: storedUserId, 
-            isRegistered: shouldBeRegistered,
-            is_approved: organizer?.is_approved,
-            emailConfirmed: effectiveEmailConfirmed,
-            hasSession: !!storageSession,
-            fromStorage: storedIsRegistered && !organizer
-          })
         } else {
           // organizerアプリはメール認証のみ
           console.log('[Home] No email auth found - user not logged in')
         }
       } catch (error) {
         console.error('[Auth] Initialization error:', error)
+        await supabase.auth.signOut()
+        sessionStorage.clear()
+        setUserProfile(null)
+        setIsRegistered(false)
+        setHasActiveSession(false)
       } finally {
         setLoading(false)
       }
@@ -235,6 +159,19 @@ export default function Home() {
     )
   }
 
+  if (registrationComplete) {
+    return (
+      <RegistrationComplete
+        onProceed={() => {
+          setRegistrationComplete(false)
+          setIsRegistered(true)
+          sessionStorage.setItem('is_registered', 'true')
+          setCurrentView('home')
+        }}
+      />
+    )
+  }
+
   if (!isRegistered) {
     return (
       <RegistrationForm
@@ -262,9 +199,11 @@ export default function Home() {
               setIsRegistered(true)
               sessionStorage.setItem('is_registered', 'true')
             }
+            setRegistrationComplete(true)
           } else {
             setIsRegistered(true)
             sessionStorage.setItem('is_registered', 'true')
+            setRegistrationComplete(true)
           }
         }}
       />
@@ -278,10 +217,43 @@ export default function Home() {
     <>
       {showEmailConfirmationBanner && (
         <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
-          <EmailConfirmationBanner email={userProfile.email || ''} />
-        </div>
-      )}
-      <EventManagement userProfile={userProfile} onNavigate={setCurrentView} />
-    </>
+      <EmailConfirmationBanner email={userProfile.email || ''} />
+    </div>
+  )}
+  <EventManagement userProfile={userProfile} onNavigate={setCurrentView} />
+</>
+  )
+}
+
+function RegistrationComplete({ onProceed }: { onProceed: () => void }) {
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: '#F8FAFC',
+      padding: '32px',
+    }}>
+      <div style={{
+        maxWidth: '520px',
+        width: '100%',
+        background: '#fff',
+        borderRadius: '16px',
+        boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+        padding: '32px',
+        textAlign: 'center',
+      }}>
+        <h1 style={{ fontFamily: 'Noto Sans JP, sans-serif', fontSize: '24px', marginBottom: '12px' }}>
+          登録が完了しました
+        </h1>
+        <p style={{ fontSize: '14px', color: '#4B5563', marginBottom: '24px', lineHeight: 1.6 }}>
+          登録内容を保存しました。イベント管理に進む前に、プロフィールや必要情報を確認してください。
+        </p>
+        <Button variant="primary" fullWidth onClick={onProceed}>
+          ダッシュボードへ進む
+        </Button>
+      </div>
+    </div>
   )
 }

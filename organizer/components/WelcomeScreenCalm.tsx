@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
+import { Building2, Mail } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import Button from './ui/Button'
 import Input from './ui/Input'
@@ -32,6 +34,11 @@ export default function WelcomeScreenCalm() {
         if (error) throw error
         setEmailSent(true)
       } else {
+        if (password.length < 6) {
+          setError('パスワードは6文字以上で入力してください')
+          setLoading(false)
+          return
+        }
         if (password !== confirmPassword) {
           setError('パスワードが一致しません')
           setLoading(false)
@@ -114,9 +121,9 @@ export default function WelcomeScreenCalm() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: typography.fontSize['3xl'],
+            color: colors.primary[700],
           }}>
-            ✉️
+            <Mail size={28} />
           </div>
           
           <h2 style={{
@@ -156,8 +163,8 @@ export default function WelcomeScreenCalm() {
         justifyContent: 'center',
         alignItems: 'center',
         padding: spacing[12],
-        background: colors.neutral[0],
-        borderRight: `1px solid ${colors.neutral[200]}`,
+        background: colors.primary[50],
+        borderRight: `1px solid ${colors.primary[100]}`,
       }}>
         <div style={{
           maxWidth: '400px',
@@ -167,15 +174,14 @@ export default function WelcomeScreenCalm() {
             width: '80px',
             height: '80px',
             margin: `0 auto ${spacing[6]}`,
-            background: colors.primary[500],
+            background: colors.primary[100],
             borderRadius: borderRadius.xl,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: typography.fontSize['4xl'],
-            color: colors.neutral[0],
+            color: colors.primary[700],
           }}>
-            🎪
+            <Building2 size={36} />
           </div>
           
           <h1 style={{
@@ -213,6 +219,13 @@ export default function WelcomeScreenCalm() {
         }}>
           <div style={{
             marginBottom: spacing[8],
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: spacing[1],
+            height: '96px', // 見出しエリアの高さを固定して切替時の位置ずれを防ぐ
+            textAlign: 'center',
           }}>
             <h2 style={{
               fontFamily: typography.fontFamily.japanese,
@@ -339,6 +352,29 @@ export default function WelcomeScreenCalm() {
               />
             </div>
 
+            {!isLogin && (
+              <>
+                <div style={{ marginBottom: spacing[4] }}>
+                  <Input
+                    type="password"
+                    placeholder="パスワード（6文字以上）"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <div style={{ marginBottom: spacing[4] }}>
+                  <Input
+                    type="password"
+                    placeholder="パスワード（確認）"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </>
+            )}
+
             {error && (
               <div style={{
                 padding: spacing[3],
@@ -358,7 +394,7 @@ export default function WelcomeScreenCalm() {
               fullWidth
               disabled={loading}
             >
-              {loading ? '送信中...' : 'メールでログイン'}
+              {loading ? '送信中...' : isLogin ? 'メールでログイン' : 'メールで登録'}
             </Button>
           </form>
 
@@ -382,9 +418,36 @@ export default function WelcomeScreenCalm() {
               {isLogin ? '新規登録はこちら' : 'ログインはこちら'}
             </button>
           </div>
+
+          <div style={{
+            marginTop: spacing[5],
+            minHeight: '40px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: typography.fontSize.sm,
+            color: colors.neutral[600],
+            lineHeight: typography.lineHeight.relaxed,
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            gap: spacing[1],
+          }}>
+            {!isLogin && (
+              <>
+                <span>新規登録は、</span>
+                <Link href="/terms" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+                  利用規約
+                </Link>
+                <span>と</span>
+                <Link href="/privacy" style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}>
+                  プライバシーポリシー
+                </Link>
+                <span>に同意したものとみなされます。</span>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
   )
 }
-

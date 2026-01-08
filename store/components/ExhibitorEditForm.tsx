@@ -39,9 +39,10 @@ export default function ExhibitorEditForm({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
+    const nextValue = name === 'age' ? Math.min(99, Math.max(0, Number(value) || 0)) : value
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: nextValue
     }))
   }
 
@@ -365,6 +366,11 @@ export default function ExhibitorEditForm({
                     name="age"
                     value={formData.age}
                     onChange={handleInputChange}
+                    onKeyDown={(e) => {
+                      if (e.key === 'ArrowDown' && Number(formData.age || 0) <= 0) {
+                        e.preventDefault()
+                      }
+                    }}
                     min="0"
                     max="99"
                     required

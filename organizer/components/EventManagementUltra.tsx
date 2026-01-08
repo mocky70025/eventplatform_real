@@ -17,7 +17,7 @@ interface Event {
   event_end_date: string
   venue_city?: string
   approval_status: string
-  applications_count?: number
+  applications_count: number
 }
 
 export default function EventManagementUltra({ userProfile, onNavigate }: EventManagementProps) {
@@ -395,4 +395,3 @@ export default function EventManagementUltra({ userProfile, onNavigate }: EventM
     </div>
   )
 }
-

@@ -883,11 +883,23 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
               <label style={labelStyle}>年齢</label>
               <input
                 type="number"
-                value={formData.age || ''}
+                min={0}
+                value={
+                  formData.age < 0
+                    ? 0
+                    : formData.age > 99
+                    ? 99
+                    : formData.age || ''
+                }
                 onChange={(e) => {
-                  const age = parseInt(e.target.value) || 0
+                  const age = Math.min(99, Math.max(0, parseInt(e.target.value) || 0))
                   setFormData({ ...formData, age })
                   if (errors.age) setErrors({ ...errors, age: false })
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowDown' && (formData.age || 0) <= 0) {
+                    e.preventDefault()
+                  }
                 }}
                 placeholder="例: 35"
                 style={{
