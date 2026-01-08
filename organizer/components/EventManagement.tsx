@@ -507,7 +507,6 @@ export default function EventManagement({ userProfile }: EventManagementProps) {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: 'none',
                     cursor: 'pointer',
                     padding: 0,
                     position: 'relative',
