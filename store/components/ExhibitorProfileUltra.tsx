@@ -13,10 +13,11 @@ interface ExhibitorProfileProps {
 export default function ExhibitorProfileUltra({ userProfile, onBack }: ExhibitorProfileProps) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    business_type: '',
+    name: userProfile?.name || '',
+    email: userProfile?.email || '',
+    phone_number: '',
+    gender: '',
+    age: '',
     description: '',
   })
 
@@ -25,13 +26,14 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
   }, [])
 
   const fetchProfile = async () => {
+    setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       
       if (user) {
         const { data, error } = await supabase
           .from('exhibitors')
-          .select('*')
+          .select('name,email,phone_number,gender,age,description')
           .eq('user_id', user.id)
           .single()
 
@@ -39,16 +41,19 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
         
         if (data) {
           setFormData({
-            name: data.name || '',
-            email: data.email || '',
-            phone: data.phone || '',
-            business_type: data.business_type || '',
+            name: data.name || userProfile?.name || '',
+            email: data.email || userProfile?.email || '',
+            phone_number: data.phone_number || '',
+            gender: data.gender || '',
+            age: data.age?.toString() || '',
             description: data.description || '',
           })
         }
       }
     } catch (error) {
       console.error('Failed to fetch profile:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -66,7 +71,14 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
 
       const { error } = await supabase
         .from('exhibitors')
-        .update(formData)
+        .update({
+          name: formData.name,
+          email: formData.email,
+          phone_number: formData.phone_number,
+          gender: formData.gender,
+          age: formData.age ? parseInt(formData.age) : null,
+          description: formData.description,
+        })
         .eq('user_id', user.id)
 
       if (error) throw error
@@ -110,6 +122,14 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
           }}>
             プロフィール編集
           </h1>
+          {loading && (
+            <span style={{
+              color: colors.neutral[500],
+              fontSize: typography.fontSize.sm,
+            }}>
+              読み込み中…
+            </span>
+          )}
         </div>
       </div>
 
@@ -146,7 +166,7 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
                 fontWeight: typography.fontWeight.bold,
                 margin: `0 auto ${spacing[4]}`,
               }}>
-                {formData.name?.[0] || '?'}
+                {formData.name?.[0] || userProfile?.name?.[0] || '?'}
               </div>
               
               <h2 style={{
@@ -156,14 +176,14 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
                 color: colors.neutral[900],
                 marginBottom: spacing[2],
               }}>
-                {formData.name || 'ゲスト'}
+                {formData.name || userProfile?.name || '未設定'}
               </h2>
               
               <p style={{
                 fontSize: typography.fontSize.sm,
                 color: colors.neutral[600],
               }}>
-                {formData.email}
+                {formData.email || userProfile?.email || 'メール未設定'}
               </p>
             </div>
           </div>
@@ -272,8 +292,8 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
                   </label>
                   <input
                     type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    value={formData.phone_number}
+                    onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
                     style={{
                       width: '100%',
                       padding: spacing[3],
@@ -295,7 +315,7 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
                   />
                 </div>
 
-                {/* 事業形態 */}
+                {/* 性別 */}
                 <div>
                   <label style={{
                     display: 'block',
@@ -305,11 +325,12 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
                     color: colors.neutral[900],
                     marginBottom: spacing[2],
                   }}>
-                    事業形態
+                    性別
                   </label>
-                  <select
-                    value={formData.business_type}
-                    onChange={(e) => setFormData({ ...formData, business_type: e.target.value })}
+                  <input
+                    type="text"
+                    value={formData.gender}
+                    onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                     style={{
                       width: '100%',
                       padding: spacing[3],
@@ -329,12 +350,46 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
                       e.currentTarget.style.borderColor = colors.neutral[200]
                       e.currentTarget.style.boxShadow = 'none'
                     }}
-                  >
-                    <option value="">選択してください</option>
-                    <option value="個人事業主">個人事業主</option>
-                    <option value="法人">法人</option>
-                    <option value="その他">その他</option>
-                  </select>
+                  />
+                </div>
+
+                {/* 年齢 */}
+                <div>
+                  <label style={{
+                    display: 'block',
+                    fontFamily: typography.fontFamily.japanese,
+                    fontSize: typography.fontSize.sm,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.neutral[900],
+                    marginBottom: spacing[2],
+                  }}>
+                    年齢
+                  </label>
+                  <input
+                    type="number"
+                    min={0}
+                    value={formData.age}
+                    onChange={(e) => setFormData({ ...formData, age: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: spacing[3],
+                      fontSize: typography.fontSize.base,
+                      fontFamily: typography.fontFamily.japanese,
+                      border: `2px solid ${colors.neutral[200]}`,
+                      borderRadius: borderRadius.lg,
+                      outline: 'none',
+                      transition: `all ${transitions.fast}`,
+                      background: colors.neutral[0],
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = colors.primary[500]
+                      e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = colors.neutral[200]
+                      e.currentTarget.style.boxShadow = 'none'
+                    }}
+                  />
                 </div>
               </div>
 
@@ -397,4 +452,3 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
     </div>
   )
 }
-
