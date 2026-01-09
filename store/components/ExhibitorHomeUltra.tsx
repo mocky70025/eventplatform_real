@@ -470,18 +470,22 @@ export default function ExhibitorHomeUltra({ userProfile, onNavigate }: Exhibito
                     borderRadius: borderRadius.full,
                     fontSize: typography.fontSize.sm,
                     fontWeight: typography.fontWeight.semibold,
-                    background: app.status === 'approved'
+                    background: app.application_status === 'approved'
                       ? colors.status.success.light
-                      : app.status === 'rejected'
+                      : app.application_status === 'rejected'
                       ? colors.status.error.light
                       : colors.status.warning.light,
-                    color: app.status === 'approved'
+                    color: app.application_status === 'approved'
                       ? colors.status.success.dark
-                      : app.status === 'rejected'
+                      : app.application_status === 'rejected'
                       ? colors.status.error.dark
                       : colors.status.warning.dark,
                   }}>
-                    {app.status === 'approved' ? '承認済み' : app.status === 'rejected' ? '却下' : '審査中'}
+                    {app.application_status === 'approved'
+                      ? '承認済み'
+                      : app.application_status === 'rejected'
+                      ? '却下'
+                      : '審査中'}
                   </div>
                 </div>
               ))}
