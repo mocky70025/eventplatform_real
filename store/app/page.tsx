@@ -118,29 +118,15 @@ export default function Home() {
               console.log('[Home] Session exists but email not confirmed - may be disabled in Supabase settings')
             }
             
-            // 登録済みかチェック
-            // まず user_id で検索。なければ line_user_id もフォールバック（Googleでも line_user_id に入っているケースを考慮）
+            // 登録済みかチェック（exhibitorsはline_user_idで管理）
             const { data: exhibitor, error: exhibitorError } = await supabase
               .from('exhibitors')
               .select('id')
-              .eq('user_id', session.user.id)
+              .eq('line_user_id', session.user.id)
               .maybeSingle()
-
-            let exhibitorRecord = exhibitor
-            let fetchError = exhibitorError
-
-            if ((!exhibitorRecord || fetchError) && detectedAuthType === 'google') {
-              const { data: exhibitorByLine, error: exhibitorByLineError } = await supabase
-                .from('exhibitors')
-                .select('id')
-                .eq('line_user_id', session.user.id)
-                .maybeSingle()
-              exhibitorRecord = exhibitorByLine
-              fetchError = fetchError || exhibitorByLineError
-            }
-
-            if (fetchError) {
-              console.error('[Home] Error fetching exhibitor:', fetchError)
+            
+            if (exhibitorError) {
+              console.error('[Home] Error fetching exhibitor:', exhibitorError)
               if (storedIsRegistered) {
                 console.log('[Home] Error fetching exhibitor, but is_registered in storage is true, setting isRegistered to true')
                 setIsRegistered(true)
@@ -149,10 +135,10 @@ export default function Home() {
               }
             }
 
-            const shouldBeRegistered = !!exhibitorRecord || storedIsRegistered
+            const shouldBeRegistered = !!exhibitor || storedIsRegistered
             setIsRegistered(shouldBeRegistered)
             
-            if (exhibitorRecord) {
+            if (exhibitor) {
               sessionStorage.setItem('is_registered', 'true')
             } else if (!storedIsRegistered) {
               sessionStorage.setItem('is_registered', 'false')
@@ -303,7 +289,7 @@ export default function Home() {
             const { data: exhibitor } = await supabase
               .from('exhibitors')
               .select('id')
-              .eq('user_id', session.user.id)
+              .eq('line_user_id', session.user.id)
               .maybeSingle()
             setIsRegistered(!!exhibitor)
           }
@@ -335,7 +321,7 @@ export default function Home() {
             const { data: exhibitor, error } = await supabase
               .from('exhibitors')
               .select('id')
-              .eq('user_id', userProfile.userId)
+              .eq('line_user_id', userProfile.userId)
               .maybeSingle()
             
             if (error) {

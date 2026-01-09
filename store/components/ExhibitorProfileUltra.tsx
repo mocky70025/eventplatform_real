@@ -3,8 +3,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { colors, typography, spacing, borderRadius, shadows, transitions } from '../styles/design-system'
-import Button from './ui/Button'
-
 interface ExhibitorProfileProps {
   userProfile: any
   onBack: () => void
@@ -12,13 +10,12 @@ interface ExhibitorProfileProps {
 
 export default function ExhibitorProfileUltra({ userProfile, onBack }: ExhibitorProfileProps) {
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState({
+  const [profileData, setProfileData] = useState({
     name: userProfile?.name || userProfile?.displayName || '',
     email: userProfile?.email || '',
     phone_number: '',
     gender: '',
     age: '',
-    description: '',
   })
   const [docUrls, setDocUrls] = useState({
     business_license_image_url: '',
@@ -37,34 +34,26 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const isLineLogin = (userProfile as any)?.authType === 'line'
-      const lineUserId = (userProfile as any)?.userId
-
       if (user) {
         const query = supabase
           .from('exhibitors')
-          .select('name,email,phone_number,gender,age,description,business_license_image_url,vehicle_inspection_image_url,automobile_inspection_image_url,pl_insurance_image_url,fire_equipment_layout_image_url')
+          .select('name,email,phone_number,gender,age,business_license_image_url,vehicle_inspection_image_url,automobile_inspection_image_url,pl_insurance_image_url,fire_equipment_layout_image_url')
           .limit(1)
 
         let data = null
         let error = null
 
-        if (!isLineLogin) {
-          ;({ data, error } = await query.eq('user_id', user.id).maybeSingle())
-        } else if (lineUserId) {
-          ;({ data, error } = await query.eq('line_user_id', lineUserId).maybeSingle())
-        }
+        ;({ data, error } = await query.eq('line_user_id', user.id).maybeSingle())
 
         if (error) throw error
         
         if (data) {
-          setFormData({
+          setProfileData({
             name: data.name || userProfile?.name || userProfile?.displayName || '',
             email: data.email || userProfile?.email || user?.email || '',
             phone_number: data.phone_number || '',
             gender: data.gender || '',
             age: data.age?.toString() || '',
-            description: data.description || '',
           })
           setDocUrls({
             business_license_image_url: data.business_license_image_url || '',
@@ -74,7 +63,7 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
             fire_equipment_layout_image_url: data.fire_equipment_layout_image_url || '',
           })
         } else {
-          setFormData((prev) => ({
+          setProfileData((prev) => ({
             ...prev,
             name: userProfile?.name || userProfile?.displayName || prev.name,
             email: userProfile?.email || user?.email || prev.email,
@@ -83,49 +72,6 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
       }
     } catch (error) {
       console.error('Failed to fetch profile:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      if (!user) {
-        alert('ログインが必要です')
-        setLoading(false)
-        return
-      }
-
-      const isLineLogin = (userProfile as any)?.authType === 'line'
-      const lineUserId = (userProfile as any)?.userId
-
-      const payload = {
-        user_id: user.id,
-        line_user_id: isLineLogin ? lineUserId : null,
-        name: formData.name,
-        email: formData.email,
-        phone_number: formData.phone_number,
-        gender: formData.gender,
-        age: formData.age ? parseInt(formData.age) : null,
-        description: formData.description,
-      }
-
-      const { error } = await supabase
-        .from('exhibitors')
-        .upsert(payload, { onConflict: isLineLogin ? 'line_user_id' : 'user_id' })
-        .eq(isLineLogin ? 'line_user_id' : 'user_id', isLineLogin ? lineUserId : user.id)
-
-      if (error) throw error
-
-      alert('プロフィールを更新しました')
-    } catch (error: any) {
-      console.error('Failed to update profile:', error)
-      alert('更新に失敗しました: ' + error.message)
     } finally {
       setLoading(false)
     }
@@ -150,16 +96,29 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
           alignItems: 'center',
           gap: spacing[4],
         }}>
-          <Button variant="ghost" onClick={onBack}>
+          <button
+            type="button"
+            onClick={onBack}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              padding: 0,
+              fontFamily: typography.fontFamily.japanese,
+              fontSize: typography.fontSize.base,
+              fontWeight: typography.fontWeight.semibold,
+              color: colors.primary[600],
+              cursor: 'pointer',
+            }}
+          >
             ← 戻る
-          </Button>
+          </button>
           <h1 style={{
             fontFamily: typography.fontFamily.japanese,
             fontSize: typography.fontSize['3xl'],
             fontWeight: typography.fontWeight.bold,
             color: colors.neutral[900],
           }}>
-            プロフィール編集
+            プロフィール
           </h1>
           {loading && (
             <span style={{
@@ -183,264 +142,51 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
           flexDirection: 'column',
           gap: spacing[8],
         }}>
-          {/* メインフォーム */}
+          {/* 基本情報 */}
           <div style={{
             background: colors.neutral[0],
             borderRadius: borderRadius.xl,
             padding: spacing[8],
             boxShadow: shadows.card,
           }}>
-            <form onSubmit={handleSubmit}>
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(2, 1fr)',
-                gap: spacing[6],
-                marginBottom: spacing[6],
-              }}>
-                {/* 名前 */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: typography.fontFamily.japanese,
-                    fontSize: typography.fontSize.sm,
-                    fontWeight: typography.fontWeight.semibold,
-                    color: colors.neutral[900],
-                    marginBottom: spacing[2],
-                  }}>
-                    名前 <span style={{ color: colors.status.error.main }}>*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: spacing[3],
-                      fontSize: typography.fontSize.base,
-                      fontFamily: typography.fontFamily.japanese,
-                      border: `2px solid ${colors.neutral[200]}`,
-                      borderRadius: borderRadius.lg,
-                      outline: 'none',
-                      transition: `all ${transitions.fast}`,
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary[500]
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.neutral[200]
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                  />
-                </div>
-
-                {/* メールアドレス */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: typography.fontFamily.japanese,
-                    fontSize: typography.fontSize.sm,
-                    fontWeight: typography.fontWeight.semibold,
-                    color: colors.neutral[900],
-                    marginBottom: spacing[2],
-                  }}>
-                    メールアドレス <span style={{ color: colors.status.error.main }}>*</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: spacing[3],
-                      fontSize: typography.fontSize.base,
-                      fontFamily: typography.fontFamily.japanese,
-                      border: `2px solid ${colors.neutral[200]}`,
-                      borderRadius: borderRadius.lg,
-                      outline: 'none',
-                      transition: `all ${transitions.fast}`,
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary[500]
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.neutral[200]
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                  />
-                </div>
-
-                {/* 電話番号 */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: typography.fontFamily.japanese,
-                    fontSize: typography.fontSize.sm,
-                    fontWeight: typography.fontWeight.semibold,
-                    color: colors.neutral[900],
-                    marginBottom: spacing[2],
-                  }}>
-                    電話番号
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.phone_number}
-                    onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                    style={{
-                      width: '100%',
-                      padding: spacing[3],
-                      fontSize: typography.fontSize.base,
-                      fontFamily: typography.fontFamily.japanese,
-                      border: `2px solid ${colors.neutral[200]}`,
-                      borderRadius: borderRadius.lg,
-                      outline: 'none',
-                      transition: `all ${transitions.fast}`,
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary[500]
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.neutral[200]
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                  />
-                </div>
-
-                {/* 性別 */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: typography.fontFamily.japanese,
-                    fontSize: typography.fontSize.sm,
-                    fontWeight: typography.fontWeight.semibold,
-                    color: colors.neutral[900],
-                    marginBottom: spacing[2],
-                  }}>
-                    性別
-                  </label>
-                <input
-                  type="text"
-                  value={formData.gender}
-                  onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: spacing[3],
-                    fontSize: typography.fontSize.base,
-                    fontFamily: typography.fontFamily.japanese,
-                    border: `2px solid ${colors.neutral[200]}`,
-                    borderRadius: borderRadius.lg,
-                    outline: 'none',
-                    transition: `all ${transitions.fast}`,
-                    background: colors.neutral[0],
-                  }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary[500]
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.neutral[200]
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                  />
-                </div>
-
-                {/* 年齢 */}
-                <div>
-                  <label style={{
-                    display: 'block',
-                    fontFamily: typography.fontFamily.japanese,
-                    fontSize: typography.fontSize.sm,
-                    fontWeight: typography.fontWeight.semibold,
-                    color: colors.neutral[900],
-                    marginBottom: spacing[2],
-                  }}>
-                    年齢
-                  </label>
-                <input
-                  type="number"
-                  min={0}
-                  value={formData.age}
-                  onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                  style={{
-                    width: '100%',
-                    padding: spacing[3],
-                    fontSize: typography.fontSize.base,
-                    fontFamily: typography.fontFamily.japanese,
-                    border: `2px solid ${colors.neutral[200]}`,
-                    borderRadius: borderRadius.lg,
-                    outline: 'none',
-                    transition: `all ${transitions.fast}`,
-                    background: colors.neutral[0],
-                  }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = colors.primary[500]
-                      e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = colors.neutral[200]
-                      e.currentTarget.style.boxShadow = 'none'
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* 説明 */}
-              <div style={{ marginBottom: spacing[8] }}>
-                <label style={{
-                  display: 'block',
-                  fontFamily: typography.fontFamily.japanese,
-                  fontSize: typography.fontSize.sm,
-                  fontWeight: typography.fontWeight.semibold,
-                  color: colors.neutral[900],
-                  marginBottom: spacing[2],
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: spacing[6],
+            }}>
+              {[
+                { label: '名前', value: profileData.name },
+                { label: 'メールアドレス', value: profileData.email },
+                { label: '電話番号', value: profileData.phone_number },
+                { label: '性別', value: profileData.gender },
+                { label: '年齢', value: profileData.age },
+              ].map((item) => (
+                <div key={item.label} style={{
+                  padding: spacing[4],
+                  borderRadius: borderRadius.lg,
+                  border: `1px solid ${colors.neutral[200]}`,
+                  background: colors.neutral[50],
                 }}>
-                  事業内容・自己紹介
-                </label>
-                <textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={6}
-                  placeholder="あなたの事業内容や自己紹介を記入してください"
-                  style={{
-                    width: '100%',
-                    padding: spacing[4],
-                    fontSize: typography.fontSize.base,
+                  <div style={{
                     fontFamily: typography.fontFamily.japanese,
-                    border: `2px solid ${colors.neutral[200]}`,
-                    borderRadius: borderRadius.lg,
-                    outline: 'none',
-                    resize: 'vertical',
-                    transition: `all ${transitions.fast}`,
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = colors.primary[500]
-                    e.currentTarget.style.boxShadow = `0 0 0 3px ${colors.primary[100]}`
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = colors.neutral[200]
-                    e.currentTarget.style.boxShadow = 'none'
-                  }}
-                />
-              </div>
-
-              {/* アクションボタン */}
-              <div style={{
-                display: 'flex',
-                gap: spacing[4],
-                justifyContent: 'flex-end',
-              }}>
-                <Button variant="outline" onClick={onBack} disabled={loading}>
-                  キャンセル
-                </Button>
-                <Button type="submit" variant="primary" disabled={loading}>
-                  {loading ? '保存中...' : '保存する'}
-                </Button>
-              </div>
-            </form>
+                    fontSize: typography.fontSize.sm,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.neutral[600],
+                    marginBottom: spacing[1],
+                  }}>
+                    {item.label}
+                  </div>
+                  <div style={{
+                    fontFamily: typography.fontFamily.japanese,
+                    fontSize: typography.fontSize.base,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.neutral[900],
+                  }}>
+                    {item.value || '未設定'}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* 提出書類プレビュー */}

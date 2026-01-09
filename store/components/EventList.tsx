@@ -116,33 +116,37 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
         ...overrideFilters
       }
 
-      let query = supabase
-        .from('events')
-        .select('*')
+      const buildQuery = (withApprovalStatus: boolean) => {
+        let query = supabase
+          .from('events')
+          .select('*')
 
-      // approval_statusカラムが存在する場合のみフィルタリング
-      // カラムが存在しない場合はエラーになるので、try-catchで処理
-      try {
-        query = query.eq('approval_status', 'approved')
-      } catch (error) {
-        // カラムが存在しない場合はスキップ
-        console.log('[EventList] approval_status column may not exist, skipping filter')
+        if (withApprovalStatus) {
+          query = query.eq('approval_status', 'approved')
+        }
+
+        if (effectiveFilters.periodStart) {
+          query = query.gte('event_end_date', effectiveFilters.periodStart)
+        }
+
+        if (effectiveFilters.periodEnd) {
+          query = query.lte('event_start_date', effectiveFilters.periodEnd)
+        }
+
+        const today = new Date().toISOString().split('T')[0]
+        query = query.or(`application_end_date.is.null,application_end_date.gte.${today}`)
+
+        query = query.order('event_start_date', { ascending: true })
+
+        return query
       }
 
-      if (effectiveFilters.periodStart) {
-        query = query.gte('event_end_date', effectiveFilters.periodStart)
+      let { data, error } = await buildQuery(true)
+
+      if (error && (error.code === '42703' || `${error.message}`.includes('approval_status'))) {
+        console.log('[EventList] approval_status column missing, retrying without filter')
+        ;({ data, error } = await buildQuery(false))
       }
-
-      if (effectiveFilters.periodEnd) {
-        query = query.lte('event_start_date', effectiveFilters.periodEnd)
-      }
-
-      const today = new Date().toISOString().split('T')[0]
-      query = query.or(`application_end_date.is.null,application_end_date.gte.${today}`)
-
-      query = query.order('event_start_date', { ascending: true })
-
-      const { data, error } = await query
 
       if (error) {
         console.error('[EventList] Supabase query error:', error)
@@ -320,25 +324,11 @@ export default function EventList({ userProfile, onBack }: EventListProps) {
 
   const handleApply = async (eventId: string) => {
     try {
-      // 出店者情報を取得（認証タイプに応じて）
-      const authType = userProfile.authType || 'line'
-      let exhibitor
-
-      if (authType === 'email') {
-        const { data } = await supabase
-          .from('exhibitors')
-          .select('id')
-          .eq('user_id', userProfile.userId)
-          .single()
-        exhibitor = data
-      } else {
-        const { data } = await supabase
-          .from('exhibitors')
-          .select('id')
-          .eq('line_user_id', userProfile.userId)
-          .single()
-        exhibitor = data
-      }
+      const { data: exhibitor } = await supabase
+        .from('exhibitors')
+        .select('id')
+        .eq('line_user_id', userProfile.userId)
+        .single()
 
       if (!exhibitor) {
         alert('出店者登録が完了していません。まず登録を行ってください。')

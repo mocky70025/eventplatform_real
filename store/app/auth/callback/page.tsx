@@ -93,11 +93,11 @@ export default function AuthCallback() {
             sessionStorage.setItem('user_id', session.user.id)
             sessionStorage.setItem('user_email', session.user.email || '')
             
-            // 既存ユーザーかチェック（user_idで検索）
+            // 既存ユーザーかチェック（exhibitorsはline_user_idで管理）
             const { data: existingUser, error: exhibitorError } = await supabase
               .from('exhibitors')
               .select('*')
-              .eq('user_id', session.user.id)
+              .eq('line_user_id', session.user.id)
               .maybeSingle()
             
             if (exhibitorError) {
@@ -268,5 +268,4 @@ export default function AuthCallback() {
     </div>
   )
 }
-
 

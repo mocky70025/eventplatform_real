@@ -44,7 +44,7 @@ export default function VerifyEmailPage() {
           const { data: exhibitor } = await supabase
             .from('exhibitors')
             .select('id')
-            .eq('user_id', session.user.id)
+            .eq('line_user_id', session.user.id)
             .maybeSingle()
           
           setStatus('success')
@@ -86,7 +86,7 @@ export default function VerifyEmailPage() {
               const { data: exhibitor } = await supabase
                 .from('exhibitors')
                 .select('id')
-                .eq('user_id', newSession.user.id)
+                .eq('line_user_id', newSession.user.id)
                 .maybeSingle()
               
               setStatus('success')
@@ -260,4 +260,3 @@ export default function VerifyEmailPage() {
     </div>
   )
 }
-

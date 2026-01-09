@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { type LineProfile } from '@/lib/auth'
-import OrganizerEditForm from './OrganizerEditForm'
 
 interface OrganizerProfileProps {
   userProfile: LineProfile
@@ -27,7 +26,6 @@ interface OrganizerData {
 export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfileProps) {
   const [organizerData, setOrganizerData] = useState<OrganizerData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [isEditing, setIsEditing] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
 
   // 画面サイズを検出
@@ -97,11 +95,6 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
     }
   }
 
-  const handleUpdateComplete = (updatedData: OrganizerData) => {
-    setOrganizerData(updatedData)
-    setIsEditing(false)
-  }
-
   if (loading) {
     return (
       <div style={{ 
@@ -133,17 +126,6 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
           }}>プロフィールを読み込み中...</p>
         </div>
       </div>
-    )
-  }
-
-  if (isEditing && organizerData) {
-    return (
-      <OrganizerEditForm
-        organizerData={organizerData}
-        userProfile={userProfile}
-        onUpdateComplete={handleUpdateComplete}
-        onCancel={() => setIsEditing(false)}
-      />
     )
   }
 
@@ -300,7 +282,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   fontWeight: 400,
                   color: '#2C3E50'
                 }}>
-                  {organizerData.name}
+                  {organizerData.name || '未設定'}
                 </p>
 
                 {/* 性別 */}
@@ -323,7 +305,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   fontWeight: 400,
                   color: '#2C3E50'
                 }}>
-                  {organizerData.gender === '男' ? '男性' : organizerData.gender === '女' ? '女性' : 'その他'}
+                  {organizerData.gender ? (organizerData.gender === '男' ? '男性' : organizerData.gender === '女' ? '女性' : 'その他') : '未設定'}
                 </p>
 
                 {/* 年齢 */}
@@ -346,7 +328,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   fontWeight: 400,
                   color: '#2C3E50'
                 }}>
-                  {organizerData.age}
+                  {organizerData.age ?? '未設定'}
                 </p>
 
                 {/* 電話番号 */}
@@ -369,7 +351,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   fontWeight: 400,
                   color: '#2C3E50'
                 }}>
-                  {organizerData.phone_number}
+                  {organizerData.phone_number || '未設定'}
                 </p>
 
                 {/* メールアドレス */}
@@ -392,7 +374,7 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   fontWeight: 400,
                   color: '#2C3E50'
                 }}>
-                  {organizerData.email}
+                  {organizerData.email || '未設定'}
                 </p>
 
                 {/* 会社名 */}
@@ -415,29 +397,8 @@ export default function OrganizerProfile({ userProfile, onBack }: OrganizerProfi
                   fontWeight: 400,
                   color: '#2C3E50'
                 }}>
-                  {organizerData.company_name}
+                  {organizerData.company_name || '未設定'}
                 </p>
-
-                {/* 編集するボタン */}
-                <button
-                  onClick={() => setIsEditing(true)}
-                  style={{
-                    width: '100%',
-                    padding: '16px 24px',
-                    background: '#FF8A5C', // Primary Default
-                    borderRadius: '12px',
-                    border: 'none',
-                    fontSize: '15px',
-                    fontFamily: '"Inter", "Noto Sans JP", sans-serif',
-                    fontStyle: 'normal',
-                    fontWeight: 700,
-                    color: 'white',
-                    cursor: 'pointer',
-                    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.08)', // Shadow SM
-                  }}
-                >
-                  編集する
-                </button>
               </div>
             </div>
           )}

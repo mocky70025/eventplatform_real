@@ -24,7 +24,7 @@ interface Event {
 interface Application {
   id: string
   event_id: string
-  status: string
+  application_status: string
   event: {
     event_name: string
   }
@@ -44,32 +44,67 @@ export default function ExhibitorHomeUltra({ userProfile, onNavigate }: Exhibito
     setLoading(true)
     try {
       // イベント取得
-      const { data: eventsData } = await supabase
+      let eventsData: Event[] | null = null
+      let eventsError: any = null
+
+      ;({ data: eventsData, error: eventsError } = await supabase
         .from('events')
         .select('*')
         .eq('approval_status', 'approved')
         .order('event_start_date', { ascending: true })
-        .limit(6)
+        .limit(6))
+
+      if (eventsError && (eventsError.code === '42703' || `${eventsError.message}`.includes('approval_status'))) {
+        const fallback = await supabase
+          .from('events')
+          .select('*')
+          .order('event_start_date', { ascending: true })
+          .limit(6)
+
+        if (fallback.error) throw fallback.error
+        eventsData = fallback.data
+      } else if (eventsError) {
+        throw eventsError
+      }
+
+      const normalizedEvents = eventsData && eventsData.length > 0 && 'approval_status' in eventsData[0]
+        ? eventsData.filter((event: any) => event.approval_status === 'approved' || event.approval_status === null)
+        : eventsData
 
       // 申し込み取得
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        const { data: appsData } = await supabase
-          .from('event_applications')
-          .select('*, event:events(event_name)')
-          .eq('exhibitor_id', user.id)
+        const { data: exhibitor } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('line_user_id', user.id)
+          .maybeSingle()
 
-        if (appsData) {
-          setApplications(appsData)
-          setStats({
-            total: appsData.length,
-            pending: appsData.filter(a => a.status === 'pending').length,
-            approved: appsData.filter(a => a.status === 'approved').length,
-          })
+        if (exhibitor?.id) {
+          const { data: appsData } = await supabase
+            .from('event_applications')
+            .select('id, application_status, event:events(event_name)')
+            .eq('exhibitor_id', exhibitor.id)
+
+          if (appsData) {
+            const mappedApps = appsData.map((app: any) => ({
+              id: app.id,
+              event_id: app.event_id,
+              application_status: app.application_status,
+              event: Array.isArray(app.event) ? app.event[0] : app.event
+            }))
+
+            setApplications(mappedApps)
+            setStats({
+              total: mappedApps.length,
+              pending: mappedApps.filter(a => a.application_status === 'pending').length,
+              approved: mappedApps.filter(a => a.application_status === 'approved').length,
+            })
+          }
         }
       }
 
-      setEvents(eventsData || [])
+      setEvents(normalizedEvents || [])
     } catch (error) {
       console.error('Failed to fetch data:', error)
     } finally {

@@ -51,28 +51,11 @@ export default function ExhibitorProfile({ userProfile, onBack }: ExhibitorProfi
 
   const fetchExhibitorData = async () => {
     try {
-      const authType = userProfile.authType || 'line'
-      let data, error
-
-      if (authType === 'email') {
-        // メールアドレス・パスワード認証の場合
-        const result = await supabase
-          .from('exhibitors')
-          .select('*')
-          .eq('user_id', userProfile.userId)
-          .single()
-        data = result.data
-        error = result.error
-      } else {
-        // LINE Loginの場合
-        const result = await supabase
-          .from('exhibitors')
-          .select('*')
-          .eq('line_user_id', userProfile.userId)
-          .single()
-        data = result.data
-        error = result.error
-      }
+      const { data, error } = await supabase
+        .from('exhibitors')
+        .select('*')
+        .eq('line_user_id', userProfile.userId)
+        .single()
 
       if (error) throw error
       

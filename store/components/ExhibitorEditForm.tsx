@@ -99,29 +99,13 @@ export default function ExhibitorEditForm({
         updated_at: new Date().toISOString()
       }
 
-      // Supabaseで更新（認証タイプに応じて）
-      const authType = userProfile.authType || 'line'
-      let data, error
-
-      if (authType === 'email') {
-        const result = await supabase
-          .from('exhibitors')
-          .update(updateData)
-          .eq('user_id', userProfile.userId)
-          .select()
-          .single()
-        data = result.data
-        error = result.error
-      } else {
-        const result = await supabase
-          .from('exhibitors')
-          .update(updateData)
-          .eq('line_user_id', userProfile.userId)
-          .select()
-          .single()
-        data = result.data
-        error = result.error
-      }
+      // Supabaseで更新（exhibitorsはline_user_idで管理）
+      const { data, error } = await supabase
+        .from('exhibitors')
+        .update(updateData)
+        .eq('line_user_id', userProfile.userId)
+        .select()
+        .single()
 
       if (error) {
         console.error('Update failed:', error)

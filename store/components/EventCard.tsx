@@ -26,24 +26,11 @@ export default function EventCard({ event, userProfile, onClick }: EventCardProp
 
       setApplying(true)
       try {
-        const authType = userProfile.authType || 'line'
-        let exhibitor
-
-        if (authType === 'email') {
-          const { data } = await supabase
-            .from('exhibitors')
-            .select('id, business_license_image_url, vehicle_inspection_image_url, automobile_inspection_image_url, pl_insurance_image_url, fire_equipment_layout_image_url')
-            .eq('user_id', userProfile.userId)
-            .single()
-          exhibitor = data
-        } else {
-          const { data } = await supabase
+        const { data: exhibitor } = await supabase
           .from('exhibitors')
           .select('id, business_license_image_url, vehicle_inspection_image_url, automobile_inspection_image_url, pl_insurance_image_url, fire_equipment_layout_image_url')
           .eq('line_user_id', userProfile.userId)
           .single()
-          exhibitor = data
-        }
 
         if (!exhibitor) {
           throw new Error('出店者情報が見つかりません')

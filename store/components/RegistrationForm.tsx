@@ -498,27 +498,12 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
     setLoading(true)
 
     try {
-      // 認証タイプに応じて重複登録チェック
-      const authType = userProfile.authType || 'line'
-      let existingUser = null
-
-      if (authType === 'email') {
-        // メールアドレス・パスワード認証の場合
-        const { data } = await supabase
-          .from('exhibitors')
-          .select('id')
-          .eq('user_id', userProfile.userId)
-          .single()
-        existingUser = data
-      } else {
-        // LINE Loginの場合
-        const { data } = await supabase
-          .from('exhibitors')
-          .select('id')
-          .eq('line_user_id', userProfile.userId)
-          .single()
-        existingUser = data
-      }
+      // Exhibitorsはline_user_idで一意に管理する
+      const { data: existingUser } = await supabase
+        .from('exhibitors')
+        .select('id')
+        .eq('line_user_id', userProfile.userId)
+        .single()
 
       if (existingUser) {
         alert('既に登録済みです。')
@@ -555,12 +540,7 @@ export default function RegistrationForm({ userProfile, onRegistrationComplete }
         ...documentImageUrls,
       }
 
-      // 認証タイプに応じてuser_idまたはline_user_idを設定
-      if (authType === 'email') {
-        insertData.user_id = userProfile.userId
-      } else {
-        insertData.line_user_id = userProfile.userId
-      }
+      insertData.line_user_id = userProfile.userId
 
       const { error } = await supabase
         .from('exhibitors')

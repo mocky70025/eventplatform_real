@@ -37,14 +37,32 @@ export default function EventListUltra({ userProfile, onBack }: EventListProps) 
   const fetchEvents = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase
+      let data: Event[] | null = null
+      let error: any = null
+
+      ;({ data, error } = await supabase
         .from('events')
         .select('*')
         .eq('approval_status', 'approved')
-        .order('event_start_date', { ascending: true })
+        .order('event_start_date', { ascending: true }))
 
-      if (error) throw error
-      setEvents(data || [])
+      if (error && (error.code === '42703' || `${error.message}`.includes('approval_status'))) {
+        const fallback = await supabase
+          .from('events')
+          .select('*')
+          .order('event_start_date', { ascending: true })
+
+        if (fallback.error) throw fallback.error
+        data = fallback.data
+      } else if (error) {
+        throw error
+      }
+
+      const normalized = data && data.length > 0 && 'approval_status' in data[0]
+        ? data.filter((event: any) => event.approval_status === 'approved' || event.approval_status === null)
+        : data
+
+      setEvents(normalized || [])
     } catch (error) {
       console.error('Failed to fetch events:', error)
     } finally {
@@ -751,4 +769,3 @@ function ApplicationFormUltra({ event, userProfile, onBack }: { event: Event; us
     </div>
   )
 }
-
