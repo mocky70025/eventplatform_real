@@ -8,7 +8,7 @@ import Button from './ui/Button'
 interface Application {
   id: string
   event_id: string
-  status: string
+  application_status: string
   message?: string
   created_at: string
   event: {
@@ -41,16 +41,27 @@ export default function ApplicationManagementUltra({ userProfile, onBack }: Appl
       
       if (user) {
         const { data, error } = await supabase
+          .from('exhibitors')
+          .select('id')
+          .eq('line_user_id', user.id)
+          .maybeSingle()
+
+        if (!data?.id) {
+          setApplications([])
+          return
+        }
+
+        const { data: applicationsData, error: applicationsError } = await supabase
           .from('event_applications')
           .select(`
             *,
             event:events(event_name, event_start_date, venue_city, main_image_url, genre)
           `)
-          .eq('exhibitor_id', user.id)
+          .eq('exhibitor_id', data.id)
           .order('created_at', { ascending: false })
 
-        if (error) throw error
-        setApplications(data || [])
+        if (applicationsError) throw applicationsError
+        setApplications(applicationsData || [])
       }
     } catch (error) {
       console.error('Failed to fetch applications:', error)
@@ -61,14 +72,14 @@ export default function ApplicationManagementUltra({ userProfile, onBack }: Appl
 
   const filteredApplications = applications.filter(app => {
     if (filter === 'all') return true
-    return app.status === filter
+    return app.application_status === filter
   })
 
   const stats = {
     total: applications.length,
-    pending: applications.filter(a => a.status === 'pending').length,
-    approved: applications.filter(a => a.status === 'approved').length,
-    rejected: applications.filter(a => a.status === 'rejected').length,
+    pending: applications.filter(a => a.application_status === 'pending').length,
+    approved: applications.filter(a => a.application_status === 'approved').length,
+    rejected: applications.filter(a => a.application_status === 'rejected').length,
   }
 
   const formatDate = (dateString: string) => {
@@ -269,18 +280,22 @@ export default function ApplicationManagementUltra({ userProfile, onBack }: Appl
                     borderRadius: borderRadius.full,
                     fontSize: typography.fontSize.sm,
                     fontWeight: typography.fontWeight.semibold,
-                    background: app.status === 'approved'
+                    background: app.application_status === 'approved'
                       ? colors.status.success.light
-                      : app.status === 'rejected'
+                      : app.application_status === 'rejected'
                       ? colors.status.error.light
                       : colors.status.warning.light,
-                    color: app.status === 'approved'
+                    color: app.application_status === 'approved'
                       ? colors.status.success.dark
-                      : app.status === 'rejected'
+                      : app.application_status === 'rejected'
                       ? colors.status.error.dark
                       : colors.status.warning.dark,
                   }}>
-                    {app.status === 'approved' ? '承認済み' : app.status === 'rejected' ? '却下' : '審査中'}
+                    {app.application_status === 'approved'
+                      ? '承認済み'
+                      : app.application_status === 'rejected'
+                      ? '却下'
+                      : '審査中'}
                   </div>
                 </div>
 
@@ -367,4 +382,3 @@ export default function ApplicationManagementUltra({ userProfile, onBack }: Appl
     </div>
   )
 }
-
