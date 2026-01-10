@@ -43,7 +43,7 @@ export default function ApplicationManagementUltra({ userProfile, onBack }: Appl
         const { data, error } = await supabase
           .from('exhibitors')
           .select('id')
-          .eq('line_user_id', user.id)
+          .or(`id.eq.${user.id},line_user_id.eq.${user.id}`)
           .maybeSingle()
 
         if (!data?.id) {

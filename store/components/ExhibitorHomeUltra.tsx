@@ -35,6 +35,7 @@ export default function ExhibitorHomeUltra({ userProfile, onNavigate }: Exhibito
   const [applications, setApplications] = useState<Application[]>([])
   const [stats, setStats] = useState({ total: 0, pending: 0, approved: 0 })
   const [loading, setLoading] = useState(true)
+  const [exhibitorName, setExhibitorName] = useState('')
 
   useEffect(() => {
     fetchData()
@@ -76,11 +77,12 @@ export default function ExhibitorHomeUltra({ userProfile, onNavigate }: Exhibito
       if (user) {
         const { data: exhibitor } = await supabase
           .from('exhibitors')
-          .select('id')
-          .eq('line_user_id', user.id)
+          .select('id,name')
+          .or(`id.eq.${user.id},line_user_id.eq.${user.id}`)
           .maybeSingle()
 
         if (exhibitor?.id) {
+          setExhibitorName(exhibitor.name || '')
           const { data: appsData } = await supabase
             .from('event_applications')
             .select('id, application_status, event:events(event_name)')
@@ -101,6 +103,8 @@ export default function ExhibitorHomeUltra({ userProfile, onNavigate }: Exhibito
               approved: mappedApps.filter(a => a.application_status === 'approved').length,
             })
           }
+        } else {
+          setExhibitorName('')
         }
       }
 
@@ -171,7 +175,7 @@ export default function ExhibitorHomeUltra({ userProfile, onNavigate }: Exhibito
               fontSize: typography.fontSize.base,
               color: colors.neutral[600],
             }}>
-              こんにちは、{userProfile?.name || 'ゲスト'}さん
+              こんにちは、{exhibitorName || userProfile?.name || userProfile?.displayName || '出店者'}さん
             </p>
           </div>
           <div style={{ display: 'flex', gap: spacing[3] }}>
