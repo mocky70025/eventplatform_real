@@ -22,6 +22,8 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     age: '',
     phone_number: '',
     email: userProfile?.email || '',
+    genre_category: '',
+    genre_free_text: '',
   })
   const [documents, setDocuments] = useState({
     business_license_image_url: '',
@@ -63,6 +65,8 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
         phone_number: formData.phone_number,
         gender: formData.gender,
         age: parseInt(formData.age),
+        genre_category: formData.genre_category || null,
+        genre_free_text: formData.genre_free_text || null,
         business_license_image_url: documents.business_license_image_url || null,
         vehicle_inspection_image_url: documents.vehicle_inspection_image_url || null,
         automobile_inspection_image_url: documents.automobile_inspection_image_url || null,
@@ -304,6 +308,72 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                     required
                     fullWidth
                   />
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      fontFamily: typography.fontFamily.japanese,
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.medium,
+                      color: colors.neutral[700],
+                      marginBottom: spacing[2],
+                    }}>
+                      ジャンル
+                    </label>
+                    <select
+                      value={formData.genre_category}
+                      onChange={(e) => setFormData({ ...formData, genre_category: e.target.value })}
+                      required
+                      style={{
+                        width: '100%',
+                        height: '44px',
+                        padding: '0 16px',
+                        borderRadius: borderRadius.lg,
+                        border: `1px solid ${colors.neutral[300]}`,
+                        background: colors.neutral[0],
+                        fontFamily: typography.fontFamily.japanese,
+                        fontSize: typography.fontSize.base,
+                        color: colors.neutral[900],
+                        cursor: 'pointer',
+                        appearance: 'none',
+                      }}
+                    >
+                      <option value="">選択してください</option>
+                      <option value="飲食">飲食</option>
+                      <option value="物販">物販</option>
+                      <option value="サービス">サービス</option>
+                      <option value="その他">その他</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      fontFamily: typography.fontFamily.japanese,
+                      fontSize: typography.fontSize.sm,
+                      fontWeight: typography.fontWeight.medium,
+                      color: colors.neutral[700],
+                      marginBottom: spacing[2],
+                    }}>
+                      ジャンル（自由記述）
+                    </label>
+                    <textarea
+                      value={formData.genre_free_text}
+                      onChange={(e) => setFormData({ ...formData, genre_free_text: e.target.value })}
+                      placeholder="例: 焼きそば、たこ焼きなど"
+                      required
+                      style={{
+                        width: '100%',
+                        minHeight: '120px',
+                        padding: '12px 16px',
+                        borderRadius: borderRadius.lg,
+                        border: `1px solid ${colors.neutral[300]}`,
+                        background: colors.neutral[0],
+                        fontFamily: typography.fontFamily.japanese,
+                        fontSize: typography.fontSize.base,
+                        color: colors.neutral[900],
+                        resize: 'vertical',
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             )}
