@@ -129,6 +129,11 @@ export async function GET(request: NextRequest) {
     const redirectUrl = new URL('/', request.url)
     redirectUrl.searchParams.set('line_auth', 'success')
     redirectUrl.searchParams.set('email', userEmail)
+    redirectUrl.searchParams.set('line_name', userName)
+    redirectUrl.searchParams.set('line_id', profile.userId)
+    if (profile.pictureUrl) {
+      redirectUrl.searchParams.set('line_picture', profile.pictureUrl)
+    }
     
     return NextResponse.redirect(redirectUrl.toString())
   } catch (error: any) {
@@ -136,4 +141,3 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL(`/?error=${encodeURIComponent(error.message)}`, request.url))
   }
 }
-

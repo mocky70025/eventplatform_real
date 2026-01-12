@@ -15,6 +15,7 @@ import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 import EmailConfirmationPending from '@/components/EmailConfirmationPending'
 import EmailSent from '@/components/EmailSent'
 import Button from '@/components/ui/Button'
+import { useSearchParams, useRouter } from 'next/navigation'
 
 export default function Home() {
   const [isRegistered, setIsRegistered] = useState(false)
@@ -26,6 +27,14 @@ export default function Home() {
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const [registrationComplete, setRegistrationComplete] = useState(false)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const lineAuthParam = searchParams.get('line_auth')
+  const lineEmailParam = searchParams.get('email')
+  const lineNameParam = searchParams.get('line_name')
+  const lineIdParam = searchParams.get('line_id')
+  const linePictureParam = searchParams.get('line_picture')
+  const initialLineAuth = lineAuthParam
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -42,10 +51,14 @@ export default function Home() {
         })
         
         // セッションが無効な場合、すべてのsessionStorageをクリア
+        const isLineCallbackFlow = initialLineAuth === 'success'
+
         if (!session || sessionError) {
           console.log('[Home] No valid session, clearing all sessionStorage and showing WelcomeScreen')
-          sessionStorage.clear() // すべてをクリア
-          setUserProfile(null)
+          if (!isLineCallbackFlow) {
+            sessionStorage.clear()
+            setUserProfile(null)
+          }
           setIsRegistered(false)
           setHasActiveSession(false)
           setLoading(false)
@@ -173,6 +186,32 @@ export default function Home() {
 
     initializeAuth()
   }, [])
+
+  useEffect(() => {
+    if (lineAuthParam !== 'success') return
+
+    const lineUserId = lineIdParam || `line_${Date.now()}`
+    const lineProfile = {
+      userId: lineUserId,
+      displayName: lineNameParam || '',
+      pictureUrl: linePictureParam || undefined,
+      statusMessage: '',
+      authType: 'line',
+      email: lineEmailParam || '',
+    }
+
+    sessionStorage.setItem('line_profile', JSON.stringify({ ...lineProfile }))
+    sessionStorage.setItem('auth_type', 'line')
+    sessionStorage.setItem('user_id', lineUserId)
+    sessionStorage.setItem('user_email', lineEmailParam || '')
+    sessionStorage.setItem('is_registered', 'false')
+
+    setUserProfile(lineProfile)
+    setIsRegistered(false)
+    setHasActiveSession(false)
+
+    router.replace('/', { scroll: false })
+  }, [lineAuthParam])
 
   // 未読通知数を取得
   useEffect(() => {
