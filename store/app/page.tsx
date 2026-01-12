@@ -35,6 +35,18 @@ export default function Home() {
   const lineIdParam = searchParams.get('line_id')
   const linePictureParam = searchParams.get('line_picture')
   const initialLineAuth = lineAuthParam
+  const lineProfileFromParams =
+    lineAuthParam === 'success'
+      ? {
+          userId: lineIdParam || `line_${Date.now()}`,
+          displayName: lineNameParam || '',
+          pictureUrl: linePictureParam || undefined,
+          statusMessage: '',
+          authType: 'line',
+          email: lineEmailParam || '',
+        }
+      : null
+  const effectiveProfile = userProfile ?? lineProfileFromParams
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -282,7 +294,7 @@ export default function Home() {
   }
 
   // ログイン状態のチェック
-  if (!userProfile) {
+  if (!effectiveProfile) {
     console.log('[Home] No userProfile, showing WelcomeScreen')
     console.log('[Home] SessionStorage state:', {
       line_profile: sessionStorage.getItem('line_profile') ? 'exists' : 'null',
@@ -353,8 +365,8 @@ export default function Home() {
   if (!isRegistered) {
     console.log('[Home] User not registered, showing RegistrationForm')
     return (
-      <RegistrationForm
-        userProfile={userProfile}
+        <RegistrationForm
+          userProfile={effectiveProfile}
         onRegistrationComplete={async () => {
           if (userProfile?.userId) {
             const { data: exhibitor, error } = await supabase
