@@ -233,105 +233,104 @@ export default function ExhibitorProfileUltra({ userProfile, onBack }: Exhibitor
             justifyContent: 'space-between',
             marginBottom: spacing[5],
           }}>
-              <div>
-                <h2 style={{
-                  fontFamily: typography.fontFamily.japanese,
-                  fontSize: typography.fontSize.xl,
-                  fontWeight: typography.fontWeight.bold,
-                  color: colors.neutral[900],
-                  marginBottom: spacing[1],
-                }}>
-                  提出書類
-                </h2>
-                <p style={{
-                  fontFamily: typography.fontFamily.japanese,
-                  fontSize: typography.fontSize.sm,
-                  color: colors.neutral[500],
-                }}>
-                  クリックすると原寸で確認できます
-                </p>
-              </div>
+            <div>
+              <h2 style={{
+                fontFamily: typography.fontFamily.japanese,
+                fontSize: typography.fontSize.xl,
+                fontWeight: typography.fontWeight.bold,
+                color: colors.neutral[900],
+                marginBottom: spacing[1],
+              }}>
+                提出書類
+              </h2>
+              <p style={{
+                fontFamily: typography.fontFamily.japanese,
+                fontSize: typography.fontSize.sm,
+                color: colors.neutral[500],
+              }}>
+                クリックすると原寸で確認できます
+              </p>
             </div>
+          </div>
 
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: spacing[5],
-            }}>
-              {[
-                { key: 'business_license_image_url', label: '営業許可証' },
-                { key: 'vehicle_inspection_image_url', label: '車検証' },
-                { key: 'automobile_inspection_image_url', label: '自動車点検記録簿' },
-                { key: 'pl_insurance_image_url', label: 'PL保険' },
-                { key: 'fire_equipment_layout_image_url', label: '消防設備配置図' },
-              ].map((doc) => {
-                const url = (docUrls as any)[doc.key] as string
-                const isUploaded = !!url
-                return (
-                  <div key={doc.key} style={{
-                    border: `1px solid ${colors.neutral[200]}`,
-                    borderRadius: borderRadius.lg,
-                    overflow: 'hidden',
-                    background: colors.neutral[50],
-                    transition: `transform ${transitions.fast}`,
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: spacing[5],
+          }}>
+            {[
+              { key: 'business_license_image_url', label: '営業許可証' },
+              { key: 'vehicle_inspection_image_url', label: '車検証' },
+              { key: 'automobile_inspection_image_url', label: '自動車点検記録簿' },
+              { key: 'pl_insurance_image_url', label: 'PL保険' },
+              { key: 'fire_equipment_layout_image_url', label: '消防設備配置図' },
+            ].map((doc) => {
+              const url = (docUrls as any)[doc.key] as string
+              const isUploaded = !!url
+              return (
+                <div key={doc.key} style={{
+                  border: `1px solid ${colors.neutral[200]}`,
+                  borderRadius: borderRadius.lg,
+                  overflow: 'hidden',
+                  background: colors.neutral[50],
+                  transition: `transform ${transitions.fast}`,
+                }}>
+                  <div style={{
+                    position: 'relative',
+                    height: '180px',
+                    background: colors.neutral[0],
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}>
-                    <div style={{
-                      position: 'relative',
-                      height: '180px',
-                      background: colors.neutral[0],
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                      {isUploaded ? (
-                        <a href={url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', height: '100%' }}>
-                          <img
-                            src={url}
-                            alt={doc.label}
-                            style={{
-                              width: '100%',
-                              height: '100%',
-                              objectFit: 'cover',
-                              display: 'block',
-                            }}
-                          />
-                        </a>
-                      ) : (
-                        <span style={{
-                          color: colors.neutral[400],
-                          fontSize: typography.fontSize.sm,
-                        }}>
-                          未アップロード
-                        </span>
-                      )}
+                    {isUploaded ? (
+                      <a href={url} target="_blank" rel="noreferrer" style={{ display: 'block', width: '100%', height: '100%' }}>
+                        <img
+                          src={url}
+                          alt={doc.label}
+                          style={{
+                            width: '100%',
+                            height: '100%',
+                            objectFit: 'cover',
+                            display: 'block',
+                          }}
+                        />
+                      </a>
+                    ) : (
                       <span style={{
-                        position: 'absolute',
-                        top: spacing[3],
-                        left: spacing[3],
-                        padding: `${spacing[1]} ${spacing[3]}`,
-                        borderRadius: borderRadius.full,
-                        fontSize: typography.fontSize.xs,
-                        fontWeight: typography.fontWeight.semibold,
-                        background: isUploaded ? colors.status.success.light : colors.neutral[200],
-                        color: isUploaded ? colors.status.success.dark : colors.neutral[600],
+                        color: colors.neutral[400],
+                        fontSize: typography.fontSize.sm,
                       }}>
-                        {isUploaded ? '登録済み' : '未登録'}
+                        未アップロード
                       </span>
-                    </div>
-                    <div style={{
-                      padding: spacing[4],
-                      borderTop: `1px solid ${colors.neutral[200]}`,
-                      fontFamily: typography.fontFamily.japanese,
-                      fontSize: typography.fontSize.sm,
+                    )}
+                    <span style={{
+                      position: 'absolute',
+                      top: spacing[3],
+                      left: spacing[3],
+                      padding: `${spacing[1]} ${spacing[3]}`,
+                      borderRadius: borderRadius.full,
+                      fontSize: typography.fontSize.xs,
                       fontWeight: typography.fontWeight.semibold,
-                      color: colors.neutral[800],
+                      background: isUploaded ? colors.status.success.light : colors.neutral[200],
+                      color: isUploaded ? colors.status.success.dark : colors.neutral[600],
                     }}>
-                      {doc.label}
-                    </div>
+                      {isUploaded ? '登録済み' : '未登録'}
+                    </span>
                   </div>
-                )
-              })}
-            </div>
+                  <div style={{
+                    padding: spacing[4],
+                    borderTop: `1px solid ${colors.neutral[200]}`,
+                    fontFamily: typography.fontFamily.japanese,
+                    fontSize: typography.fontSize.sm,
+                    fontWeight: typography.fontWeight.semibold,
+                    color: colors.neutral[800],
+                  }}>
+                    {doc.label}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>
