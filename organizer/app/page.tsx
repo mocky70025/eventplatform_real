@@ -6,10 +6,14 @@ import { type LineProfile, isLiffEnvironment } from '@/lib/auth'
 import WelcomeScreen from '@/components/WelcomeScreenCalm'
 import RegistrationForm from '@/components/RegistrationFormModern'
 import EventManagement from '@/components/EventManagementUltra'
+import EventFormUltra from '@/components/EventFormUltra'
+import OrganizerProfileUltra from '@/components/OrganizerProfileUltra'
+import NotificationBox from '@/components/NotificationBox'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import EmailConfirmationBanner from '@/components/EmailConfirmationBanner'
 import EmailConfirmationPending from '@/components/EmailConfirmationPending'
 import Button from '@/components/ui/Button'
+import { spacing } from '@/styles/design-system'
 
 export default function Home() {
   const [userProfile, setUserProfile] = useState<LineProfile | null>(null)
@@ -227,14 +231,47 @@ export default function Home() {
   // メール未確認の場合はバナーを表示
   const showEmailConfirmationBanner = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && userProfile?.email
 
+  const renderCurrentView = () => {
+    switch (currentView) {
+      case 'create-event':
+        return (
+          <EventFormUltra
+            organizer={null}
+            onEventCreated={() => setCurrentView('home')}
+            onCancel={() => setCurrentView('home')}
+          />
+        )
+      case 'profile':
+        return (
+          <OrganizerProfileUltra
+            userProfile={userProfile}
+            onBack={() => setCurrentView('home')}
+          />
+        )
+      case 'notifications':
+        return (
+          <div style={{ padding: spacing[8], maxWidth: '720px', margin: '0 auto' }}>
+            <NotificationBox
+              title="通知"
+              message="通知機能は準備中です。しばらくお待ちください。"
+              type="info"
+              action={{ label: 'ダッシュボードに戻る', onClick: () => setCurrentView('home') }}
+            />
+          </div>
+        )
+      default:
+        return <EventManagement userProfile={userProfile} onNavigate={setCurrentView} />
+    }
+  }
+
   return (
     <>
       {showEmailConfirmationBanner && (
         <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
-      <EmailConfirmationBanner email={userProfile.email || ''} />
-    </div>
-  )}
-  <EventManagement userProfile={userProfile} onNavigate={setCurrentView} />
+        <EmailConfirmationBanner email={userProfile.email || ''} />
+      </div>
+    )}
+    {renderCurrentView()}
 </>
   )
 }

@@ -151,15 +151,6 @@ export default function EventManagementUltra({ userProfile, onNavigate }: EventM
                 boxShadow: shadows.card,
                 border: `1px solid ${colors.neutral[100]}`,
                 transition: `all ${transitions.normal}`,
-                cursor: 'pointer',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-4px)'
-                e.currentTarget.style.boxShadow = shadows.lg
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = shadows.card
               }}
             >
               <div style={{
