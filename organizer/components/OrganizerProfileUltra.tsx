@@ -30,8 +30,7 @@ export default function OrganizerProfileUltra({ userProfile, onBack }: Organizer
     try {
       const { data: { user } } = await supabase.auth.getUser()
 
-      const isLineLogin = (userProfile as any)?.authType === 'line'
-      const lineUserId = (userProfile as any)?.userId
+      const lineUserId = (userProfile as any)?.userId || user?.id
 
       if (user) {
         const query = supabase
@@ -39,14 +38,8 @@ export default function OrganizerProfileUltra({ userProfile, onBack }: Organizer
           .select('name,email,phone_number,company_name,gender,age')
           .limit(1)
 
-        let data = null
-        let error = null
-
-        if (!isLineLogin) {
-          ;({ data, error } = await query.eq('user_id', user.id).maybeSingle())
-        } else if (lineUserId) {
-          ;({ data, error } = await query.eq('line_user_id', lineUserId).maybeSingle())
-        }
+        const lookupIds = [user.id, lineUserId].filter(Boolean)
+        const { data, error } = await query.in('line_user_id', lookupIds).maybeSingle()
 
         if (error) throw error
 
