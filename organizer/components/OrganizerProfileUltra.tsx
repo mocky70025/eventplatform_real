@@ -12,6 +12,7 @@ interface OrganizerProfileProps {
 
 export default function OrganizerProfileUltra({ userProfile, onBack }: OrganizerProfileProps) {
   const [loading, setLoading] = useState(false)
+  const [organizerId, setOrganizerId] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     name: userProfile?.name || userProfile?.displayName || '',
     email: userProfile?.email || '',
@@ -39,7 +40,9 @@ export default function OrganizerProfileUltra({ userProfile, onBack }: Organizer
           .limit(1)
 
         const lookupIds = [user.id, lineUserId].filter(Boolean)
-        const { data, error } = await query.in('line_user_id', lookupIds).maybeSingle()
+        const queryResult = await query.in('line_user_id', lookupIds).maybeSingle()
+        const data = queryResult.data as any
+        const error = queryResult.error
 
         if (error) throw error
 
@@ -52,12 +55,14 @@ export default function OrganizerProfileUltra({ userProfile, onBack }: Organizer
             gender: data.gender || '',
             age: data.age?.toString() || '',
           })
+          setOrganizerId(data.id || null)
         } else {
           setFormData((prev) => ({
             ...prev,
             name: userProfile?.name || userProfile?.displayName || prev.name,
             email: userProfile?.email || user?.email || prev.email,
           }))
+          setOrganizerId(null)
         }
       }
     } catch (error) {
@@ -93,10 +98,26 @@ export default function OrganizerProfileUltra({ userProfile, onBack }: Organizer
         age: formData.age ? parseInt(formData.age, 10) : null,
       }
 
-      const { error } = await supabase
-        .from('organizers')
-        .upsert(payload, { onConflict: isLineLogin ? 'line_user_id' : 'user_id' })
-        .eq(isLineLogin ? 'line_user_id' : 'user_id', isLineLogin ? lineUserId : user.id)
+      let error = null
+      if (organizerId) {
+        const result = await supabase
+          .from('organizers')
+          .update({
+            ...payload,
+            user_id: user.id,
+          })
+          .eq('id', organizerId)
+        error = result.error
+      } else {
+        const result = await supabase
+          .from('organizers')
+          .upsert(payload, { onConflict: isLineLogin ? 'line_user_id' : 'user_id' })
+        error = result.error
+        if (!error) {
+          const inserted = Array.isArray(result.data) ? (result.data as any[]) : []
+          setOrganizerId(inserted[0]?.id || organizerId)
+        }
+      }
 
       if (error) throw error
 
