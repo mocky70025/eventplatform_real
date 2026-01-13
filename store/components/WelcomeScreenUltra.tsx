@@ -99,65 +99,7 @@ export default function WelcomeScreenUltra() {
 
     updateIsDesktop()
     window.addEventListener('resize', updateIsDesktop)
-    return () => window.removeEventListener('resize', updateIsDesktop)
-  }, [])
-
-  if (emailSent) {
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: colors.primary[100],
-      }}>
-        <div style={{
-          maxWidth: '600px',
-          width: '100%',
-          background: colors.neutral[0],
-          borderRadius: borderRadius['2xl'],
-          padding: spacing[10],
-          boxShadow: shadows['2xl'],
-          textAlign: 'center',
-        }}>
-          <div style={{
-            width: '80px',
-            height: '80px',
-            background: colors.primary[100],
-            borderRadius: borderRadius.full,
-            margin: '0 auto',
-            marginBottom: spacing[6],
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: colors.primary[700],
-          }}>
-            <Mail size={28} />
-          </div>
-          <h2 style={{
-            fontFamily: typography.fontFamily.japanese,
-            fontSize: typography.fontSize['2xl'],
-            fontWeight: typography.fontWeight.bold,
-            color: colors.neutral[900],
-            marginBottom: spacing[3],
-          }}>
-            メールを確認してください
-          </h2>
-          <p style={{
-            fontFamily: typography.fontFamily.japanese,
-            fontSize: typography.fontSize.base,
-            color: colors.neutral[600],
-            lineHeight: typography.lineHeight.relaxed,
-          }}>
-            {email} にログインリンクを送信しました。<br />
-            メール内のリンクをクリックしてログインしてください。
-          </p>
-        </div>
-      </div>
-    )
-  }
-
-  return (
     <div style={{
       minHeight: '100vh',
       display: 'grid',
@@ -175,98 +117,98 @@ export default function WelcomeScreenUltra() {
           padding: spacing[12],
           color: colors.primary[800],
         }}>
-        {/* 装飾的な背景要素 */}
-        <div style={{
-          position: 'absolute',
-          top: '-20%',
-          left: '-10%',
-          width: '60%',
-          height: '60%',
-          background: 'rgba(255,255,255,0.15)',
-          borderRadius: '50%',
-          filter: 'blur(100px)',
-        }} />
-        <div style={{
-          position: 'absolute',
-          bottom: '-10%',
-          right: '-10%',
-          width: '50%',
-          height: '50%',
-          background: 'rgba(255,255,255,0.12)',
-          borderRadius: '50%',
-          filter: 'blur(80px)',
-        }} />
-
-        <div style={{ position: 'relative', zIndex: 1 }}>
+          {/* 装飾的な背景要素 */}
           <div style={{
-            width: '100px',
-            height: '100px',
+            position: 'absolute',
+            top: '-20%',
+            left: '-10%',
+            width: '60%',
+            height: '60%',
             background: 'rgba(255,255,255,0.15)',
-            borderRadius: borderRadius['2xl'],
-            marginBottom: spacing[8],
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            backdropFilter: 'blur(10px)',
-            border: '2px solid rgba(255,255,255,0.2)',
-          }}>
-            <Store size={48} />
-          </div>
-
-          <h1 style={{
-            fontFamily: typography.fontFamily.japanese,
-            fontSize: typography.fontSize['4xl'],
-            fontWeight: typography.fontWeight.bold,
-            marginBottom: spacing[4],
-            lineHeight: typography.lineHeight.tight,
-          }}>
-            デミセル<br />出店者プラットフォーム
-          </h1>
-
-          <p style={{
-            fontFamily: typography.fontFamily.japanese,
-            fontSize: typography.fontSize.xl,
-            opacity: 0.95,
-            lineHeight: typography.lineHeight.relaxed,
-            marginBottom: spacing[8],
-          }}>
-            イベント出店をもっと簡単に、<br />
-            もっとスマートに。
-          </p>
-
+            borderRadius: '50%',
+            filter: 'blur(100px)',
+          }} />
           <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: spacing[4],
-          }}>
-            {[
-              { icon: <Check size={16} />, text: 'カンタン出店申込' },
-              { icon: <Check size={16} />, text: 'リアルタイム管理' },
-              { icon: <Check size={16} />, text: '安心のサポート' },
-            ].map((feature, index) => (
-              <div key={index} style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: spacing[3],
-                fontSize: typography.fontSize.lg,
-                opacity: 0.95,
-              }}>
-                <div style={{
-                  width: '32px',
-                  height: '32px',
-                  background: index === 0 ? colors.primary[600] : 'rgba(255,255,255,0.2)',
-                  borderRadius: borderRadius.full,
+            position: 'absolute',
+            bottom: '-10%',
+            right: '-10%',
+            width: '50%',
+            height: '50%',
+            background: 'rgba(255,255,255,0.12)',
+            borderRadius: '50%',
+            filter: 'blur(80px)',
+          }} />
+
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <div style={{
+              width: '100px',
+              height: '100px',
+              background: 'rgba(255,255,255,0.15)',
+              borderRadius: borderRadius['2xl'],
+              marginBottom: spacing[8],
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backdropFilter: 'blur(10px)',
+              border: '2px solid rgba(255,255,255,0.2)',
+            }}>
+              <Store size={48} />
+            </div>
+
+            <h1 style={{
+              fontFamily: typography.fontFamily.japanese,
+              fontSize: typography.fontSize['4xl'],
+              fontWeight: typography.fontWeight.bold,
+              marginBottom: spacing[4],
+            }}>
+              デミセル<br />出店者プラットフォーム
+            </h1>
+
+            <p style={{
+              fontFamily: typography.fontFamily.japanese,
+              fontSize: typography.fontSize.xl,
+              opacity: 0.95,
+              lineHeight: typography.lineHeight.relaxed,
+              marginBottom: spacing[8],
+            }}>
+              イベント出店をもっと簡単に、<br />
+              もっとスマートに。
+            </p>
+
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: spacing[4],
+            }}>
+              {[
+                { icon: <Check size={16} />, text: 'カンタン出店申込' },
+                { icon: <Check size={16} />, text: 'リアルタイム管理' },
+                { icon: <Check size={16} />, text: '安心のサポート' },
+              ].map((feature, index) => (
+                <div key={index} style={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  color: index === 0 ? colors.neutral[0] : colors.primary[700],
-                  fontWeight: typography.fontWeight.bold,
+                  gap: spacing[3],
+                  fontSize: typography.fontSize.lg,
+                  opacity: 0.95,
                 }}>
-                  {feature.icon}
+                  <div style={{
+                    width: '32px',
+                    height: '32px',
+                    background: index === 0 ? colors.primary[600] : 'rgba(255,255,255,0.2)',
+                    borderRadius: borderRadius.full,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: index === 0 ? colors.neutral[0] : colors.primary[700],
+                    fontWeight: typography.fontWeight.bold,
+                  }}>
+                    {feature.icon}
+                  </div>
+                  <span style={{ color: colors.primary[800] }}>{feature.text}</span>
                 </div>
-                <span style={{ color: colors.primary[800] }}>{feature.text}</span>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       )}
