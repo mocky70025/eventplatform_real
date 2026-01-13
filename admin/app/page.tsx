@@ -30,20 +30,17 @@ export default function AdminDashboard() {
 
   const fetchData = async () => {
     try {
-      const { data: organizersData } = await supabase
-        .from('organizers')
-        .select('*')
-        .order('created_at', { ascending: false })
+      const res = await fetch('/api/admin/pending-data')
 
-      const { data: eventsData } = await supabase
-        .from('events')
-        .select('*')
-        .order('created_at', { ascending: false })
+      if (!res.ok) {
+        throw new Error('Failed to load admin data')
+      }
 
-      setOrganizers(organizersData || [])
-      setEvents(eventsData || [])
+      const payload = await res.json()
+      setOrganizers(payload.organizers || [])
+      setEvents(payload.events || [])
     } catch (error) {
-      console.error('Failed to fetch data:', error)
+      console.error('Failed to fetch admin data:', error)
     } finally {
       setLoading(false)
     }
