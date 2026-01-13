@@ -146,6 +146,11 @@ export default function AdminDashboard() {
     }
   }
 
+  const pendingOrganizers = organizers.filter((organizer) => !organizer.is_approved)
+  const approvedOrganizers = organizers.filter((organizer) => organizer.is_approved)
+  const pendingEvents = events.filter((event) => event.approval_status !== 'approved')
+  const approvedEvents = events.filter((event) => event.approval_status === 'approved')
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('ja-JP', {
@@ -156,6 +161,124 @@ export default function AdminDashboard() {
       minute: '2-digit',
     })
   }
+
+  const SectionHeading = ({ title, count }: { title: string; count: number }) => (
+    <div style={{
+      marginBottom: spacing[4],
+      display: 'flex',
+      alignItems: 'center',
+      gap: spacing[2],
+    }}>
+      <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: colors.neutral[900] }}>{title}</h3>
+      <span style={{
+        padding: `${spacing[1]} ${spacing[2]}`,
+        borderRadius: borderRadius.md,
+        background: colors.neutral[100],
+        fontSize: '0.75rem',
+        color: colors.neutral[700],
+        fontWeight: 600,
+      }}>
+        {count} 件
+      </span>
+    </div>
+  )
+
+  const ApprovalCard = ({
+    title,
+    subtitle,
+    statusLabel,
+    statusColor,
+    meta,
+    actions,
+  }: {
+    title: string
+    subtitle: string
+    statusLabel: string
+    statusColor: { background: string; color: string }
+    meta: string[]
+    actions?: { label: string; color: string; onClick: () => void }[]
+  }) => (
+    <div
+      style={{
+        background: colors.neutral[0],
+        borderRadius: borderRadius.lg,
+        boxShadow: shadows.md,
+        padding: spacing[12],
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing[3],
+      }}
+    >
+      <div style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+      }}>
+        <div>
+          <h3 style={{
+            fontSize: '1.125rem',
+            fontWeight: 700,
+            color: colors.neutral[900],
+            margin: 0,
+          }}>
+            {title}
+          </h3>
+          <p style={{
+            fontSize: '0.875rem',
+            color: colors.neutral[500],
+            margin: 0,
+          }}>
+            {subtitle}
+          </p>
+        </div>
+        <span style={{
+          padding: `${spacing[1]} ${spacing[2]}`,
+          borderRadius: borderRadius.sm,
+          fontSize: '0.75rem',
+          fontWeight: 600,
+          background: statusColor.background,
+          color: statusColor.color,
+        }}>
+          {statusLabel}
+        </span>
+      </div>
+      <div style={{
+        fontSize: '0.875rem',
+        color: colors.neutral[500],
+        display: 'flex',
+        flexDirection: 'column',
+        gap: spacing[2],
+      }}>
+        {meta.map((item) => (
+          <div key={item}>{item}</div>
+        ))}
+      </div>
+      {actions && actions.length > 0 && (
+        <div style={{ display: 'flex', gap: spacing[2] }}>
+          {actions.map((action) => (
+            <button
+              key={action.label}
+              onClick={action.onClick}
+              style={{
+                flex: 1,
+                padding: `${spacing[2]} ${spacing[4]}`,
+                background: action.color,
+                color: colors.neutral[0],
+                border: 'none',
+                borderRadius: borderRadius.md,
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {action.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 
   if (!isAuthenticated) {
     return <AdminLogin onLoginSuccess={() => {
@@ -291,7 +414,7 @@ export default function AdminDashboard() {
               transition: 'all 0.2s',
             }}
           >
-            主催者承認 ({organizers.filter(o => !o.is_approved).length})
+              主催者承認 ({pendingOrganizers.length})
           </button>
           <button
             onClick={() => setCurrentView('events')}
@@ -307,7 +430,7 @@ export default function AdminDashboard() {
               transition: 'all 0.2s',
             }}
           >
-            イベント管理 ({events.length})
+              イベント管理 ({pendingEvents.length} 審査中)
           </button>
           <button
             onClick={() => setCurrentView('logs')}
@@ -344,111 +467,60 @@ export default function AdminDashboard() {
             }}>
               主催者承認
             </h2>
-            {organizers.length === 0 ? (
-              <p style={{ color: colors.neutral[500] }}>主催者登録がありません</p>
+            <SectionHeading title="未承認主催者" count={pendingOrganizers.length} />
+            {pendingOrganizers.length === 0 ? (
+              <p style={{ color: colors.neutral[500], marginBottom: spacing[8] }}>未承認の主催者はありません</p>
             ) : (
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                 gap: spacing[12],
+                marginBottom: spacing[12],
               }}>
-                {organizers.map((organizer) => (
-                  <div
+                {pendingOrganizers.map((organizer) => (
+                  <ApprovalCard
                     key={organizer.id}
-                    style={{
-                      background: colors.neutral[0],
-                      borderRadius: borderRadius.lg,
-                      boxShadow: shadows.md,
-                      padding: spacing[12],
-                    }}
-                  >
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      marginBottom: spacing[4],
-                    }}>
-                      <div>
-                        <h3 style={{
-                          fontSize: '1.125rem',
-                          fontWeight: 700,
-                          color: colors.neutral[900],
-                          marginBottom: spacing[1],
-                        }}>
-                          {organizer.company_name}
-                        </h3>
-                        <p style={{
-                          fontSize: '0.875rem',
-                          color: colors.neutral[500],
-                          margin: 0,
-                        }}>
-                          {organizer.name}
-                        </p>
-                      </div>
-                      <span style={{
-                        padding: `${spacing[1]} ${spacing[2]}`,
-                        borderRadius: borderRadius.md,
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        background: organizer.is_approved ? colors.status.success.light : colors.status.warning.light,
-                        color: organizer.is_approved ? colors.status.success.main : colors.status.warning.main,
-                      }}>
-                        {organizer.is_approved ? '承認済み' : '未承認'}
-                      </span>
-                    </div>
-                    <div style={{
-                      fontSize: '0.875rem',
-                      color: colors.neutral[500],
-                      marginBottom: spacing[4],
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: spacing[2],
-                    }}>
-                      <div>電話: {organizer.phone_number}</div>
-                      <div>メール: {organizer.email}</div>
-                      <div>登録日: {formatDate(organizer.created_at)}</div>
-                    </div>
-                    {!organizer.is_approved && (
-                      <div style={{ display: 'flex', gap: spacing[2] }}>
-                        <button
-                          onClick={() => handleOrganizerApproval(organizer.id, true)}
-                          style={{
-                            flex: 1,
-                            padding: `${spacing[2]} ${spacing[4]}`,
-                            background: colors.status.success.main,
-                            color: colors.neutral[0],
-                            border: 'none',
-                            borderRadius: borderRadius.md,
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                          }}
-                        >
-                          承認
-                        </button>
-                        <button
-                          onClick={() => handleOrganizerApproval(organizer.id, false)}
-                          style={{
-                            flex: 1,
-                            padding: `${spacing[2]} ${spacing[4]}`,
-                            background: colors.status.error.main,
-                            color: colors.neutral[0],
-                            border: 'none',
-                            borderRadius: borderRadius.md,
-                            fontSize: '0.875rem',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                          }}
-                        >
-                          却下
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                    title={organizer.company_name}
+                    subtitle={organizer.name}
+                    statusLabel="未承認"
+                    statusColor={{ background: colors.status.warning.light, color: colors.status.warning.main }}
+                    meta={[
+                      `電話: ${organizer.phone_number}`,
+                      `メール: ${organizer.email}`,
+                      `登録日: ${formatDate(organizer.created_at)}`,
+                    ]}
+                    actions={[
+                      { label: '承認', color: colors.status.success.main, onClick: () => handleOrganizerApproval(organizer.id, true) },
+                      { label: '却下', color: colors.status.error.main, onClick: () => handleOrganizerApproval(organizer.id, false) },
+                    ]}
+                  />
                 ))}
               </div>
+            )}
+            {approvedOrganizers.length > 0 && (
+              <>
+                <SectionHeading title="承認済み主催者" count={approvedOrganizers.length} />
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                  gap: spacing[12],
+                }}>
+                  {approvedOrganizers.map((organizer) => (
+                    <ApprovalCard
+                      key={organizer.id}
+                      title={organizer.company_name}
+                      subtitle={organizer.name}
+                      statusLabel="承認済み"
+                      statusColor={{ background: colors.status.success.light, color: colors.status.success.main }}
+                      meta={[
+                        `電話: ${organizer.phone_number}`,
+                        `メール: ${organizer.email}`,
+                        `登録日: ${formatDate(organizer.created_at)}`,
+                      ]}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         ) : currentView === 'logs' ? (
@@ -538,101 +610,64 @@ export default function AdminDashboard() {
             }}>
               イベント管理
             </h2>
-            {events.length === 0 ? (
-              <p style={{ color: colors.neutral[500] }}>イベントがありません</p>
+            <SectionHeading title="審査中・未承認イベント" count={pendingEvents.length} />
+            {pendingEvents.length === 0 ? (
+              <p style={{ color: colors.neutral[500], marginBottom: spacing[12] }}>承認待ちのイベントはありません</p>
             ) : (
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
                 gap: spacing[12],
+                marginBottom: spacing[12],
               }}>
-                {events.map((event) => (
-                  <div
+                {pendingEvents.map((event) => (
+                  <ApprovalCard
                     key={event.id}
-                    style={{
-                      background: colors.neutral[0],
-                      borderRadius: borderRadius.lg,
-                      boxShadow: shadows.md,
-                      padding: spacing[12],
+                    title={event.event_name}
+                    subtitle={event.genre}
+                    statusLabel={event.approval_status === 'pending' ? '審査中' : '却下'}
+                    statusColor={{
+                      background: event.approval_status === 'rejected' ? colors.status.error.light : colors.status.warning.light,
+                      color: event.approval_status === 'rejected' ? colors.status.error.main : colors.status.warning.main,
                     }}
-                  >
-                    <h3 style={{
-                      fontSize: '1.125rem',
-                      fontWeight: 700,
-                      color: colors.neutral[900],
-                      marginBottom: spacing[2],
-                    }}>
-                      {event.event_name}
-                    </h3>
-                    <p style={{
-                      fontSize: '0.875rem',
-                      color: colors.neutral[500],
-                      marginBottom: spacing[2],
-                    }}>
-                      {event.genre}
-                    </p>
-                    <div style={{
-                      fontSize: '0.875rem',
-                      color: colors.neutral[500],
-                      marginBottom: spacing[4],
-                    }}>
-                      <div>{formatDate(event.event_start_date)} 〜 {formatDate(event.event_end_date)}</div>
-                      <div>{event.venue_name}</div>
-                    </div>
-                    <div style={{ marginBottom: spacing[4] }}>
-                      <span style={{
-                        padding: `${spacing[1]} ${spacing[2]}`,
-                        borderRadius: borderRadius.md,
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        background: event.approval_status === 'approved' ? colors.status.success.light :
-                          event.approval_status === 'rejected' ? colors.status.error.light : colors.status.warning.light,
-                        color: event.approval_status === 'approved' ? colors.status.success.main :
-                          event.approval_status === 'rejected' ? colors.status.error.main : colors.status.warning.main,
-                      }}>
-                        {event.approval_status === 'approved' ? '承認済み' :
-                          event.approval_status === 'rejected' ? '却下' : '審査中'}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', gap: spacing[2] }}>
-                      <button
-                        onClick={() => handleEventApproval(event.id, 'approved')}
-                        style={{
-                          flex: 1,
-                          padding: `${spacing[2]} ${spacing[4]}`,
-                          background: colors.status.success.main,
-                          color: colors.neutral[0],
-                          border: 'none',
-                          borderRadius: borderRadius.md,
-                          fontSize: '0.875rem',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                        }}
-                      >
-                        承認
-                      </button>
-                      <button
-                        onClick={() => handleEventApproval(event.id, 'rejected')}
-                        style={{
-                          flex: 1,
-                          padding: `${spacing[2]} ${spacing[4]}`,
-                          background: colors.status.error.main,
-                          color: colors.neutral[0],
-                          border: 'none',
-                          borderRadius: borderRadius.md,
-                          fontSize: '0.875rem',
-                          fontWeight: 600,
-                          cursor: 'pointer',
-                          transition: 'all 0.2s',
-                        }}
-                      >
-                        却下
-                      </button>
-                    </div>
-                  </div>
+                    meta={[
+                      `${formatDate(event.event_start_date)} 〜 ${formatDate(event.event_end_date)}`,
+                      event.venue_name,
+                    ]}
+                    actions={[
+                      { label: '承認', color: colors.status.success.main, onClick: () => handleEventApproval(event.id, 'approved') },
+                      { label: '却下', color: colors.status.error.main, onClick: () => handleEventApproval(event.id, 'rejected') },
+                    ]}
+                  />
                 ))}
               </div>
+            )}
+            {approvedEvents.length > 0 && (
+              <>
+                <SectionHeading title="承認済みイベント" count={approvedEvents.length} />
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+                  gap: spacing[12],
+                }}>
+                  {approvedEvents.map((event) => (
+                    <ApprovalCard
+                      key={event.id}
+                      title={event.event_name}
+                      subtitle={event.genre}
+                      statusLabel="承認済み"
+                      statusColor={{ background: colors.status.success.light, color: colors.status.success.main }}
+                      meta={[
+                        `${formatDate(event.event_start_date)} 〜 ${formatDate(event.event_end_date)}`,
+                        event.venue_name,
+                      ]}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+            {events.length === 0 && (
+              <p style={{ color: colors.neutral[500] }}>承認対象のイベントがありません</p>
             )}
           </div>
         )}
