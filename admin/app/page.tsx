@@ -205,7 +205,12 @@ export default function AdminDashboard() {
     </Card>
   )
 
-  const summaryStats = [
+  const summaryStats: {
+    label: string
+    value: number
+    helper: string
+    accent: [string, string]
+  }[] = [
     {
       label: '未承認主催者',
       value: pendingOrganizers.length,
