@@ -30,6 +30,7 @@ export default function WelcomeScreenCalm() {
     e.preventDefault()
     setError('')
     setLoading(true)
+    console.log('[WelcomeScreenCalm] handleEmailAuth', { isLogin, email, loginPassword, password, confirmPassword })
 
     try {
       if (isLogin) {
