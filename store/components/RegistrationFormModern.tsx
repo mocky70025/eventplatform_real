@@ -15,6 +15,21 @@ interface RegistrationFormProps {
   onRegistrationComplete: () => void
 }
 
+type DocumentKey =
+  | 'business_license'
+  | 'vehicle_inspection'
+  | 'automobile_inspection'
+  | 'pl_insurance'
+  | 'fire_equipment_layout'
+
+const DOCUMENTS: { key: DocumentKey; label: string }[] = [
+  { key: 'business_license', label: '営業許可証' },
+  { key: 'vehicle_inspection', label: '車検証' },
+  { key: 'automobile_inspection', label: '自動車検査証' },
+  { key: 'pl_insurance', label: 'PL保険' },
+  { key: 'fire_equipment_layout', label: '火器類配置図' },
+]
+
 const FORM_DRAFT_KEY = 'registration_form_draft'
 
 export default function RegistrationFormModern({ userProfile, onRegistrationComplete }: RegistrationFormProps) {
@@ -43,6 +58,21 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
   const [error, setError] = useState('')
   const [draftLoaded, setDraftLoaded] = useState(false)
   const [isDesktop, setIsDesktop] = useState(false)
+  const [documentExpirations, setDocumentExpirations] = useState<Record<DocumentKey, string>>({
+    business_license: '',
+    vehicle_inspection: '',
+    automobile_inspection: '',
+    pl_insurance: '',
+    fire_equipment_layout: '',
+  })
+  const [documentStatuses, setDocumentStatuses] = useState<Record<DocumentKey, { status: 'valid' | 'invalid' | 'unknown'; reason?: string }>>({
+    business_license: { status: 'unknown' },
+    vehicle_inspection: { status: 'unknown' },
+    automobile_inspection: { status: 'unknown' },
+    pl_insurance: { status: 'unknown' },
+    fire_equipment_layout: { status: 'unknown' },
+  })
+  const [validatingDocuments, setValidatingDocuments] = useState(false)
 
   useEffect(() => {
     if (draftLoaded || typeof window === 'undefined') return
@@ -106,6 +136,48 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       })
     )
   }, [formData, documents, currentStep])
+
+  useEffect(() => {
+    if (currentStep !== 3) return
+
+    const checkDocuments = async () => {
+      setValidatingDocuments(true)
+      try {
+        const payload = DOCUMENTS.map((doc) => ({
+          key: doc.key,
+          name: doc.label,
+          expiration: documentExpirations[doc.key] || null,
+          uploaded: Boolean((documents as any)[`${doc.key}_image_url`]),
+        }))
+
+        const res = await fetch('/api/documents/validate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ documents: payload }),
+        })
+
+        if (!res.ok) throw new Error('書類の有効期限チェックに失敗しました')
+
+        const { statuses }: {
+          statuses: { key: DocumentKey; status: 'valid' | 'invalid' | 'unknown'; reason?: string }[]
+        } = await res.json()
+
+        setDocumentStatuses((prev) => {
+          const normalized = { ...prev }
+          statuses.forEach((item) => {
+            normalized[item.key] = { status: item.status, reason: item.reason }
+          })
+          return normalized
+        })
+      } catch (error) {
+        console.error('Document validation failed:', error)
+      } finally {
+        setValidatingDocuments(false)
+      }
+    }
+
+    checkDocuments()
+  }, [currentStep, documentExpirations, documents])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

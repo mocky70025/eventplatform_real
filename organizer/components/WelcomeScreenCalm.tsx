@@ -12,6 +12,7 @@ import { colors, spacing, typography, borderRadius, shadows, transitions } from 
 export default function WelcomeScreenCalm() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -31,15 +32,20 @@ export default function WelcomeScreenCalm() {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithOtp({
+        if (!loginPassword) {
+          setError('パスワードを入力してください')
+          setLoading(false)
+          return
+        }
+
+        const { error } = await supabase.auth.signInWithPassword({
           email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
+          password: loginPassword,
         })
 
         if (error) throw error
-        setEmailSent(true)
+        setEmailSent(false)
+        return
       } else {
         if (password.length < 6) {
           setError('パスワードは6文字以上で入力してください')
@@ -357,6 +363,18 @@ export default function WelcomeScreenCalm() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+
+              {isLogin && (
+                <div style={{ marginTop: spacing[4] }}>
+                  <Input
+                    type="password"
+                    placeholder="パスワード"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
             </div>
 
             {!isLogin && (
@@ -401,7 +419,7 @@ export default function WelcomeScreenCalm() {
               fullWidth
               disabled={loading}
             >
-              {loading ? '送信中...' : isLogin ? 'メールでログイン' : 'メールで登録'}
+              {loading ? '送信中...' : isLogin ? 'ログイン' : 'メールで登録'}
             </Button>
           </form>
 

@@ -12,6 +12,7 @@ import { colors, spacing, typography, borderRadius, shadows, transitions } from 
 export default function WelcomeScreenUltra() {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState('')
@@ -32,15 +33,20 @@ export default function WelcomeScreenUltra() {
 
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithOtp({
+        if (!loginPassword) {
+          setError('パスワードを入力してください')
+          setLoading(false)
+          return
+        }
+
+        const { error } = await supabase.auth.signInWithPassword({
           email,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
+          password: loginPassword,
         })
 
         if (error) throw error
-        setEmailSent(true)
+        setEmailSent(false)
+        return
       } else {
         if (password !== confirmPassword) {
           setError('パスワードが一致しません')
@@ -416,6 +422,18 @@ export default function WelcomeScreenUltra() {
                 fullWidth
               />
 
+              {isLogin && (
+                <Input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  placeholder="••••••••"
+                  label="パスワード"
+                  required
+                  fullWidth
+                />
+              )}
+
               {!isLogin && (
                 <>
                   <Input
@@ -448,7 +466,7 @@ export default function WelcomeScreenUltra() {
                 disabled={loading}
                 style={{ marginTop: spacing[2] }}
               >
-                {isLogin ? 'ログインリンクを送信' : 'アカウントを作成'}
+                {isLogin ? 'ログイン' : 'アカウントを作成'}
               </Button>
             </div>
           </form>

@@ -66,12 +66,17 @@ useEffect(() => {
         const isLineCallbackFlow = initialLineAuth === 'success'
 
         if (!session || sessionError) {
-          console.log('[Home] No valid session, clearing all sessionStorage and showing WelcomeScreen')
+          console.log('[Home] No valid session, clearing selective sessionStorage and showing WelcomeScreen')
+          const storedIsRegistered = sessionStorage.getItem('is_registered') === 'true'
+          const storedUserId = sessionStorage.getItem('user_id')
           if (!isLineCallbackFlow) {
-            sessionStorage.clear()
-            setUserProfile(null)
+            sessionStorage.removeItem('auth_type')
+            sessionStorage.removeItem('user_email')
+            sessionStorage.removeItem('email_confirmed')
+            sessionStorage.removeItem('line_profile')
           }
-          setIsRegistered(false)
+          setUserProfile(null)
+          setIsRegistered(storedIsRegistered || !!storedUserId)
           setHasActiveSession(false)
           setLoading(false)
           return
@@ -390,10 +395,12 @@ useEffect(() => {
             setIsRegistered(true)
             sessionStorage.setItem('is_registered', 'true')
             setRegistrationComplete(true)
+            sessionStorage.setItem('registration_complete', 'true')
           } else {
             setIsRegistered(true)
             sessionStorage.setItem('is_registered', 'true')
             setRegistrationComplete(true)
+            sessionStorage.setItem('registration_complete', 'true')
           }
           console.log('[Home] Registration completed, setting isRegistered to true')
         }}
