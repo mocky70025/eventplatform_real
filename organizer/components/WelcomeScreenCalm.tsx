@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Building2, Mail } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import Button from './ui/Button'
@@ -20,6 +20,7 @@ export default function WelcomeScreenCalm() {
   const [emailSent, setEmailSent] = useState(false)
   const pathname = usePathname()
   const searchParams = useSearchParams()
+  const router = useRouter()
   const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
   const returnTo = encodeURIComponent(currentUrl)
   const termsHref = `/terms?returnTo=${returnTo}`
@@ -45,6 +46,7 @@ export default function WelcomeScreenCalm() {
 
         if (error) throw error
         setEmailSent(false)
+        router.replace('/')
         return
       } else {
         if (password.length < 6) {
