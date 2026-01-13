@@ -94,6 +94,7 @@ export default function Home() {
             authType: detectedAuthType === 'google' ? 'google' : 'email',
             emailConfirmed: isEmailConfirmed || true // セッションがあれば確認済みとして扱う
           })
+          setHasActiveSession(true)
           
           if (!isEmailConfirmed && detectedAuthType === 'email') {
             console.log('[Home] Session exists but email not confirmed - may be disabled in Supabase settings')
