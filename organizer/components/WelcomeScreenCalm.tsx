@@ -40,10 +40,11 @@ export default function WelcomeScreenCalm() {
           return
         }
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password: loginPassword,
         })
+        console.log('[WelcomeScreenCalm] signInWithPassword result', { data, error })
 
         if (error) throw error
         setEmailSent(false)
@@ -61,13 +62,14 @@ export default function WelcomeScreenCalm() {
           return
         }
 
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
           },
         })
+        console.log('[WelcomeScreenCalm] signUp result', { data, error })
 
         if (error) throw error
         setEmailSent(true)
