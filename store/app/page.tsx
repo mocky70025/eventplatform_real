@@ -47,6 +47,7 @@ export default function Home() {
         }
       : null
   const effectiveProfile = userProfile ?? lineProfileFromParams
+  const activeProfile = userProfile ?? effectiveProfile
 
 useEffect(() => {
     const initializeAuth = async () => {
@@ -241,13 +242,13 @@ useEffect(() => {
   // 未読通知数を取得
   useEffect(() => {
     const fetchUnreadCount = async () => {
-      if (!userProfile?.userId || !isRegistered) return
+      if (!activeProfile?.userId || !isRegistered) return
 
       try {
         const { count } = await supabase
           .from('notifications')
           .select('*', { count: 'exact', head: true })
-          .eq('user_id', userProfile.userId)
+          .eq('user_id', activeProfile.userId)
           .eq('user_type', 'exhibitor')
           .eq('is_read', false)
 
@@ -288,17 +289,17 @@ useEffect(() => {
     return <LoadingSpinner />
   }
 
-  console.log('[Home] Render check:', {
+    console.log('[Home] Render check:', {
     loading,
-    hasUserProfile: !!userProfile,
-    userProfile: userProfile ? { userId: userProfile.userId, authType: userProfile.authType } : null,
+    hasUserProfile: !!activeProfile,
+    userProfile: activeProfile ? { userId: activeProfile.userId, authType: activeProfile.authType } : null,
     isRegistered,
     hasActiveSession
   })
 
   // EmailSent画面を表示するかチェック（セッションが有効な場合のみ）
   const showEmailSent = typeof window !== 'undefined' && 
-    userProfile && 
+    activeProfile && 
     sessionStorage.getItem('show_email_sent') === 'true'
   
   if (showEmailSent) {
@@ -318,9 +319,9 @@ useEffect(() => {
     return <WelcomeScreen />
   }
 
-  console.log('[Home] Rendering with userProfile:', { 
-    userId: userProfile.userId, 
-    authType: userProfile.authType, 
+  console.log('[Home] Rendering with activeProfile:', { 
+    userId: activeProfile?.userId, 
+    authType: activeProfile?.authType, 
     isRegistered, 
     loading 
   })
@@ -340,7 +341,7 @@ useEffect(() => {
     console.log('[Home] Email confirmation pending, showing EmailConfirmationPending')
     return (
       <EmailConfirmationPending
-        email={userProfile.email || ''}
+        email={activeProfile?.email || ''}
         onEmailConfirmed={async () => {
           const { data: { session } } = await supabase.auth.getSession()
           if (session && session.user) {
@@ -381,27 +382,31 @@ useEffect(() => {
         <RegistrationForm
           userProfile={effectiveProfile}
         onRegistrationComplete={async () => {
-          if (userProfile?.userId) {
+          const profileId = activeProfile?.userId
+
+          if (profileId) {
             const { data: exhibitor, error } = await supabase
               .from('exhibitors')
               .select('id')
-              .or(`id.eq.${userProfile.userId},line_user_id.eq.${userProfile.userId}`)
+              .or(`id.eq.${profileId},line_user_id.eq.${profileId}`)
               .maybeSingle()
-            
+
             if (error) {
               console.error('[Home] Error fetching exhibitor after registration:', error)
             }
-            
-            setIsRegistered(true)
-            sessionStorage.setItem('is_registered', 'true')
-            setRegistrationComplete(true)
-            sessionStorage.setItem('registration_complete', 'true')
+
+            if (exhibitor) {
+              sessionStorage.setItem('is_registered', 'true')
+            } else {
+              sessionStorage.setItem('is_registered', 'false')
+            }
           } else {
-            setIsRegistered(true)
             sessionStorage.setItem('is_registered', 'true')
-            setRegistrationComplete(true)
-            sessionStorage.setItem('registration_complete', 'true')
           }
+
+          setIsRegistered(true)
+          setRegistrationComplete(true)
+          sessionStorage.setItem('registration_complete', 'true')
           console.log('[Home] Registration completed, setting isRegistered to true')
         }}
       />
@@ -413,29 +418,29 @@ useEffect(() => {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'home':
-        return <ExhibitorHome userProfile={userProfile} onNavigate={setCurrentView} />
+    return <ExhibitorHome userProfile={activeProfile} onNavigate={setCurrentView} />
       case 'events':
-        return <EventList userProfile={userProfile} onBack={() => setCurrentView('home')} />
+        return <EventList userProfile={activeProfile} onBack={() => setCurrentView('home')} />
       case 'profile':
-        return <ExhibitorProfile userProfile={userProfile} onBack={() => setCurrentView('home')} />
+        return <ExhibitorProfile userProfile={activeProfile} onBack={() => setCurrentView('home')} />
       case 'applications':
-        return <ApplicationManagement userProfile={userProfile} onBack={() => setCurrentView('home')} />
+        return <ApplicationManagement userProfile={activeProfile} onBack={() => setCurrentView('home')} />
       case 'notifications':
         // TODO: 通知一覧コンポーネントを実装
-        return <ExhibitorHome userProfile={userProfile} onNavigate={setCurrentView} />
+        return <ExhibitorHome userProfile={activeProfile} onNavigate={setCurrentView} />
       default:
-        return <ExhibitorHome userProfile={userProfile} onNavigate={setCurrentView} />
+        return <ExhibitorHome userProfile={activeProfile} onNavigate={setCurrentView} />
     }
   }
 
   // メール未確認の場合はバナーを表示
-  const showEmailConfirmationBanner = userProfile?.authType === 'email' && !userProfile?.emailConfirmed && userProfile?.email
+  const showEmailConfirmationBanner = activeProfile?.authType === 'email' && !activeProfile?.emailConfirmed && activeProfile?.email
 
   return (
     <div style={{ background: '#FFFFFF', minHeight: '100vh' }}>
       {showEmailConfirmationBanner && (
         <div style={{ padding: '9px 16px', maxWidth: '394px', margin: '0 auto' }}>
-          <EmailConfirmationBanner email={userProfile.email} />
+          <EmailConfirmationBanner email={activeProfile?.email || ''} />
         </div>
       )}
       {renderCurrentView()}
