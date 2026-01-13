@@ -163,6 +163,14 @@ export default function Home() {
     }
 
     initializeAuth()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((_event, _session) => {
+      initializeAuth()
+    })
+
+    return () => {
+      authListener?.subscription.unsubscribe()
+    }
   }, [])
 
   useEffect(() => {
