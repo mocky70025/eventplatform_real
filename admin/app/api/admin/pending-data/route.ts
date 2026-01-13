@@ -32,7 +32,14 @@ export async function GET(_request: NextRequest) {
 
   if (eventError) {
     console.error('[admin/pending-data] events fetch error', eventError)
-    return NextResponse.json({ error: 'Failed to fetch events' }, { status: 500 })
+    return NextResponse.json(
+      {
+        error: 'Failed to fetch events',
+        details: eventError.message,
+        code: eventError.code,
+      },
+      { status: 500 }
+    )
   }
 
   return NextResponse.json({
