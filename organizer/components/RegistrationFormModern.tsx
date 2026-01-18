@@ -396,8 +396,17 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                 </div>
                 <div style={{ marginTop: spacing[4], padding: spacing[4], borderRadius: borderRadius.lg, background: colors.neutral[100], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
                   <p style={{ fontSize: typography.fontSize.sm, color: colors.neutral[600], margin: 0 }}>
-                    利用規約・プライバシーポリシーを確認したうえでチェックしてください
+                    利用規約・プライバシーポリシーは Notion の公開ページにまとまっています。
                   </p>
+                  <Link
+                    href={policyUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => setAgreementState((prev) => ({ ...prev, termsRead: true, privacyRead: true }))}
+                    style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold }}
+                  >
+                    公開ページを確認する
+                  </Link>
                   <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
                     <input
                       type="checkbox"
@@ -406,15 +415,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                       onChange={(e) => setAgreementState((prev) => ({ ...prev, termsAgreed: e.target.checked }))}
                     />
                     利用規約に同意します
-                    <Link
-                      href={policyUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setAgreementState((prev) => ({ ...prev, termsRead: true }))}
-                      style={{ color: '#2563EB' }}
-                    >
-                      利用規約・プライバシーポリシーを開く
-                    </Link>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
                     <input
@@ -424,19 +424,7 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                       onChange={(e) => setAgreementState((prev) => ({ ...prev, privacyAgreed: e.target.checked }))}
                     />
                     プライバシーポリシーに同意します
-                    <Link
-                      href={policyUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setAgreementState((prev) => ({ ...prev, privacyRead: true }))}
-                      style={{ color: '#2563EB' }}
-                    >
-                      利用規約・プライバシーポリシーを開く
-                    </Link>
                   </label>
-                  <small style={{ color: termsRead && privacyRead ? colors.neutral[600] : colors.status.error.main }}>
-                    リンクを開くとチェックボックスが有効になります
-                  </small>
                 </div>
                 <div style={{ marginTop: spacing[4], padding: spacing[4], borderRadius: borderRadius.lg, background: colors.neutral[100], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
                   <p style={{ fontSize: typography.fontSize.sm, color: colors.neutral[600], margin: 0 }}>
