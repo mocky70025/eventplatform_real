@@ -203,10 +203,10 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
         }
       }
 
-      const storedUserId = sessionStorage.getItem('user_id') || userProfile?.userId || storedLineProfile?.userId
+      const storedUserId = sessionStorage.getItem('user_id')
       const resolvedUserId = user?.id || storedUserId
 
-      if (!resolvedUserId) throw new Error('ユーザーが見つかりません')
+      if (!resolvedUserId) throw new Error('Supabaseの認証済みユーザーが見つかりません。ページをリロードしてログインし直してください。')
 
       const exhibitorName = formData.shop_name || formData.name
       const authProvider =

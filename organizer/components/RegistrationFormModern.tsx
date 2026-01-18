@@ -69,9 +69,9 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
 
     try {
       const { data: { user } } = await supabase.auth.getUser()
-      const userId = user?.id ?? userProfile?.userId
+      const userId = user?.id
       
-      if (!userId) throw new Error('ユーザーが見つかりません')
+      if (!userId) throw new Error('ログイン状態が確認できないため、再度ページをリロードしてログインし直してください。')
 
       const upsertPayload: Record<string, any> = {
         id: userId,
