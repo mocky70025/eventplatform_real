@@ -56,15 +56,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       console.warn('[RegistrationFormModern] Failed to load draft:', err)
     }
   }
-  const waitForAuthenticatedUser = async () => {
-    for (let attempt = 0; attempt < 6; attempt += 1) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) return user
-      await new Promise((resolve) => setTimeout(resolve, 500))
-    }
-    return null
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -77,11 +68,21 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     setError('')
 
     try {
-      const user = await waitForAuthenticatedUser()
-      const userId = user?.id
+      const { data: { user } } = await supabase.auth.getUser()
+      const storedLineProfileRaw = sessionStorage.getItem('line_profile')
+      let storedLineProfile: LineProfile | null = null
+      if (storedLineProfileRaw) {
+        try {
+          storedLineProfile = JSON.parse(storedLineProfileRaw)
+        } catch {
+          storedLineProfile = null
+        }
+      }
+
+      const userId = user?.id || userProfile?.userId || storedLineProfile?.userId
 
       if (!userId)
-        throw new Error('ログイン状態が確認できないため、再度ページをリロードしてログインし直してください。')
+        throw new Error('LINE認証が完了していません。もう一度LINEでログインしてください。')
 
       const upsertPayload: Record<string, any> = {
         id: userId,

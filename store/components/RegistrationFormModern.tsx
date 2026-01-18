@@ -179,15 +179,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     checkDocuments()
   }, [currentStep, documentExpirations, documents])
 
-  const waitForAuthenticatedUser = async () => {
-    for (let attempt = 0; attempt < 6; attempt += 1) {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) return user
-      await new Promise((resolve) => setTimeout(resolve, 500))
-    }
-    return null
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
@@ -200,7 +191,7 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     setError('')
 
     try {
-      const user = await waitForAuthenticatedUser()
+      const { data: { user } } = await supabase.auth.getUser()
 
       const storedLineProfileRaw = sessionStorage.getItem('line_profile')
       let storedLineProfile: LineProfile | null = null
@@ -213,10 +204,10 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       }
 
       const storedUserId = sessionStorage.getItem('user_id')
-      const resolvedUserId = user?.id || storedUserId
+      const resolvedUserId = user?.id || userProfile?.userId || storedLineProfile?.userId || storedUserId
 
       if (!resolvedUserId)
-        throw new Error('Supabaseの認証済みユーザーが見つかりません。ページをリロードしてログインし直してください。')
+        throw new Error('LINE認証が完了していません。もう一度LINEでログインしてください。')
 
       const exhibitorName = formData.shop_name || formData.name
       const authProvider =
