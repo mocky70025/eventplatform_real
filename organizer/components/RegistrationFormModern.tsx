@@ -13,6 +13,8 @@ interface RegistrationFormProps {
   onRegistrationComplete: () => void
 }
 
+const FORM_DRAFT_KEY = 'registration_form_draft'
+
 export default function RegistrationFormModern({ userProfile, onRegistrationComplete }: RegistrationFormProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const pathname = usePathname()
@@ -34,6 +36,44 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isDesktop, setIsDesktop] = useState(false)
+  const [draftLoaded, setDraftLoaded] = useState(false)
+  const [termsRead, setTermsRead] = useState(false)
+  const [privacyRead, setPrivacyRead] = useState(false)
+  const [termsAgreed, setTermsAgreed] = useState(false)
+  const [privacyAgreed, setPrivacyAgreed] = useState(false)
+  const policyUrl = process.env.NEXT_PUBLIC_POLICY_URL || '/terms'
+  const loadDraftFromStorage = () => {
+    if (typeof window === 'undefined') return
+    const raw = sessionStorage.getItem(FORM_DRAFT_KEY)
+    if (!raw) return
+
+    try {
+      const saved = JSON.parse(raw)
+      if (saved.formData) {
+        setFormData((prev) => ({
+          ...prev,
+          ...saved.formData,
+        }))
+      }
+      if (saved.currentStep) {
+        setCurrentStep(saved.currentStep)
+      }
+      if (typeof saved.termsRead === 'boolean') {
+        setTermsRead(saved.termsRead)
+      }
+      if (typeof saved.privacyRead === 'boolean') {
+        setPrivacyRead(saved.privacyRead)
+      }
+      if (typeof saved.termsAgreed === 'boolean') {
+        setTermsAgreed(saved.termsAgreed)
+      }
+      if (typeof saved.privacyAgreed === 'boolean') {
+        setPrivacyAgreed(saved.privacyAgreed)
+      }
+    } catch (err) {
+      console.warn('[RegistrationFormModern] Failed to load draft:', err)
+    }
+  }
   const [termsRead, setTermsRead] = useState(false)
   const [privacyRead, setPrivacyRead] = useState(false)
   const [termsAgreed, setTermsAgreed] = useState(false)
@@ -97,6 +137,43 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
   const sidebarPadding = isDesktop ? spacing[8] : spacing[6]
   const formPadding = isDesktop ? spacing[10] : spacing[6]
   const sidebarHeadingSpacing = isDesktop ? spacing[10] : spacing[6]
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!draftLoaded) {
+      loadDraftFromStorage()
+      setDraftLoaded(true)
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadDraftFromStorage()
+      }
+    }
+
+    window.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('pageshow', handleVisibility)
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('pageshow', handleVisibility)
+    }
+  }, [draftLoaded])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+
+    sessionStorage.setItem(
+      FORM_DRAFT_KEY,
+      JSON.stringify({
+        formData,
+        currentStep,
+        termsRead,
+        privacyRead,
+        termsAgreed,
+        privacyAgreed,
+      })
+    )
+  }, [formData, currentStep, termsRead, privacyRead, termsAgreed, privacyAgreed])
 
   return (
     <div style={{
@@ -351,6 +428,50 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                     リンクを開くとチェックボックスが有効になります
                   </small>
                 </div>
+                <div style={{ marginTop: spacing[4], padding: spacing[4], borderRadius: borderRadius.lg, background: colors.neutral[100], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
+                  <p style={{ fontSize: typography.fontSize.sm, color: colors.neutral[600], margin: 0 }}>
+                    利用規約・プライバシーポリシーを確認したうえでチェックしてください
+                  </p>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
+                    <input
+                      type="checkbox"
+                      checked={termsAgreed}
+                      disabled={!termsRead}
+                      onChange={(e) => setTermsAgreed(e.target.checked)}
+                    />
+                    利用規約に同意します
+                    <Link
+                      href={policyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => setTermsRead(true)}
+                      style={{ color: '#2563EB' }}
+                    >
+                      利用規約・プライバシーポリシーを開く
+                    </Link>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
+                    <input
+                      type="checkbox"
+                      checked={privacyAgreed}
+                      disabled={!privacyRead}
+                      onChange={(e) => setPrivacyAgreed(e.target.checked)}
+                    />
+                    プライバシーポリシーに同意します
+                    <Link
+                      href={policyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => setPrivacyRead(true)}
+                      style={{ color: '#2563EB' }}
+                    >
+                      利用規約・プライバシーポリシーを開く
+                    </Link>
+                  </label>
+                  <small style={{ color: termsRead && privacyRead ? colors.neutral[600] : colors.status.error.main }}>
+                    リンクを開くとチェックボックスが有効になります
+                  </small>
+                </div>
               </div>
             )}
 
@@ -475,21 +596,15 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
               color: colors.neutral[600],
               lineHeight: typography.lineHeight.relaxed,
             }}>
-              登録を進めることで、
+              利用規約・プライバシーポリシーは Notion で公開しています。
               <Link
-                href={`/terms?returnTo=${encodeURIComponent(currentUrl)}`}
-                style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}
+                href={policyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline', marginLeft: spacing[1] }}
               >
-                利用規約
+                公開ページを確認する
               </Link>
-              と
-              <Link
-                href={`/privacy?returnTo=${encodeURIComponent(currentUrl)}`}
-                style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}
-              >
-                プライバシーポリシー
-              </Link>
-              に同意したものとみなされます。
             </div>
 
             {/* フッターボタン */}

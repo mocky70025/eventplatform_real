@@ -77,15 +77,12 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
   const [privacyRead, setPrivacyRead] = useState(false)
   const [termsAgreed, setTermsAgreed] = useState(false)
   const [privacyAgreed, setPrivacyAgreed] = useState(false)
+  const policyUrl = process.env.NEXT_PUBLIC_POLICY_URL || '/terms'
 
-  useEffect(() => {
-    if (draftLoaded || typeof window === 'undefined') return
-
+  const loadDraftFromStorage = () => {
+    if (typeof window === 'undefined') return
     const raw = sessionStorage.getItem(FORM_DRAFT_KEY)
-    if (!raw) {
-      setDraftLoaded(true)
-      return
-    }
+    if (!raw) return
 
     try {
       const saved = JSON.parse(raw)
@@ -104,10 +101,41 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       if (saved.currentStep) {
         setCurrentStep(saved.currentStep)
       }
+      if (typeof saved.termsRead === 'boolean') {
+        setTermsRead(saved.termsRead)
+      }
+      if (typeof saved.privacyRead === 'boolean') {
+        setPrivacyRead(saved.privacyRead)
+      }
+      if (typeof saved.termsAgreed === 'boolean') {
+        setTermsAgreed(saved.termsAgreed)
+      }
+      if (typeof saved.privacyAgreed === 'boolean') {
+        setPrivacyAgreed(saved.privacyAgreed)
+      }
     } catch (err) {
       console.warn('[RegistrationFormModern] Failed to load draft:', err)
-    } finally {
+    }
+  }
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (!draftLoaded) {
+      loadDraftFromStorage()
       setDraftLoaded(true)
+    }
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        loadDraftFromStorage()
+      }
+    }
+
+    window.addEventListener('visibilitychange', handleVisibility)
+    window.addEventListener('pageshow', handleVisibility)
+    return () => {
+      window.removeEventListener('visibilitychange', handleVisibility)
+      window.removeEventListener('pageshow', handleVisibility)
     }
   }, [draftLoaded])
 
@@ -137,9 +165,13 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
         formData,
         documents,
         currentStep,
+        termsRead,
+        privacyRead,
+        termsAgreed,
+        privacyAgreed,
       })
     )
-  }, [formData, documents, currentStep])
+  }, [formData, documents, currentStep, termsRead, privacyRead, termsAgreed, privacyAgreed])
 
   useEffect(() => {
     if (currentStep !== 3) return
@@ -593,15 +625,15 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                         onChange={(e) => setTermsAgreed(e.target.checked)}
                       />
                       利用規約に同意します
-                      <Link
-                        href={`/terms?returnTo=${encodeURIComponent(currentUrl)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={() => setTermsRead(true)}
-                        style={{ color: '#2563EB' }}
-                      >
-                        利用規約を開く
-                      </Link>
+                    <Link
+                      href={policyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => setTermsRead(true)}
+                      style={{ color: '#2563EB' }}
+                    >
+                      利用規約・プライバシーポリシーを開く
+                    </Link>
                     </label>
                     <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
                       <input
@@ -611,15 +643,15 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                         onChange={(e) => setPrivacyAgreed(e.target.checked)}
                       />
                       プライバシーポリシーに同意します
-                      <Link
-                        href={`/privacy?returnTo=${encodeURIComponent(currentUrl)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={() => setPrivacyRead(true)}
-                        style={{ color: '#2563EB' }}
-                      >
-                        プライバシーポリシーを開く
-                      </Link>
+                    <Link
+                      href={policyUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => setPrivacyRead(true)}
+                      style={{ color: '#2563EB' }}
+                    >
+                      利用規約・プライバシーポリシーを開く
+                    </Link>
                     </label>
                     <small style={{ color: termsRead && privacyRead ? colors.neutral[600] : colors.status.error.main }}>
                       リンクを開くとチェックボックスが有効になります
@@ -772,25 +804,15 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
             color: colors.neutral[600],
             lineHeight: typography.lineHeight.relaxed,
           }}>
-            登録を進めることで、
-          <Link
-            href={`/terms?returnTo=${encodeURIComponent(currentUrl)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}
-          >
-            利用規約
-          </Link>
-          と
-          <Link
-            href={`/privacy?returnTo=${encodeURIComponent(currentUrl)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline' }}
-          >
-            プライバシーポリシー
-          </Link>
-            に同意したものとみなされます。
+            利用規約・プライバシーポリシーは公開 Notion ドキュメントにまとめています。
+            <Link
+              href={policyUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold, textDecoration: 'underline', marginLeft: spacing[1] }}
+            >
+              公開ページを確認する
+            </Link>
           </div>
 
           {/* フッターボタン */}
