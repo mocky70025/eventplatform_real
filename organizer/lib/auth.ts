@@ -85,7 +85,17 @@ export const getLineLoginCode = (): { code: string; state: string } | null => {
  * 注意: この実装はサーバーサイドで行うべきですが、動作確認用にクライアントサイドでも実装可能です
  * 本番環境では、API Routeを使用してサーバーサイドで処理してください
  */
-export const exchangeLineLoginCode = async (code: string): Promise<LineProfile | null> => {
+export type ExchangeLineLoginResult = {
+  profile: LineProfile
+  tokenData: {
+    access_token: string
+    refresh_token?: string
+    expires_in?: number
+    id_token?: string
+  }
+} | null
+
+export const exchangeLineLoginCode = async (code: string): Promise<ExchangeLineLoginResult> => {
   try {
     console.log('[Auth] Exchanging code for profile, code:', code ? 'present' : 'missing')
     // サーバーサイドのAPI Routeを使用することを推奨
@@ -108,17 +118,24 @@ export const exchangeLineLoginCode = async (code: string): Promise<LineProfile |
     
     const data = await response.json()
     console.log('[Auth] API response data:', data)
-    
+
     if (!data.profile) {
       console.error('[Auth] No profile in response:', data)
       return null
     }
-    
-    return data.profile
+
+    if (!data.tokenData) {
+      console.error('[Auth] No tokenData in response:', data)
+      return null
+    }
+
+    return {
+      profile: data.profile,
+      tokenData: data.tokenData,
+    }
   } catch (error) {
     console.error('[Auth] Failed to exchange LINE Login code:', error)
     return null
   }
 }
-
 

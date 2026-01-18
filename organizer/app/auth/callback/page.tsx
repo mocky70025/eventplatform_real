@@ -145,7 +145,13 @@ export default function AuthCallback() {
         sessionStorage.removeItem('line_login_state')
         
         // 認証コードをユーザー情報に交換
-        const profile = await exchangeLineLoginCode(code)
+        const result = await exchangeLineLoginCode(code)
+        if (!result || !result.profile || !result.tokenData) {
+          setErrorMessage('ユーザー情報の取得に失敗しました')
+          setStatus('error')
+          return
+        }
+        const { profile, tokenData } = result
         
         if (!profile) {
           setErrorMessage('ユーザー情報の取得に失敗しました')
@@ -156,6 +162,20 @@ export default function AuthCallback() {
         // デバッグログ
         console.log('[LINE Login] User ID:', profile.userId)
         console.log('[LINE Login] Display Name:', profile.displayName)
+        console.log('[LINE Login] Token data keys:', Object.keys(tokenData))
+
+        // Supabase セッションを設定
+        const { error: setSessionError } = await supabase.auth.setSession({
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token || ''
+        })
+
+        if (setSessionError) {
+          console.error('[Callback] Failed to set Supabase session:', setSessionError)
+          setErrorMessage('認証処理中にセッションを生成できませんでした')
+          setStatus('error')
+          return
+        }
         
         // 既存ユーザーかチェック（organizersテーブル）
         console.log('[Callback] Checking for existing organizer with userId:', profile.userId)
@@ -263,5 +283,4 @@ export default function AuthCallback() {
     </div>
   )
 }
-
 

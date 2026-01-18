@@ -102,13 +102,12 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    console.log('[API] Returning profile:', { userId: profile.userId, displayName: profile.displayName })
-    return NextResponse.json({ profile })
+    console.log('[API] Returning profile and tokens:', { userId: profile.userId, displayName: profile.displayName })
+    return NextResponse.json({ profile, tokenData })
   } catch (error) {
     console.error('[API] LINE Login API error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Internal server error'
     return NextResponse.json({ error: 'Internal server error', details: errorMessage }, { status: 500 })
   }
 }
-
 
