@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import { colors, spacing, typography, borderRadius, shadows, transitions } from '@/styles/design-system'
@@ -29,22 +28,14 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
     age: '',
     phone_number: '',
     email:
-      isLineLogin && userProfile?.email?.startsWith('line_') && userProfile?.email.includes('@line.local')
-        ? ''
-        : userProfile?.email || '',
+    isLineLogin && userProfile?.email?.startsWith('line_') && userProfile?.email.includes('@line.local')
+      ? ''
+      : userProfile?.email || '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [isDesktop, setIsDesktop] = useState(false)
   const [draftLoaded, setDraftLoaded] = useState(false)
-  const [agreementState, setAgreementState] = useState({
-    termsRead: false,
-    privacyRead: false,
-    termsAgreed: false,
-    privacyAgreed: false,
-  })
-  const { termsRead, privacyRead, termsAgreed, privacyAgreed } = agreementState
-  const policyUrl = process.env.NEXT_PUBLIC_POLICY_URL || '/terms'
   const loadDraftFromStorage = () => {
     if (typeof window === 'undefined') return
     const raw = sessionStorage.getItem(FORM_DRAFT_KEY)
@@ -60,18 +51,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       }
       if (saved.currentStep) {
         setCurrentStep(saved.currentStep)
-      }
-      if (typeof saved.termsRead === 'boolean') {
-        setAgreementState((prev) => ({ ...prev, termsRead: saved.termsRead }))
-      }
-      if (typeof saved.privacyRead === 'boolean') {
-        setAgreementState((prev) => ({ ...prev, privacyRead: saved.privacyRead }))
-      }
-      if (typeof saved.termsAgreed === 'boolean') {
-        setAgreementState((prev) => ({ ...prev, termsAgreed: saved.termsAgreed }))
-      }
-      if (typeof saved.privacyAgreed === 'boolean') {
-        setAgreementState((prev) => ({ ...prev, privacyAgreed: saved.privacyAgreed }))
       }
     } catch (err) {
       console.warn('[RegistrationFormModern] Failed to load draft:', err)
@@ -143,10 +122,9 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       JSON.stringify({
         formData,
         currentStep,
-        ...agreementState,
       })
     )
-  }, [formData, currentStep, agreementState])
+  }, [formData, currentStep])
 
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -168,22 +146,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
       window.removeEventListener('pageshow', handleVisibility)
     }
   }, [draftLoaded])
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-
-    sessionStorage.setItem(
-      FORM_DRAFT_KEY,
-      JSON.stringify({
-        formData,
-        currentStep,
-        termsRead,
-        privacyRead,
-        termsAgreed,
-        privacyAgreed,
-      })
-    )
-  }, [formData, currentStep, termsRead, privacyRead, termsAgreed, privacyAgreed])
 
   return (
     <div style={{
@@ -393,82 +355,6 @@ export default function RegistrationFormModern({ userProfile, onRegistrationComp
                     required
                     fullWidth
                   />
-                </div>
-                <div style={{ marginTop: spacing[4], padding: spacing[4], borderRadius: borderRadius.lg, background: colors.neutral[100], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
-                  <p style={{ fontSize: typography.fontSize.sm, color: colors.neutral[600], margin: 0 }}>
-                    利用規約・プライバシーポリシーは Notion の公開ページにまとまっています。
-                  </p>
-                  <Link
-                    href={policyUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setAgreementState((prev) => ({ ...prev, termsRead: true, privacyRead: true }))}
-                    style={{ color: '#2563EB', fontWeight: typography.fontWeight.semibold }}
-                  >
-                    公開ページを確認する
-                  </Link>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
-                    <input
-                      type="checkbox"
-                      checked={termsAgreed}
-                      disabled={!termsRead}
-                      onChange={(e) => setAgreementState((prev) => ({ ...prev, termsAgreed: e.target.checked }))}
-                    />
-                    利用規約に同意します
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
-                    <input
-                      type="checkbox"
-                      checked={privacyAgreed}
-                      disabled={!privacyRead}
-                      onChange={(e) => setAgreementState((prev) => ({ ...prev, privacyAgreed: e.target.checked }))}
-                    />
-                    プライバシーポリシーに同意します
-                  </label>
-                </div>
-                <div style={{ marginTop: spacing[4], padding: spacing[4], borderRadius: borderRadius.lg, background: colors.neutral[100], display: 'flex', flexDirection: 'column', gap: spacing[2] }}>
-                  <p style={{ fontSize: typography.fontSize.sm, color: colors.neutral[600], margin: 0 }}>
-                    利用規約・プライバシーポリシーを確認したうえでチェックしてください
-                  </p>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
-                    <input
-                      type="checkbox"
-                      checked={termsAgreed}
-                      disabled={!termsRead}
-                      onChange={(e) => setAgreementState((prev) => ({ ...prev, termsAgreed: e.target.checked }))}
-                    />
-                    利用規約に同意します
-                    <Link
-                      href={policyUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setAgreementState((prev) => ({ ...prev, termsRead: true }))}
-                      style={{ color: '#2563EB' }}
-                    >
-                      利用規約・プライバシーポリシーを開く
-                    </Link>
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: spacing[2], fontSize: typography.fontSize.sm, color: colors.neutral[700] }}>
-                    <input
-                      type="checkbox"
-                      checked={privacyAgreed}
-                      disabled={!privacyRead}
-                      onChange={(e) => setAgreementState((prev) => ({ ...prev, privacyAgreed: e.target.checked }))}
-                    />
-                    プライバシーポリシーに同意します
-                    <Link
-                      href={policyUrl}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setAgreementState((prev) => ({ ...prev, privacyRead: true }))}
-                      style={{ color: '#2563EB' }}
-                    >
-                      利用規約・プライバシーポリシーを開く
-                    </Link>
-                  </label>
-                  <small style={{ color: termsRead && privacyRead ? colors.neutral[600] : colors.status.error.main }}>
-                    リンクを開くとチェックボックスが有効になります
-                  </small>
                 </div>
               </div>
             )}
