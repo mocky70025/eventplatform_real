@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { LineProfile } from '@/lib/auth'
-import { LineProfile } from '@/lib/auth'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { supabase } from '../lib/supabase'
 import ImageUpload from './ImageUpload'
