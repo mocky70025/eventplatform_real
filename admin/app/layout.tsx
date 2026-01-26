@@ -1,21 +1,29 @@
-import './globals.css'
-import { Inter } from 'next/font/google'
+import type { Metadata } from "next";
+import { Noto_Sans_JP } from "next/font/google";
+import "./globals.css";
 
-const inter = Inter({ subsets: ['latin'] })
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  variable: "--font-noto-sans-jp",
+});
 
-export const metadata = {
-  title: '運営管理',
-  description: 'イベントプラットフォーム運営管理システム',
-}
+export const metadata: Metadata = {
+  title: "管理画面 | イベントプラットフォーム",
+  description: "Platform Administration",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="ja">
-      <body className={inter.className}>{children}</body>
+      <body
+        className={`${notoSansJP.variable} antialiased bg-gray-50 text-gray-900 font-sans`}
+      >
+        {children}
+      </body>
     </html>
-  )
+  );
 }

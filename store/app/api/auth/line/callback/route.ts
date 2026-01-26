@@ -1,144 +1,114 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { NextResponse } from 'next/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 
-export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams
-  const code = searchParams.get('code')
+export async function GET(request: Request) {
+    const { searchParams, origin } = new URL(request.url);
+    const code = searchParams.get('code');
+    const state = searchParams.get('state');
 
-  if (!code) {
-    return NextResponse.redirect(new URL('/?error=no_code', request.url))
-  }
-
-  try {
-    const channelId = process.env.NEXT_PUBLIC_LINE_CHANNEL_ID || '2008802740'
-    const channelSecret = process.env.LINE_CHANNEL_SECRET || '66eb6d952341ddcc9fad1b0adfc40dff'
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL || 'https://store-phi-murex.vercel.app'}/api/auth/line/callback`
-
-    // LINEからアクセストークンを取得
-    const tokenResponse = await fetch('https://api.line.me/oauth2/v2.1/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'authorization_code',
-        code: code,
-        redirect_uri: redirectUri,
-        client_id: channelId,
-        client_secret: channelSecret,
-      }),
-    })
-
-    if (!tokenResponse.ok) {
-      const errorText = await tokenResponse.text()
-      console.error('LINE token error:', errorText)
-      throw new Error('Failed to get LINE access token')
+    if (!code) {
+        return NextResponse.redirect(`${origin}/login?error=no-code`);
     }
 
-    const tokenData = await tokenResponse.json()
-    const accessToken = tokenData.access_token
-    const idToken = tokenData.id_token
+    const client_id = process.env.LINE_CHANNEL_ID;
+    const client_secret = process.env.LINE_CHANNEL_SECRET;
+    const redirect_uri = `${origin}/api/auth/line/callback`;
 
-    // LINEからユーザープロフィールを取得
-    const profileResponse = await fetch('https://api.line.me/v2/profile', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-
-    if (!profileResponse.ok) {
-      throw new Error('Failed to get LINE profile')
+    if (!client_id || !client_secret) {
+        return NextResponse.json({ error: 'LINE credentials missing' }, { status: 500 });
     }
 
-    const profile = await profileResponse.json()
+    try {
+        console.log('1. Starting token exchange with code:', code);
+        // 1. Exchange code for access token (and ID Token)
+        const tokenResponse = await fetch('https://api.line.me/oauth2/v2.1/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                grant_type: 'authorization_code',
+                code: code,
+                redirect_uri: redirect_uri,
+                client_id: client_id,
+                client_secret: client_secret,
+            }),
+        });
 
-    // ID Tokenからメールアドレスを取得
-    let email = null
-    if (idToken) {
-      try {
-        const payload = JSON.parse(Buffer.from(idToken.split('.')[1], 'base64').toString())
-        email = payload.email
-      } catch (e) {
-        console.error('Failed to parse ID token:', e)
-      }
+        const tokenData = await tokenResponse.json();
+
+        if (!tokenResponse.ok) {
+            console.error('LINE Token Error response:', tokenData);
+            return NextResponse.redirect(`${origin}/login?error=line-token-error&detail=${encodeURIComponent(JSON.stringify(tokenData))}`);
+        }
+
+        const { id_token } = tokenData;
+        if (!id_token) {
+            console.error('No ID token in response');
+            return NextResponse.redirect(`${origin}/login?error=no-id-token`);
+        }
+
+        console.log('2. Verifying ID Token');
+        // 2. Decode ID Token to get user email
+        const verifyResponse = await fetch('https://api.line.me/oauth2/v2.1/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                id_token: id_token,
+                client_id: client_id,
+            }),
+        });
+
+        const claims = await verifyResponse.json();
+
+        if (!verifyResponse.ok) {
+            console.error('ID Token Verification Error:', claims);
+            return NextResponse.redirect(`${origin}/login?error=token-verification-failed`);
+        }
+
+        if (!claims.email) {
+            console.error('Email not found in LINE claims. Make sure you have requested email permission.');
+            return NextResponse.redirect(`${origin}/login?error=email-not-found-in-line`);
+        }
+
+        const email = claims.email;
+        console.log('3. Claims received for email:', email);
+        const supabaseAdmin = createAdminClient();
+
+        console.log('4. Attempting to create user in Supabase');
+        // 3. Find or Create User in Supabase (Service Role)
+        const { data: createdUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+            email: email,
+            email_confirm: true,
+            user_metadata: { full_name: claims.name, picture: claims.picture }
+        });
+
+        if (createError && !createError.message.includes('already been registered')) {
+            console.error('Supabase Create User Error:', createError);
+            return NextResponse.redirect(`${origin}/login?error=create-user-failed&msg=${encodeURIComponent(createError.message)}`);
+        }
+
+        console.log('5. Generating magic link for login');
+        // 4. Generate Magic Link
+        const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+            type: 'magiclink',
+            email: email,
+            options: {
+                redirectTo: `${origin}/auth/callback`,
+            },
+        });
+
+        if (linkError || !linkData.properties?.action_link) {
+            console.error('Supabase Magic Link Error:', linkError);
+            return NextResponse.redirect(`${origin}/login?error=magic-link-failed&msg=${encodeURIComponent(linkError?.message || 'no-link')}`);
+        }
+
+        console.log('6. Auth successful, redirecting to action link');
+        // 5. Redirect user to the Action Link
+        return NextResponse.redirect(linkData.properties.action_link);
+
+    } catch (err: any) {
+        console.error('Unexpected Auth Error in catch block:', err);
+        return NextResponse.redirect(`${origin}/login?error=server-error&msg=${encodeURIComponent(err.message)}`);
     }
-
-    // Supabase Admin Clientを使用してユーザーを作成
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      }
-    )
-
-    const userEmail = email || `line_${profile.userId}@line.local`
-    const userName = profile.displayName
-
-    // 既存ユーザーをチェック
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers()
-    const existingUser = existingUsers?.users.find(u => u.email === userEmail)
-
-    let userId: string
-
-    if (!existingUser) {
-      // 新規ユーザー作成
-      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email: userEmail,
-        email_confirm: true,
-        user_metadata: {
-          name: userName,
-          line_id: profile.userId,
-          avatar_url: profile.pictureUrl,
-          provider: 'line',
-        },
-      })
-
-      if (createError || !newUser.user) {
-        console.error('Failed to create user:', createError)
-        throw new Error('Failed to create user')
-      }
-
-      userId = newUser.user.id
-
-      // exhibitorsテーブルにレコード作成
-      await supabaseAdmin.from('exhibitors').insert({
-        id: userId,
-        email: userEmail,
-        name: userName,
-      })
-    } else {
-      userId = existingUser.id
-    }
-
-    // ワンタイムトークンを生成してリダイレクト
-    const { data: sessionData, error: sessionError } = await supabaseAdmin.auth.admin.generateLink({
-      type: 'magiclink',
-      email: userEmail,
-    })
-
-    if (sessionError || !sessionData) {
-      console.error('Failed to generate session:', sessionError)
-      throw new Error('Failed to generate session')
-    }
-
-    // ユーザーをログインページにリダイレクトし、クライアント側でセッションを確立
-    const redirectUrl = new URL('/', request.url)
-    redirectUrl.searchParams.set('line_auth', 'success')
-    redirectUrl.searchParams.set('email', userEmail)
-    redirectUrl.searchParams.set('line_name', userName)
-    redirectUrl.searchParams.set('line_id', profile.userId)
-    redirectUrl.searchParams.set('supabase_user_id', userId)
-    if (profile.pictureUrl) {
-      redirectUrl.searchParams.set('line_picture', profile.pictureUrl)
-    }
-    
-    return NextResponse.redirect(redirectUrl.toString())
-  } catch (error: any) {
-    console.error('LINE OAuth error:', error)
-    return NextResponse.redirect(new URL(`/?error=${encodeURIComponent(error.message)}`, request.url))
-  }
 }

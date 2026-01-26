@@ -1,19 +1,29 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from "next";
+import { Noto_Sans_JP } from "next/font/google";
+import "./globals.css";
+
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["latin"],
+  variable: "--font-noto-sans-jp",
+});
 
 export const metadata: Metadata = {
-  title: '出店者向け',
-  description: 'イベント出店者向けプラットフォーム',
-}
+  title: "イベント出店管理プラットフォーム | 出店者",
+  description: "キッチンカーのためのイベント出店管理プラットフォーム",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body
+        className={`${notoSansJP.variable} antialiased bg-emerald-50/30 text-gray-900 font-sans`}
+      >
+        {children}
+      </body>
     </html>
-  )
+  );
 }
